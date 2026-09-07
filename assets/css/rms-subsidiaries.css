@@ -1,0 +1,1429 @@
+/*
+ * Shared Organization Directory design.
+ * Subsidiaries and Departments intentionally use the same scale, colors,
+ * controls, table behavior, modal styling, and responsive breakpoints as Users.
+ */
+:root {
+    --org-green-950: #073f31;
+    --org-green-900: #07513c;
+    --org-green-800: #087552;
+    --org-green-700: #0a8a60;
+    --org-green-500: #25bd7e;
+    --org-mint-100: #eaf8f1;
+    --org-mint-50: #f4fbf7;
+    --org-text: #18322b;
+    --org-muted: #6d817a;
+    --org-border: #dfeae5;
+    --org-danger: #b33e4b;
+    --org-shadow: 0 16px 38px rgba(24, 50, 43, .07);
+}
+
+/* Keep sizing predictable when module controls are nested in shared layouts. */
+/*
+ * Include modal elements in the local box-sizing reset.
+ * The dialogs are rendered after .subs-content, so they need their own scope.
+ */
+.subs-content,
+.subs-content *,
+.subs-modal,
+.subs-modal * {
+    box-sizing: border-box;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.subs-content {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 32px 38px 48px;
+    color: var(--org-text);
+}
+
+/* Hero uses the same strong green identity and information hierarchy as Users. */
+.subs-hero {
+    min-height: 154px;
+    padding: 30px 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 20px;
+    background:
+        radial-gradient(circle at 88% 18%, rgba(121, 239, 179, .28), transparent 29%),
+        linear-gradient(120deg, var(--org-green-900), var(--org-green-800));
+    box-shadow: 0 18px 38px rgba(6, 83, 59, .16);
+}
+
+.subs-hero > div:first-child {
+    min-width: 0;
+}
+
+.subs-hero span,
+.subs-heading p {
+    display: block;
+    margin: 0;
+    color: #a8efca;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+}
+
+.subs-hero h1 {
+    margin: 8px 0 7px;
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+}
+
+.subs-hero p {
+    max-width: 690px;
+    margin: 0;
+    color: rgba(255, 255, 255, .75);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.subs-total {
+    min-width: 176px;
+    padding: 18px 22px;
+    border: 1px solid rgba(255, 255, 255, .17);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .10);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+    text-align: right;
+}
+
+.subs-total small,
+.subs-total strong {
+    display: block;
+}
+
+.subs-total small {
+    color: rgba(255, 255, 255, .68);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.subs-total strong {
+    margin-top: 3px;
+    font-size: 32px;
+    line-height: 1;
+}
+
+/* Main card mirrors the Users management table card. */
+.subs-panel {
+    margin-top: 24px;
+    overflow: hidden;
+    border: 1px solid var(--org-border);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--org-shadow);
+}
+
+.subs-heading {
+    min-height: 88px;
+    padding: 21px 27px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid var(--org-border);
+}
+
+.subs-heading p {
+    margin-bottom: 5px;
+    color: var(--org-green-800);
+}
+
+.subs-heading h2 {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.25;
+}
+
+/* Search stays compact on desktop and becomes a full row on small screens. */
+.subs-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.subs-search svg {
+    position: absolute;
+    left: 14px;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: #71877f;
+    stroke-width: 2;
+    pointer-events: none;
+}
+
+.subs-search input {
+    width: 285px;
+    height: 44px;
+    padding: 0 14px 0 42px;
+    color: var(--org-text);
+    border: 1px solid #d8e5df;
+    border-radius: 11px;
+    background: #f8fbfa;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .18s, box-shadow .18s, background .18s;
+}
+
+.subs-search input:focus {
+    border-color: var(--org-green-500);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 189, 126, .13);
+}
+
+.subs-search button,
+.subs-search a {
+    min-height: 42px;
+    padding: 0 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.subs-search button {
+    color: #fff;
+    background: var(--org-green-800);
+}
+
+.subs-search a {
+    color: #526a62;
+    background: #edf4f1;
+}
+
+/* Toolbar icons and highlights use one consistent visual language. */
+.subs-toolbar {
+    min-height: 70px;
+    padding: 14px 27px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #e6efeb;
+    background: #fbfdfc;
+}
+
+.action {
+    min-height: 42px;
+    padding: 0 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #36554a;
+    border: 1px solid #d9e6e0;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s, border-color .15s, background .15s, box-shadow .15s;
+}
+
+.action svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.action:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: #72caa4;
+    background: #f0faf5;
+    box-shadow: 0 5px 14px rgba(8, 117, 82, .08);
+}
+
+.action.primary {
+    color: #fff;
+    border-color: var(--org-green-800);
+    background: linear-gradient(135deg, var(--org-green-800), var(--org-green-700));
+    box-shadow: 0 7px 16px rgba(8, 117, 82, .16);
+}
+
+.action.danger:not(:disabled) {
+    color: var(--org-danger);
+}
+
+.action:disabled {
+    opacity: .43;
+    cursor: not-allowed;
+}
+
+/* Table rows highlight exactly when selected, clicked, or keyboard focused. */
+.subs-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.subs-table {
+    width: 100%;
+    min-width: 660px;
+    border-collapse: collapse;
+}
+
+.subs-table th {
+    padding: 13px 18px;
+    color: #687e76;
+    background: #f6faf8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .11em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Sort links expose the active order without changing the table header scale. */
+.sort-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.sort-link span {
+    color: #9aaca5;
+    font-size: 12px;
+}
+
+.sort-link.active,
+.sort-link:hover,
+.sort-link.active span {
+    color: var(--org-green-800);
+}
+
+.subs-table td {
+    padding: 15px 18px;
+    border-top: 1px solid #edf2f0;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.subs-table tbody tr[data-id] {
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s;
+}
+
+.subs-table tbody tr[data-id]:hover {
+    background: #f7fcf9;
+}
+
+.subs-table tbody tr.selected {
+    background: #ecf9f3;
+    box-shadow: inset 4px 0 0 var(--org-green-500);
+}
+
+.subs-table .check {
+    width: 52px;
+    text-align: center;
+}
+
+.subs-table input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--org-green-800);
+    cursor: pointer;
+}
+
+.subs-table td:nth-child(2),
+.department-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.subs-table td strong {
+    color: var(--org-text);
+    font-weight: 750;
+}
+
+.company-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--org-green-800);
+    border: 1px solid rgba(8, 117, 82, .06);
+    border-radius: 11px;
+    background: var(--org-mint-100);
+}
+
+.company-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.subsidiary-cell {
+    color: #52635d;
+    font-weight: 650;
+}
+
+.id-col {
+    width: 100px;
+    color: #789087;
+}
+
+.empty {
+    height: 240px !important;
+    display: table-cell !important;
+    color: #7b9189;
+    text-align: center !important;
+}
+
+.empty svg {
+    width: 42px;
+    height: 42px;
+    display: block;
+    margin: 0 auto 11px;
+    fill: none;
+    stroke: #8bb9a5;
+    stroke-width: 1.5;
+}
+
+.empty strong,
+.empty span {
+    display: block;
+}
+
+.empty strong {
+    margin-bottom: 5px;
+    color: #36554a;
+}
+
+/* Pagination follows the same size and responsive wrapping as Users. */
+.subs-footer {
+    min-height: 72px;
+    padding: 14px 27px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 25px;
+    color: #71857e;
+    border-top: 1px solid #e6efeb;
+    font-size: 12px;
+}
+
+.subs-footer form {
+    margin-right: auto;
+}
+
+.subs-footer select {
+    margin-left: 7px;
+    padding: 7px 9px;
+    color: var(--org-text);
+    border: 1px solid #dbe8e2;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.subs-footer nav {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.subs-footer nav a {
+    width: 33px;
+    height: 33px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--org-green-800);
+    border: 1px solid #dbe8e2;
+    border-radius: 8px;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.subs-footer nav a:hover:not(.disabled) {
+    border-color: #72caa4;
+    background: var(--org-mint-50);
+}
+
+.subs-footer nav a.disabled {
+    opacity: .35;
+    pointer-events: none;
+}
+
+/* Modal fields copy the 48px readable field scale from Create User. */
+.subs-modal[hidden] {
+    display: none !important;
+}
+
+.subs-modal {
+    position: fixed;
+    z-index: 1500;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.subs-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 31, 23, .60);
+    backdrop-filter: blur(3px);
+}
+
+.subs-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, .27);
+    animation: orgModalIn .18s ease;
+}
+
+.subs-dialog header {
+    min-height: 88px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid #e6efeb;
+}
+
+.dialog-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--org-green-800);
+    border-radius: 12px;
+    background: var(--org-mint-100);
+}
+
+.dialog-icon svg {
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.subs-dialog header small {
+    color: var(--org-green-800);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .15em;
+}
+
+.subs-dialog h2 {
+    margin: 4px 0 0;
+    color: var(--org-text);
+    font-size: 20px;
+}
+
+.modal-close {
+    width: 38px;
+    height: 38px;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #789087;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--org-text);
+    background: #edf4f1;
+}
+
+/* Department form shell matches the approved centered mockup. */
+#dept-form-modal .dept-form-dialog {
+    max-width: 650px;
+    overflow: visible;
+    border-radius: 12px;
+}
+
+#dept-form-modal .dept-form-header {
+    min-height: 114px;
+    padding: 25px 66px 22px;
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+#dept-form-modal .dept-form-heading {
+    width: 100%;
+}
+
+#dept-form-modal .dept-form-heading h2 {
+    margin: 0;
+    color: #064a35;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+#dept-form-modal .dept-form-heading p {
+    margin: 8px 0 0;
+    color: #6f7b77;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+#dept-form-modal .dept-form-header .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+}
+
+.form-body {
+    padding: 26px;
+}
+
+/* Keep every modal field on its own complete row. */
+.subs-dialog .form-group {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.subs-dialog .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.subs-dialog .form-body label {
+    width: 100%;
+    display: block;
+    margin-bottom: 8px;
+    color: #29473d;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.form-body em {
+    color: #c33;
+}
+
+.subs-dialog .form-body input,
+.subs-dialog .form-body select {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 48px;
+    padding: 0 14px;
+    color: var(--org-text);
+    border: 1px solid #d7e3dd;
+    border-radius: 10px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 48px;
+    outline: none;
+    transition: border-color .18s, box-shadow .18s;
+}
+
+.subs-dialog .form-body select {
+    /* Preserve the native arrow while enforcing the same field size as Users. */
+    appearance: auto;
+    -webkit-appearance: menulist;
+    padding-right: 42px;
+    line-height: normal;
+}
+
+.form-body input:focus,
+.form-body select:focus {
+    border-color: var(--org-green-500);
+    box-shadow: 0 0 0 3px rgba(37, 189, 126, .13);
+}
+
+.subs-dialog .form-body small {
+    width: 100%;
+    display: block;
+    margin-top: 7px;
+    color: #7a8e87;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/*
+ * Department modal isolation.
+ * Use Department-specific selectors with higher specificity so legacy
+ * Bootstrap/entity form rules cannot shrink the select or move helper text.
+ */
+#dept-form-modal .dept-form-body {
+    width: 100%;
+    display: block;
+    padding: 25px 36px 28px;
+}
+
+#dept-form-modal .dept-form-group {
+    width: 100%;
+    display: block;
+    margin: 0 0 20px;
+}
+
+#dept-form-modal .dept-form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+#dept-form-modal .dept-form-group label,
+#dept-form-modal .dept-form-group select,
+#dept-form-modal .dept-form-group input,
+#dept-form-modal .dept-form-group small {
+    width: 100%;
+    display: block;
+    float: none;
+}
+
+#dept-form-modal .dept-form-group select,
+#dept-form-modal .dept-form-group input {
+    max-width: none;
+    height: 48px;
+    margin: 0;
+}
+
+#dept-form-modal #dept-name {
+    height: 52px;
+    padding: 0 18px;
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+#dept-form-modal #dept-name::placeholder {
+    color: #9aa4a0;
+    font-weight: 500;
+}
+
+#dept-form-modal .dept-form-group small {
+    clear: both;
+    margin: 7px 0 0;
+}
+
+/*
+ * Mockup-matched Department subsidiary picker.
+ * Every selector is rooted at #dept-subsidiary-picker so no shared SVG,
+ * button, select, or modal rule can resize this component accidentally.
+ */
+#dept-form-modal .dept-subsidiary-field > label {
+    margin-bottom: 9px;
+    color: #243f36;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+#dept-subsidiary-picker {
+    position: relative;
+    width: 100%;
+}
+
+/* Keep the native sub_id select usable as a no-JavaScript fallback. */
+#dept-subsidiary-picker > #dept-subsidiary {
+    width: 100%;
+    height: 52px;
+}
+
+/* Once enhanced, retain the native field only for CI3 form submission. */
+#dept-subsidiary-picker.is-enhanced > #dept-subsidiary {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    opacity: 0;
+}
+
+#dept-subsidiary-picker .dept-picker-trigger {
+    width: 100%;
+    height: 56px;
+    padding: 0 52px 0 56px;
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #7c8783;
+    border: 1.5px solid #c8d6d0;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(13, 64, 48, .035);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    -webkit-transition: border-color .16s ease, box-shadow .16s ease;
+    transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+#dept-subsidiary-picker .dept-picker-trigger:hover {
+    border-color: #75ae96;
+}
+
+#dept-subsidiary-picker.open .dept-picker-trigger,
+#dept-subsidiary-picker .dept-picker-trigger:focus {
+    color: #203c33;
+    border-color: #087b55;
+    box-shadow: 0 0 0 3px rgba(8, 123, 85, .12);
+}
+
+#dept-subsidiary-picker .dept-picker-trigger.has-value {
+    color: #203c33;
+    font-weight: 650;
+}
+
+#dept-subsidiary-picker .dept-picker-trigger.invalid {
+    border-color: #c94f5c;
+    box-shadow: 0 0 0 3px rgba(201, 79, 92, .12);
+}
+
+#dept-subsidiary-picker .dept-picker-icon {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    width: 24px !important;
+    height: 24px !important;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    color: #07845b;
+    pointer-events: none;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+/* Explicit !important dimensions guard against legacy global SVG rules. */
+#dept-subsidiary-picker .dept-picker-icon > svg {
+    width: 23px !important;
+    height: 23px !important;
+    min-width: 23px !important;
+    max-width: 23px !important;
+    display: block !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.8 !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#dept-subsidiary-picker .dept-picker-value {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#dept-subsidiary-picker .dept-picker-chevron {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #44564f;
+    border-bottom: 2px solid #44564f;
+    pointer-events: none;
+    -webkit-transform: translateY(-68%) rotate(45deg);
+    transform: translateY(-68%) rotate(45deg);
+    -webkit-transition: transform .16s ease;
+    transition: transform .16s ease;
+}
+
+#dept-subsidiary-picker.open .dept-picker-chevron {
+    -webkit-transform: translateY(-28%) rotate(225deg);
+    transform: translateY(-28%) rotate(225deg);
+}
+
+#dept-subsidiary-picker .dept-picker-menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 5px);
+    right: 0;
+    left: 0;
+    max-height: 232px;
+    padding: 6px 0;
+    overflow-y: auto;
+    border: 1px solid #d5dfdb;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 14px 30px rgba(14, 50, 39, .16);
+}
+
+#dept-subsidiary-picker .dept-picker-menu[hidden] {
+    display: none !important;
+}
+
+#dept-subsidiary-picker .dept-picker-option {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 22px;
+    display: block;
+    color: #263d35;
+    border: 0;
+    background: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
+
+#dept-subsidiary-picker .dept-picker-option:hover,
+#dept-subsidiary-picker .dept-picker-option:focus {
+    background: #edf8f2;
+}
+
+#dept-subsidiary-picker .dept-picker-option.selected {
+    color: #075a40;
+    background: #dff2e8;
+    font-weight: 700;
+}
+
+#dept-form-modal .dept-subsidiary-field .dept-field-help {
+    margin-top: 8px;
+    color: #71827c;
+    font-size: 11px;
+}
+
+/* Keep the mockup proportions while fitting narrow phones. */
+@media (max-width: 520px) {
+    #dept-form-modal .dept-form-dialog {
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+    }
+
+    #dept-form-modal .dept-form-header {
+        min-height: 104px;
+        padding: 23px 54px 19px;
+    }
+
+    #dept-form-modal .dept-form-heading h2 {
+        font-size: 21px;
+    }
+
+    #dept-form-modal .dept-form-heading p {
+        font-size: 12px;
+    }
+
+    #dept-form-modal .dept-form-body {
+        padding: 22px 18px 24px;
+    }
+
+    #dept-subsidiary-picker .dept-picker-trigger {
+        height: 52px;
+        padding-right: 46px;
+        padding-left: 50px;
+        font-size: 14px;
+    }
+
+    #dept-subsidiary-picker .dept-picker-icon {
+        left: 15px;
+    }
+
+    #dept-subsidiary-picker .dept-picker-chevron {
+        right: 17px;
+    }
+
+    #dept-subsidiary-picker .dept-picker-option {
+        min-height: 43px;
+        padding: 10px 17px;
+        font-size: 13px;
+    }
+}
+
+.form-error {
+    display: none;
+    margin-top: 14px;
+    padding: 11px 13px;
+    color: #a53542;
+    border: 1px solid #f3cdd1;
+    border-radius: 9px;
+    background: #fff0f1;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.form-error:not(:empty) {
+    display: block;
+}
+
+.subs-dialog footer,
+.message-actions {
+    min-height: 72px;
+    padding: 15px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #e6efeb;
+    background: #fbfdfc;
+}
+
+.cancel,
+.save {
+    min-height: 42px;
+    padding: 0 17px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.cancel {
+    color: #526a62;
+    border: 1px solid #d8e5df;
+    background: #fff;
+}
+
+.save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #fff;
+    border: 1px solid var(--org-green-800);
+    background: var(--org-green-800);
+}
+
+.save:disabled {
+    opacity: .58;
+    cursor: wait;
+}
+
+.save svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+/* Feedback modal distinguishes success, warning, and error with accessible icons. */
+.subs-dialog.message {
+    max-width: 440px;
+    padding: 31px 28px;
+    text-align: center;
+}
+
+.message-icon {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--org-green-800);
+    border-radius: 50%;
+    background: #e8f8f0;
+}
+
+.message-icon svg {
+    width: 31px;
+    height: 31px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+.message-icon.warning {
+    color: #a96308;
+    background: #fff4df;
+}
+
+.message-icon.error {
+    color: var(--org-danger);
+    background: #ffedef;
+}
+
+.message h2 {
+    margin: 0 0 9px;
+}
+
+.message p {
+    margin: 0;
+    color: #687e76;
+    line-height: 1.6;
+}
+
+.message-actions {
+    margin: 25px -28px -31px;
+}
+
+.message-actions .save {
+    min-width: 100px;
+}
+
+@keyframes orgModalIn {
+    from { opacity: 0; transform: translateY(10px) scale(.98); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Tablet layout keeps every control reachable while preserving Users sizing. */
+@media (max-width: 900px) {
+    .subs-content {
+        padding: 24px 20px 38px;
+    }
+
+    .subs-hero,
+    .subs-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .subs-total {
+        width: 100%;
+        text-align: left;
+    }
+
+    .subs-search {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .subs-search input {
+        width: 100%;
+    }
+
+    .subs-toolbar {
+        overflow-x: auto;
+    }
+
+    .subs-footer {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .subs-footer form {
+        width: 100%;
+        margin: 0;
+        text-align: center;
+    }
+}
+
+/* Phone layout changes table rows into readable cards without losing actions. */
+@media (max-width: 620px) {
+    .subs-content {
+        padding: 16px 12px 28px;
+    }
+
+    .subs-hero {
+        min-height: 0;
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+
+    .subs-hero h1 {
+        font-size: 25px;
+    }
+
+    .subs-heading,
+    .subs-toolbar,
+    .subs-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .subs-panel {
+        border-radius: 15px;
+    }
+
+    .subs-search button,
+    .subs-search a {
+        flex: 1 1 auto;
+    }
+
+    .subs-toolbar {
+        align-items: stretch;
+        flex-wrap: wrap;
+        overflow: visible;
+    }
+
+    .action.primary {
+        flex: 1 0 100%;
+    }
+
+    .action:not(.primary) {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+    .subs-table {
+        min-width: 0;
+    }
+
+    .subs-table thead {
+        display: none;
+    }
+
+    .subs-table tbody,
+    .subs-table tr,
+    .subs-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .subs-table tbody {
+        padding: 8px 12px 14px;
+    }
+
+    .subs-table tbody tr[data-id] {
+        position: relative;
+        margin: 9px 0;
+        padding: 14px 46px 14px 14px;
+        border: 1px solid #e1ebe6;
+        border-radius: 13px;
+        background: #fff;
+    }
+
+    .subs-table tbody tr.selected {
+        border-color: #82d3af;
+        background: #ecf9f3;
+        box-shadow: inset 4px 0 0 var(--org-green-500);
+    }
+
+    .subs-table td {
+        padding: 5px 0;
+        border: 0;
+    }
+
+    .subs-table td.check {
+        position: absolute;
+        top: 18px;
+        right: 14px;
+        width: auto;
+        padding: 0;
+    }
+
+    .subs-table td:nth-child(2) {
+        padding-right: 0;
+    }
+
+    .subsidiary-cell {
+        padding-left: 50px !important;
+        font-size: 12px !important;
+    }
+
+    .id-col {
+        display: none !important;
+    }
+
+    .empty {
+        height: 210px !important;
+        padding: 40px 15px !important;
+    }
+
+    .subs-footer {
+        gap: 12px;
+    }
+
+    .subs-footer > span {
+        width: 100%;
+        text-align: center;
+    }
+
+    .subs-modal {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .subs-dialog {
+        max-height: calc(100vh - 20px);
+        border-radius: 17px;
+    }
+
+    .subs-dialog header,
+    .form-body,
+    .subs-dialog footer {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .subs-dialog footer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Respect reduced-motion accessibility preferences. */
+@media (prefers-reduced-motion: reduce) {
+    .subs-dialog,
+    .action,
+    .subs-table tbody tr[data-id] {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Users-style organization form headers and explicit close controls. */
+#subs-form-modal .subs-dialog,
+#dept-form-modal .dept-form-dialog {
+    border: 1px solid #b9d9cc;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(1, 43, 31, .34);
+}
+
+#subs-form-modal .subs-dialog > header,
+#dept-form-modal .dept-form-header {
+    min-height: 106px;
+    padding: 20px 66px 20px 26px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    border-bottom: 0;
+    background: linear-gradient(120deg, #064c39 0%, #07815b 58%, #0b9668 100%);
+}
+
+#subs-form-modal .dialog-icon {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .28);
+    background: rgba(255, 255, 255, .12);
+}
+
+#subs-form-modal .subs-dialog header small,
+#dept-form-modal .dept-form-heading small {
+    display: block;
+    margin: 0 0 7px;
+    color: rgba(255, 255, 255, .82);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .15em;
+}
+
+#subs-form-modal .subs-dialog h2,
+#dept-form-modal .dept-form-heading h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+#dept-form-modal .dept-form-heading p {
+    margin: 6px 0 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 12px;
+}
+
+#subs-form-modal .modal-close,
+#dept-form-modal .dept-form-header .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .30);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .08);
+    font-size: 25px;
+    line-height: 1;
+    box-shadow: none;
+}
+
+#subs-form-modal .modal-close:hover,
+#subs-form-modal .modal-close:focus,
+#dept-form-modal .dept-form-header .modal-close:hover,
+#dept-form-modal .dept-form-header .modal-close:focus {
+    color: #fff;
+    border-color: rgba(255, 255, 255, .55);
+    background: rgba(255, 255, 255, .20);
+    box-shadow: 0 5px 14px rgba(1, 31, 23, .18);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#subs-form-modal .subs-backdrop,
+#dept-form-modal .subs-backdrop {
+    cursor: default;
+}
+
+@media (max-width: 560px) {
+    #subs-form-modal .subs-dialog > header,
+    #dept-form-modal .dept-form-header {
+        min-height: 98px;
+        padding: 18px 62px 18px 18px;
+    }
+
+    #subs-form-modal .dialog-icon {
+        display: none;
+    }
+
+    #subs-form-modal .subs-dialog h2,
+    #dept-form-modal .dept-form-heading h2 {
+        font-size: 20px;
+    }
+}
+
+/* ========================================================================== */
+/* Final content spacing matched to Documents                                  */
+/* Moves organization cards closer to the header with the same side rhythm.     */
+/* ========================================================================== */
+.subs-content {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 18px 34px 36px !important;
+    box-sizing: border-box !important;
+}

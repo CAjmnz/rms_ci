@@ -1,0 +1,19 @@
+rose|2026-08-28 08:22:51|Login to Administrator Portal|Administrator
+rose|2026-08-28 08:22:54|Login to Administrator Portal|Administrator
+rose|2026-08-28 09:03:51|Login to Administrator Portal|Administrator
+rose|2026-08-28 09:03:54|Login to Administrator Portal|Administrator
+rose|2026-08-28 09:04:20|Unpublish Data: 1|Administrator
+rose|2026-08-28 09:34:32|Unpublish Data: 3|Administrator
+Unknown|2026-08-28 13:55:24|RMS Action: Documents / delete_uploaded_files (level=4, record_id=4, data_ids=57,56,55,54,53,52,51,50,49)|Administrator
+Unknown|2026-08-28 13:55:34|RMS Action: Documents / delete_uploaded_files (level=4, record_id=4, data_ids=57,56,55,54,53,52,51,50,49)|Administrator
+rose|2026-08-28 13:55:51|Login to Administrator Portal|Administrator
+rose|2026-08-28 13:56:35|Upload Data: fix ths .jpg|Administrator
+rose|2026-08-28 13:57:03|Upload Data: add a new filname.jpg, additional.jpg|Administrator
+iadsumaylo|2026-08-28 15:05:53|[Portal] Login|Records
+iadsumaylo|2026-08-28 15:06:06|Login to Administrator Portal|Administrator
+iadsumaylo|2026-08-28 15:06:12|Login to Administrator Portal|Administrator
+Juanlvl|2026-08-28 15:37:41|[Portal] Login|Records
+Juanlvl|2026-08-28 15:37:43|[Portal] Viewed: Screenshot 2026-08-19 093944.png|Records
+Juanlvl|2026-08-28 15:37:43|[Portal] Viewed: upload _1.png|Records
+rose|2026-08-28 17:43:58|Logout from Administrator Portal|Administrator
+rose|2026-08-28 18:23:44|Login to Administrator Portal|Administrator

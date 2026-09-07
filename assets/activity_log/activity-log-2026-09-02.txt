@@ -1,0 +1,29 @@
+rose|2026-09-02 08:15:01|Login to Administrator Portal|Administrator
+rose|2026-09-02 08:18:50|Login to Administrator Portal|Administrator
+rose|2026-09-02 13:08:53|Login to Administrator Portal|Administrator
+rose|2026-09-02 13:08:55|Login to Administrator Portal|Administrator
+Unknown|2026-09-02 13:13:44|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=ce1e4b2bef1b8d0a0cd8faffcc40cc0d23be9ab823539eea8980cfe7ad3440520a80a9bbed490...)|Administrator
+rose|2026-09-02 13:13:54|Login to Administrator Portal|Administrator
+rose|2026-09-02 13:14:02|Logout from Administrator Portal|Administrator
+treslvl|2026-09-02 13:14:13|Login to Administrator Portal|Administrator
+Treslvl|2026-09-02 13:14:22|Publish Data: 1|Administrator
+admin|2026-09-02 15:25:02|Login to Administrator Portal|Administrator
+admin|2026-09-02 15:29:59|Logout from Administrator Portal|Administrator
+rose|2026-09-02 15:41:06|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:41:09|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:44:57|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:45:03|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=2)|Administrator
+rose|2026-09-02 15:45:20|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=3)|Administrator
+rose|2026-09-02 15:46:03|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:46:06|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:46:22|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=4)|Administrator
+rose|2026-09-02 15:46:30|Logout from Administrator Portal|Administrator
+rose|2026-09-02 15:46:37|Login to Administrator Portal|Administrator
+rose|2026-09-02 15:46:53|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=32)|Administrator
+rose|2026-09-02 15:58:06|Unpublish Data: 1|Administrator
+rose|2026-09-02 16:50:35|Login to Administrator Portal|Administrator
+rose|2026-09-02 16:52:18|Logout from Administrator Portal|Administrator
+Treslvl|2026-09-02 16:52:29|Login to Administrator Portal|Administrator
+Treslvl|2026-09-02 16:56:16|Logout from Administrator Portal|Administrator
+rmsAngelica|2026-09-02 16:58:16|Login to Administrator Portal|Administrator
+rmsAngelica|2026-09-02 16:58:53|Login to Administrator Portal|Administrator

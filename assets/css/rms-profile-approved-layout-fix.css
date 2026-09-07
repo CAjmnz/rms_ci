@@ -1,0 +1,839 @@
+/* ========================================================================== 
+   Approved Edit Profile preview match
+   Load this file after rms-portal-shell-match.css.
+   ========================================================================== */
+
+
+@media (min-width:1200px) and (min-height:700px) {
+    .portal-profile-page {
+        padding: 10px 28px 8px !important;
+    }
+
+    .portal-profile-page .portal-content-container {
+        max-width: 1440px !important;
+    }
+
+    .portal-workspace .portal-profile-hero {
+        height: 90px !important;
+        min-height: 90px !important;
+        margin-bottom: 10px !important;
+        padding: 12px 24px !important;
+        gap: 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .portal-profile-page .portal-profile-hero-icon {
+        flex-basis: 48px !important;
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .portal-profile-page .portal-profile-hero-icon svg {
+        width: 25px !important;
+        height: 25px !important;
+    }
+
+    .portal-workspace .portal-profile-hero small {
+        font-size: 9px !important;
+    }
+
+    .portal-workspace .portal-profile-hero h1 {
+        margin: 2px 0 1px !important;
+        font-size: 24px !important;
+    }
+
+    .portal-workspace .portal-profile-hero p {
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: 300px minmax(0,1fr) !important;
+        gap: 18px !important;
+    }
+
+    .portal-profile-page .profile-summary-card {
+        padding: 18px 20px 14px !important;
+    }
+
+    .portal-profile-page .profile-photo-shell {
+        width: 100px !important;
+        margin: 0 auto 9px !important;
+    }
+
+    .portal-profile-page .profile-summary-avatar {
+        width: 100px !important;
+        height: 100px !important;
+        border-width: 6px !important;
+        font-size: 30px !important;
+    }
+
+    .portal-profile-page .profile-photo-camera {
+        width: 32px !important;
+        height: 32px !important;
+        border-width: 3px !important;
+    }
+
+    .portal-profile-page .profile-photo-button {
+        min-height: 34px !important;
+        padding: 0 14px !important;
+        font-size: 11px !important;
+    }
+
+    .portal-profile-page .profile-photo-note {
+        margin: 4px 0 9px !important;
+        font-size: 8px !important;
+    }
+
+    .portal-profile-page .profile-summary-card h2 {
+        font-size: 20px !important;
+    }
+
+    .portal-profile-page .profile-summary-card > p {
+        margin: 4px 0 10px !important;
+        font-size: 11px !important;
+    }
+
+    .portal-profile-page .profile-summary-card dl div {
+        grid-template-columns: 34px minmax(0,1fr) !important;
+        gap: 10px !important;
+        padding: 7px 0 !important;
+    }
+
+    .portal-profile-page .profile-detail-icon {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .portal-profile-page .profile-summary-card dt {
+        margin-bottom: 2px !important;
+        font-size: 10px !important;
+    }
+
+    .portal-profile-page .profile-summary-card dd {
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-form-section {
+        padding: 14px 24px !important;
+    }
+
+    .portal-profile-page .profile-form-section > header.profile-section-heading {
+        margin-bottom: 10px !important;
+        gap: 11px !important;
+    }
+
+    .portal-profile-page .profile-section-icon {
+        flex-basis: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .portal-profile-page .profile-section-icon svg {
+        width: 21px !important;
+        height: 21px !important;
+    }
+
+    .portal-profile-page .profile-form-section > header h2 {
+        font-size: 20px !important;
+    }
+
+    .portal-profile-page .profile-form-section > header p {
+        margin-top: 2px !important;
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-field-grid {
+        gap: 9px 16px !important;
+    }
+
+    .portal-profile-page .profile-field,
+    .portal-profile-page .profile-field > span:first-child {
+        gap: 5px !important;
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-field input {
+        height: 43px !important;
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-input-shell > svg,
+    .portal-profile-page .profile-input-leading-icon {
+        left: 13px !important;
+        width: 17px !important;
+        height: 17px !important;
+    }
+
+    .portal-profile-page .profile-input-shell input,
+    .portal-profile-page .profile-password-field input {
+        padding-left: 42px !important;
+    }
+
+    .portal-profile-page .profile-security-layout {
+        grid-template-columns: minmax(0,1fr) 230px !important;
+        gap: 18px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance {
+        padding: 14px 16px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance h3 {
+        margin-bottom: 4px !important;
+        font-size: 13px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance p,
+    .portal-profile-page .profile-password-guidance li,
+    .portal-profile-page .profile-password-guidance small {
+        font-size: 10px !important;
+        line-height: 1.45 !important;
+    }
+
+    .portal-profile-page .profile-password-guidance ul {
+        margin: 7px 0 !important;
+    }
+
+    .portal-profile-page .profile-form-actions {
+        padding: 10px 18px !important;
+    }
+
+    .portal-profile-page .profile-form-actions button {
+        min-height: 40px !important;
+        padding: 0 22px !important;
+        font-size: 12px !important;
+    }
+}
+
+/* Keep responsive stacking from the existing approved profile implementation. */
+@media (max-width:1199px) {
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: 240px minmax(0,1fr);
+    }
+}
+
+/* V47 layout enhancement: preserve every existing User Portal theme color. */
+.portal-profile-page .profile-workspace {
+    align-items: stretch;
+}
+
+.portal-profile-page .profile-summary-card,
+.portal-profile-page .profile-form-card {
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(24, 63, 45, .08);
+}
+
+.portal-profile-page .profile-summary-card dl div {
+    border-radius: 9px;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.portal-profile-page .profile-summary-card dl div:hover {
+    transform: translateX(3px);
+    box-shadow: 0 4px 12px rgba(24, 63, 45, .06);
+}
+
+.portal-profile-page .profile-form-section {
+    position: relative;
+}
+
+.portal-profile-page .profile-input-shell,
+.portal-profile-page .profile-password-field,
+.portal-profile-page .profile-field input {
+    border-radius: 10px !important;
+}
+
+.portal-profile-page .profile-field input {
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.portal-profile-page .profile-password-guidance {
+    align-self: stretch;
+    border-radius: 12px !important;
+}
+
+.portal-profile-page .profile-form-actions {
+    position: relative;
+    z-index: 1;
+}
+
+.portal-profile-page .profile-reset-button,
+.portal-profile-page .profile-save-button {
+    border-radius: 10px !important;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.portal-profile-page .profile-reset-button:hover,
+.portal-profile-page .profile-save-button:hover {
+    transform: translateY(-1px);
+}
+
+/*
+ * Keep related fields in vertical pairs:
+ * left  = Username, Date registered
+ * right = New password, Confirm new password
+ */
+@media (min-width: 768px) {
+    .portal-profile-page .profile-security-layout .profile-field-grid > .profile-field:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .portal-profile-page .profile-security-layout .profile-field-grid > .profile-field:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .portal-profile-page .profile-security-layout .profile-field-grid > .profile-field:nth-child(3) {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .portal-profile-page .profile-security-layout .profile-field-grid > .profile-field:nth-child(4) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+}
+
+/* Add polish without changing colors, and respect reduced-motion settings. */
+@media (prefers-reduced-motion: no-preference) {
+    .portal-profile-page .portal-profile-hero,
+    .portal-profile-page .profile-summary-card,
+    .portal-profile-page .profile-form-card {
+        animation: profileLayoutV47Reveal .38s ease both;
+    }
+
+    .portal-profile-page .profile-summary-card { animation-delay: .04s; }
+    .portal-profile-page .profile-form-card { animation-delay: .08s; }
+}
+
+@keyframes profileLayoutV47Reveal {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/*
+ * V48 icon-safe input spacing.
+ * Keep entered text and browser autofill text clear of the leading SVG icon.
+ */
+.portal-profile-page .profile-input-shell > svg,
+.portal-profile-page .profile-input-leading-icon {
+    left: 13px !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+.portal-profile-page .profile-input-shell input,
+.portal-profile-page .profile-input-shell input:hover,
+.portal-profile-page .profile-input-shell input:focus,
+.portal-profile-page .profile-input-shell input:focus-visible,
+.portal-profile-page .profile-input-shell input:active,
+.portal-profile-page .profile-input-shell input[readonly],
+.portal-profile-page .profile-input-shell input:-webkit-autofill,
+.portal-profile-page .profile-password-field input,
+.portal-profile-page .profile-password-field input:hover,
+.portal-profile-page .profile-password-field input:focus,
+.portal-profile-page .profile-password-field input:focus-visible,
+.portal-profile-page .profile-password-field input:active,
+.portal-profile-page .profile-password-field input:-webkit-autofill {
+    padding-left: 42px !important;
+}
+
+.portal-profile-page .profile-password-field input,
+.portal-profile-page .profile-password-field input:hover,
+.portal-profile-page .profile-password-field input:focus,
+.portal-profile-page .profile-password-field input:focus-visible,
+.portal-profile-page .profile-password-field input:active,
+.portal-profile-page .profile-password-field input:-webkit-autofill {
+    padding-right: 46px !important;
+}
+
+@media (max-width: 767px) {
+    .portal-profile-page .profile-input-shell > svg,
+    .portal-profile-page .profile-input-leading-icon {
+        left: 11px !important;
+    }
+
+    .portal-profile-page .profile-input-shell input,
+    .portal-profile-page .profile-input-shell input[readonly],
+    .portal-profile-page .profile-password-field input {
+        padding-left: 36px !important;
+    }
+}
+/* V49 approved-photo details. */
+.portal-profile-page .portal-profile-hero{position:relative;overflow:hidden}.profile-security-badge{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding:9px 14px;color:#08653f;background:rgba(255,255,255,.94);border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}.profile-security-badge i{width:8px;height:8px;border-radius:50%;background:#118a59}.portal-profile-page .profile-workspace{grid-template-columns:310px minmax(0,1fr)!important;gap:8px!important}.portal-profile-page .profile-summary-card{background:linear-gradient(145deg,rgba(230,255,244,.72),#fff 38%)}.portal-profile-page .profile-summary-card dl div{border-bottom:1px solid #e6ece9}.portal-profile-page .profile-summary-card dl div:nth-child(2) .profile-detail-icon{color:#1476dd;background:#eaf3ff}.portal-profile-page .profile-summary-card dl div:nth-child(3) .profile-detail-icon{color:#e58b14;background:#fff5e5}.profile-completeness{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:10px;margin-top:10px;padding:10px;border:1px solid #dfe8e3;border-radius:10px;text-align:left}.profile-completeness-ring{display:grid;place-items:center;width:50px;height:50px;border:6px solid #087148;border-right-color:#e1ebe6;border-radius:50%;color:#087148;font-size:13px;font-weight:800}.profile-completeness strong{display:block;color:#152a22;font-size:11px}.profile-completeness small{display:block;margin-top:2px;color:#68756f;font-size:9px;line-height:1.4}.portal-profile-page .profile-form-section+.profile-form-section{border-top:1px solid #e4eae7}.portal-profile-page .profile-password-guidance h3:before{content:"✓";display:inline-grid;place-items:center;width:24px;height:24px;margin-right:7px;border-radius:8px;background:#e2f7ed;color:#087148}.portal-profile-page .profile-password-guidance li{position:relative;padding-left:22px;list-style:none}.portal-profile-page .profile-password-guidance li:before{content:"✓";position:absolute;left:0;top:1px;display:grid;place-items:center;width:15px;height:15px;color:#fff;background:#087148;border-radius:50%;font-size:9px;font-weight:800}.profile-password-strength{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:2px}.profile-password-strength i{height:4px;background:#d7dcda;border-radius:999px}.profile-password-strength i:first-child{background:#087148}.profile-password-strength-label{color:#7b8580;font-size:9px}@media(max-width:980px){.profile-security-badge{display:none}.portal-profile-page .profile-workspace{grid-template-columns:1fr!important}}
+
+/* V51: center the profile name and department on the same axis. */
+.portal-profile-page .profile-summary-card > h2,
+.portal-profile-page .profile-summary-card > p {
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: center !important;
+}
+
+/* V52: responsive completeness card and functional password feedback. */
+.portal-profile-page .profile-summary-card {
+    min-width: 0 !important;
+}
+
+.portal-profile-page .profile-completeness {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 50px minmax(0, 1fr) !important;
+    align-self: end !important;
+    overflow: hidden !important;
+}
+
+.portal-profile-page .profile-completeness-ring {
+    box-sizing: border-box !important;
+    width: 48px !important;
+    height: 48px !important;
+    flex: 0 0 48px !important;
+    transition: border-color .25s ease, transform .25s ease !important;
+}
+
+.portal-profile-page .profile-completeness-ring b {
+    font: inherit;
+}
+
+.portal-profile-page .profile-completeness-copy {
+    display: block !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+}
+
+.portal-profile-page .profile-completeness.is-complete .profile-completeness-ring {
+    border-color: #087148 !important;
+    transform: scale(1.04);
+}
+
+.portal-profile-page .profile-password-strength i {
+    background: #d7dcda !important;
+    transition: background-color .22s ease, transform .22s ease, box-shadow .22s ease !important;
+    transform-origin: left center;
+}
+
+.portal-profile-page .profile-password-strength i.is-active {
+    background: #087148 !important;
+    box-shadow: 0 2px 7px rgba(8,113,72,.24);
+    animation: profileStrengthFill .26s ease both;
+}
+
+.portal-profile-page .profile-password-guidance li::before {
+    opacity: .38;
+    transform: scale(.86);
+    transition: opacity .2s ease, transform .2s ease, background-color .2s ease;
+}
+
+.portal-profile-page .profile-password-guidance li.is-met::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.portal-profile-page .profile-password-guidance li.is-met {
+    color: #087148;
+    font-weight: 700;
+}
+
+.portal-profile-page .profile-password-field.is-invalid input {
+    border-color: #c84949 !important;
+    box-shadow: 0 0 0 3px rgba(200,73,73,.10) !important;
+}
+
+.portal-profile-page .profile-password-field.is-valid input {
+    border-color: #24a16d !important;
+}
+
+.portal-profile-page .profile-save-button:disabled {
+    cursor: not-allowed !important;
+    opacity: .55 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+@keyframes profileStrengthFill {
+    from { opacity: .45; transform: scaleX(.25); }
+    to { opacity: 1; transform: scaleX(1); }
+}
+
+@media (max-width: 1199px) {
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) !important;
+    }
+
+    .portal-profile-page .profile-completeness {
+        grid-template-columns: 44px minmax(0, 1fr) !important;
+        gap: 8px !important;
+        padding: 8px !important;
+    }
+
+    .portal-profile-page .profile-completeness-ring {
+        width: 42px !important;
+        height: 42px !important;
+        border-width: 5px !important;
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 980px) {
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: 1fr !important;
+    }
+
+    .portal-profile-page .profile-summary-card {
+        height: auto !important;
+    }
+
+    .portal-profile-page .profile-completeness {
+        max-width: 420px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* V57: stronger Profile-page readability without changing its layout. */
+.portal-profile-page .portal-profile-hero small {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: .14em !important;
+}
+
+.portal-profile-page .portal-profile-hero h1 {
+    font-size: 27px !important;
+    line-height: 1.15 !important;
+}
+
+.portal-profile-page .portal-profile-hero p {
+    font-size: 13px !important;
+    font-weight: 550 !important;
+    line-height: 1.4 !important;
+}
+
+.portal-profile-page .profile-photo-button {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+}
+
+.portal-profile-page .profile-photo-note {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+}
+
+.portal-profile-page .profile-summary-card > p {
+    color: #52675f !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+}
+
+.portal-profile-page .profile-summary-card dt {
+    color: #51665e !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: .07em !important;
+}
+
+.portal-profile-page .profile-summary-card dd {
+    color: #203f34 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+}
+
+.portal-profile-page .profile-summary-card dd em {
+    font-size: 11px !important;
+    font-weight: 750 !important;
+}
+
+.portal-profile-page .profile-completeness strong {
+    color: #173d31 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+}
+
+.portal-profile-page .profile-completeness small {
+    color: #4f645c !important;
+    font-size: 10.5px !important;
+    font-weight: 550 !important;
+    line-height: 1.45 !important;
+}
+
+.portal-profile-page .profile-completeness-ring {
+    font-size: 13px !important;
+    font-weight: 850 !important;
+}
+
+.portal-profile-page .profile-section-heading h2 {
+    color: #174535 !important;
+    font-size: 23px !important;
+    font-weight: 800 !important;
+}
+
+.portal-profile-page .profile-section-heading p {
+    color: #53675f !important;
+    font-size: 13px !important;
+    font-weight: 550 !important;
+}
+
+.portal-profile-page .profile-field > span:first-child {
+    color: #304f43 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+}
+
+.portal-profile-page .profile-field input {
+    color: #243e35 !important;
+    font-size: 14px !important;
+    font-weight: 550 !important;
+}
+
+.portal-profile-page .profile-field input::placeholder {
+    color: #687a73 !important;
+    opacity: 1 !important;
+}
+
+.portal-profile-page .profile-field input[readonly] {
+    color: #4b6058 !important;
+    font-weight: 600 !important;
+    cursor: default !important;
+}
+
+.portal-profile-page .profile-password-strength-label {
+    color: #51655d !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+}
+
+.portal-profile-page .profile-password-guidance h3 {
+    color: #075f43 !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+}
+
+.portal-profile-page .profile-password-guidance p,
+.portal-profile-page .profile-password-guidance li,
+.portal-profile-page .profile-password-guidance small {
+    color: #415b51 !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    line-height: 1.55 !important;
+}
+
+.portal-profile-page .profile-password-guidance li.is-met {
+    color: #076947 !important;
+    font-weight: 750 !important;
+}
+
+.portal-profile-page .profile-form-actions button {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+}
+
+.portal-workspace .portal-main-footer {
+    color: #435d53 !important;
+    font-size: 11.5px !important;
+    font-weight: 550 !important;
+}
+
+.portal-workspace .portal-main-footer strong {
+    color: #087052 !important;
+    font-weight: 800 !important;
+}
+
+@media (max-width: 767px) {
+    .portal-profile-page .portal-profile-hero h1 {
+        font-size: 24px !important;
+    }
+
+    .portal-profile-page .profile-section-heading h2 {
+        font-size: 20px !important;
+    }
+
+    .portal-profile-page .profile-field input {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .portal-profile-page .profile-completeness {
+        grid-template-columns: 40px minmax(0, 1fr) !important;
+    }
+
+    .portal-profile-page .profile-completeness-ring {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 10px !important;
+    }
+}
+
+/* V54: taller professional composition and reliable editable fields. */
+.portal-profile-page {
+    box-sizing: border-box !important;
+    min-height: calc(100vh - 89px - 44px) !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.portal-profile-page .portal-content-container {
+    display: flex !important;
+    min-height: calc(100vh - 89px - 44px - 28px) !important;
+    flex-direction: column !important;
+}
+
+.portal-profile-page .profile-workspace {
+    flex: 1 1 auto !important;
+    align-items: stretch !important;
+    min-height: 500px !important;
+}
+
+.portal-profile-page .profile-summary-card,
+.portal-profile-page .profile-form-card {
+    height: 100% !important;
+    min-height: 500px !important;
+}
+
+.portal-profile-page .profile-summary-card {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px 22px 16px !important;
+}
+
+.portal-profile-page .profile-summary-card dl {
+    width: 100% !important;
+}
+
+.portal-profile-page .profile-completeness {
+    margin-top: auto !important;
+}
+
+.portal-profile-page .profile-form-card form {
+    display: flex !important;
+    min-height: 100% !important;
+    flex-direction: column !important;
+}
+
+.portal-profile-page .profile-form-section {
+    padding: 19px 26px !important;
+}
+
+.portal-profile-page .profile-form-section:nth-child(2) {
+    flex: 1 1 auto !important;
+}
+
+.portal-profile-page .profile-section-heading h2 {
+    font-size: 21px !important;
+    line-height: 1.2 !important;
+}
+
+.portal-profile-page .profile-section-heading p {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+}
+
+.portal-profile-page .profile-field > span:first-child {
+    font-size: 12px !important;
+    font-weight: 750 !important;
+}
+
+.portal-profile-page .profile-field input {
+    height: 48px !important;
+    font-size: 13px !important;
+}
+
+.portal-profile-page #profile-complete-name {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: auto !important;
+    cursor: text !important;
+    color: #1b3028 !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+}
+
+.portal-profile-page #profile-complete-name:focus {
+    border-color: #168761 !important;
+    box-shadow: 0 0 0 3px rgba(22,135,97,.13) !important;
+    outline: none !important;
+}
+
+.portal-profile-page .profile-summary-card h2 {
+    font-size: 22px !important;
+}
+
+.portal-profile-page .profile-summary-card > p,
+.portal-profile-page .profile-summary-card dd {
+    font-size: 11px !important;
+}
+
+.portal-profile-page .profile-password-guidance h3 {
+    font-size: 13px !important;
+}
+
+.portal-profile-page .profile-password-guidance p,
+.portal-profile-page .profile-password-guidance li,
+.portal-profile-page .profile-password-guidance small {
+    font-size: 10px !important;
+    line-height: 1.5 !important;
+}
+
+/* ASCII-only CSS escape prevents the checkmark from becoming corrupted text. */
+.portal-profile-page .profile-password-guidance h3::before {
+    content: "\2713" !important;
+    font-family: Arial, sans-serif !important;
+}
+
+.portal-profile-page .profile-password-guidance li::before {
+    content: "\2713" !important;
+    font-family: Arial, sans-serif !important;
+}
+
+.portal-profile-page .profile-form-actions {
+    margin-top: auto !important;
+    padding: 14px 26px !important;
+}
+
+.portal-profile-page .profile-form-actions button {
+    min-height: 44px !important;
+    padding-right: 24px !important;
+    padding-left: 24px !important;
+    font-size: 12px !important;
+}
+
+@media (max-width: 980px) {
+    .portal-profile-page,
+    .portal-profile-page .portal-content-container {
+        min-height: 0 !important;
+    }
+
+    .portal-profile-page .profile-workspace,
+    .portal-profile-page .profile-summary-card,
+    .portal-profile-page .profile-form-card {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+    .portal-profile-page .profile-completeness {
+        margin-top: 14px !important;
+    }
+}
+
+.portal-profile-page .profile-summary-card > h2 {
+    margin-top: 12px !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+}
+
+.portal-profile-page .profile-summary-card > p {
+    margin-top: 0 !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+}

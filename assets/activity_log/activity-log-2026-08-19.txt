@@ -1,0 +1,171 @@
+felizhyo16|2026-08-19 08:31:17|Logout from Administrator Portal|Administrator
+felizhyo|2026-08-19 08:31:24|Login to Administrator Portal|Administrator
+felizhyo|2026-08-19 08:31:29|Logout from Administrator Portal|Administrator
+felizhyo|2026-08-19 08:31:32|Login to Administrator Portal|Administrator
+rose|2026-08-19 08:31:43|Logout from Administrator Portal|Administrator
+rose|2026-08-19 08:31:46|Login to Administrator Portal|Administrator
+felizhyo|2026-08-19 08:31:47|Create Filename: My test logs|Administrator
+felizhyo|2026-08-19 08:31:50|Logout from Administrator Portal|Administrator
+felizhyo16|2026-08-19 08:31:55|Login to Administrator Portal|Administrator
+rose|2026-08-19 08:33:25|Upload Data: my profile.png|Administrator
+rose|2026-08-19 08:35:47|Logout from Administrator Portal|Administrator
+rose|2026-08-19 08:35:52|Login to Administrator Portal|Administrator
+rose|2026-08-19 08:37:01|Logout from Administrator Portal|Administrator
+rose|2026-08-19 08:37:06|Login to Administrator Portal|Administrator
+rose|2026-08-19 08:37:09|Login to Administrator Portal|Administrator
+iadsumaylo|2026-08-19 08:44:06|[Portal] Login|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_151059.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: ideal_backdrop.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: trouble_shoot_-_Copy.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_155144.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: uploading_issue.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: modadd.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: bug.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: trouble_shoot.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: more_actions.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: button.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_162104.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_102720.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: change_this.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: positioned_2.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: error.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_112201.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: Screenshot_2026-08-17_092116.png|Records
+iadsumaylo|2026-08-19 08:44:11|[Portal] Viewed: highlighted.png|Records
+iadsumaylo|2026-08-19 08:44:35|[Portal] Downloaded: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 08:45:05|[Portal] Viewed: upload _1.png|Records
+iadsumaylo|2026-08-19 08:45:11|[Portal] Viewed: upload _1.png|Records
+iadsumaylo|2026-08-19 08:45:13|[Portal] Downloaded: upload _1.png|Records
+rose|2026-08-19 08:48:10|Logout from Administrator Portal|Administrator
+rose|2026-08-19 08:48:14|Login to Administrator Portal|Administrator
+rose|2026-08-19 08:55:17|Logout from Administrator Portal|Administrator
+rose|2026-08-19 08:55:24|Login to Administrator Portal|Administrator
+iadsumaylo|2026-08-19 08:58:32|[Portal] Viewed: upload _1.png|Records
+iadsumaylo|2026-08-19 08:58:35|[Portal] Downloaded: upload _1.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: Screenshot_2026-08-17_102720.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: bug_this.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: trouble_shoot.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: feedback3.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: Screenshot_2026-08-17_162104.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: Screenshot_2026-08-17_155144.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: Screenshot_2026-08-17_092116.png|Records
+iadsumaylo|2026-08-19 08:58:38|[Portal] Viewed: Screenshot_2026-08-17_151059.png|Records
+iadsumaylo|2026-08-19 08:58:39|[Portal] Viewed: button_me_up.png|Records
+iadsumaylo|2026-08-19 08:58:39|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 08:58:42|[Portal] Downloaded: positioned_2.png|Records
+iadsumaylo|2026-08-19 08:58:42|[Portal] Downloaded: Screenshot_2026-08-17_151059.png|Records
+iadsumaylo|2026-08-19 08:58:42|[Portal] Downloaded: modadd.png|Records
+felizhyo16|2026-08-19 09:07:38|Logout from Administrator Portal|Administrator
+felizhyo16|2026-08-19 09:07:48|Login to Administrator Portal|Administrator
+felizhyo16|2026-08-19 09:07:58|Delete Document Record: 30|Administrator
+felizhyo16|2026-08-19 09:08:07|Delete Document Record: 29|Administrator
+felizhyo16|2026-08-19 09:08:11|Delete Document Record: 28|Administrator
+felizhyo16|2026-08-19 09:08:13|Delete Document Record: 25|Administrator
+felizhyo16|2026-08-19 09:08:26|Delete Document Record: 26|Administrator
+rose|2026-08-19 09:41:44|Update Document Record: test22d: 17|Administrator
+rose|2026-08-19 09:41:58|Delete Document Record: 17|Administrator
+rose|2026-08-19 09:44:46|Delete Document Record: 17|Administrator
+Juanlvl|2026-08-19 10:23:31|[Portal] Login|Records
+Juanlvl|2026-08-19 10:23:33|[Portal] Viewed: upload _1.png|Records
+rose|2026-08-19 10:56:45|Delete Document Record: 22|Administrator
+rmsAngelica|2026-08-19 11:19:19|Login to Administrator Portal|Administrator
+iadsumaylo|2026-08-19 11:20:20|[Portal] Login|Records
+iadsumaylo|2026-08-19 11:20:22|[Portal] Viewed: Screenshot_2026-08-17_155144.png|Records
+iadsumaylo|2026-08-19 11:20:22|[Portal] Viewed: trouble_shoot.png|Records
+iadsumaylo|2026-08-19 11:20:22|[Portal] Viewed: Screenshot_2026-08-17_092116.png|Records
+iadsumaylo|2026-08-19 11:20:22|[Portal] Viewed: button_me_up.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: Screenshot_2026-08-17_151059.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: Screenshot_2026-08-17_102720.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: Screenshot_2026-08-17_112201.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: uploading_issue.png|Records
+iadsumaylo|2026-08-19 11:20:23|[Portal] Viewed: trouble_shoot_-_Copy.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: trouble_shoot_-_Copy.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_092116.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: trouble_shoot.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: bug_this.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_151059.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_102720.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: button_me_up.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_112201.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: uploading_issue.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_155144.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: Screenshot_2026-08-17_162104.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: feedback3.png|Records
+iadsumaylo|2026-08-19 11:20:30|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: button_me_up.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: trouble_shoot_-_Copy.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: uploading_issue.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: modal_backdrop.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: Screenshot_2026-08-17_112201.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: feedback3.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: Screenshot_2026-08-17_102720.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: Screenshot_2026-08-17_162104.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: bug_this.png|Records
+iadsumaylo|2026-08-19 11:20:35|[Portal] Viewed: Screenshot_2026-08-17_155144.png|Records
+rose|2026-08-19 11:24:54|Login to Administrator Portal|Administrator
+rose|2026-08-19 11:26:41|Logout from Administrator Portal|Administrator
+Juanlvl|2026-08-19 11:41:47|[Portal] Viewed: upload _1.png|Records
+rose|2026-08-19 11:47:24|Upload Data: z z zz z.png|Administrator
+rose|2026-08-19 11:47:56|RMS Action: Documents / delete_uploaded_files (level=1, record_id=21, data_ids=204)|Administrator
+rose|2026-08-19 13:48:51|Unpublish Data: 8|Administrator
+rose|2026-08-19 13:51:09|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=16, target_level=2, target_id=16, data_ids=72)|Administrator
+rose|2026-08-19 13:51:11|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=16, target_level=2, target_id=16, data_ids=72)|Administrator
+rose|2026-08-19 13:51:30|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=16, target_level=2, target_id=16, data_ids=72)|Administrator
+rose|2026-08-19 13:51:32|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=16, target_level=2, target_id=16, data_ids=72)|Administrator
+rose|2026-08-19 13:51:33|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=16, target_level=2, target_id=16, data_ids=72)|Administrator
+rose|2026-08-19 13:52:14|Upload Data: z z zz z.png|Administrator
+rose|2026-08-19 13:52:24|RMS Action: Documents / delete_uploaded_files (level=2, record_id=16, data_ids=205)|Administrator
+rose|2026-08-19 13:52:55|Upload Data: Screenshot 2026-08-19 093944.png|Administrator
+rose|2026-08-19 14:09:44|RMS Action: Documents / transfer_uploaded_files (level=2, record_id=17, target_level=3, target_id=10, data_ids=156)|Administrator
+rose|2026-08-19 14:09:54|RMS Action: Documents / transfer_uploaded_files (level=2, record_id=17, target_level=3, target_id=10, data_ids=155,173)|Administrator
+rose|2026-08-19 14:09:57|RMS Action: Documents / transfer_uploaded_files (level=2, record_id=17, target_level=3, target_id=10, data_ids=172,171)|Administrator
+rose|2026-08-19 14:10:06|RMS Action: Documents / transfer_uploaded_files (level=2, record_id=17, target_level=3, target_id=10, data_ids=170,174,169,168,167,166,164,165,163)|Administrator
+rose|2026-08-19 14:11:40|Upload Data: z z zz z.png|Administrator
+rose|2026-08-19 14:11:59|RMS Action: Documents / delete_uploaded_files (level=3, record_id=10, data_ids=207)|Administrator
+rose|2026-08-19 15:39:00|Logout from Administrator Portal|Administrator
+rose|2026-08-19 15:39:25|Login to Administrator Portal|Administrator
+rose|2026-08-19 16:22:33|Upload Data: z z zz z.png|Administrator
+rose|2026-08-19 16:57:22|RMS Action: Documents / rename_uploaded_file (level=2, record_id=18, data_id=199, name=sakadingka duu.png)|Administrator
+rose|2026-08-19 16:58:05|Unpublish Data: 4|Administrator
+rose|2026-08-19 16:58:27|Publish Data: 21, 31, 24, 1, 23|Administrator
+rose|2026-08-19 16:58:36|Publish Data: 8, 2|Administrator
+rose|2026-08-19 16:58:45|Unpublish Data: 8|Administrator
+rose|2026-08-19 16:59:02|Unpublish Data: 3, 21|Administrator
+rose|2026-08-19 16:59:08|Delete Document Record: 8|Administrator
+rose|2026-08-19 17:00:28|Delete Document Record: 8|Administrator
+rose|2026-08-19 17:00:32|Delete Document Record: 8|Administrator
+rose|2026-08-19 17:01:14|Publish Data: 9|Administrator
+rose|2026-08-19 17:03:12|Upload Data: anit highlight.png, bulk action .png, document page .png, drop down .png, follow the ui.png, highlight.png, hover.png, kk.png, Screenshot_2026-08-17_162104.png, why .png, z z zz z.png|Administrator
+rose|2026-08-19 17:03:12|Upload Data: my profile.png, no changes.png, pin.png, Screenshot 2026-08-19 093944.png, Screenshot 2026-08-19 113841.png, Screenshot_2026-08-17_162104.png, why .png, z z zz z.png, highlight.png, hover.png, kk.png|Administrator
+rose|2026-08-19 17:03:45|RMS Action: Documents / delete_uploaded_files (level=0, record_id=3, data_ids=219,222,220,221,223,224)|Administrator
+rose|2026-08-19 17:04:00|RMS Action: Documents / delete_uploaded_files (level=0, record_id=3, data_ids=209,210,211,212,213,214,215,216,217,218)|Administrator
+rose|2026-08-19 17:04:28|Create Subfolder: test|Administrator
+rose|2026-08-19 17:04:50|Unpublish Data: 2|Administrator
+rose|2026-08-19 17:05:21|Publish Data: 6, 20|Administrator
+rose|2026-08-19 17:05:28|Publish Data: 17|Administrator
+rose|2026-08-19 17:05:32|Publish Data: 10|Administrator
+rose|2026-08-19 17:05:50|Publish Data: 8|Administrator
+rose|2026-08-19 17:06:48|Create Subfolder: sub 1|Administrator
+rose|2026-08-19 17:07:09|Create Filename: test|Administrator
+rose|2026-08-19 17:07:20|Create Filename: testtko|Administrator
+rose|2026-08-19 17:08:18|Upload Data: anit highlight.png, bulk action .png|Administrator
+rose|2026-08-19 17:09:06|Delete Document Record: 8|Administrator
+rose|2026-08-19 17:09:25|Publish Data: 8, 3, 21|Administrator
+Treslvl|2026-08-19 17:16:29|Login to Administrator Portal|Administrator
+Treslvl|2026-08-19 17:16:41|Unpublish Data: 16|Administrator
+Treslvl|2026-08-19 17:16:45|Publish Data: 16|Administrator
+Treslvl|2026-08-19 17:16:52|Unpublish Data: 16|Administrator
+rose|2026-08-19 17:18:32|Create User: Tres.1lvl|Administrator
+Tres.1lvl|2026-08-19 17:19:06|Login to Administrator Portal|Administrator
+Tres.1lvl|2026-08-19 17:19:21|Unpublish Data: 14|Administrator
+Treslvl|2026-08-19 17:19:31|Logout from Administrator Portal|Administrator
+Treslvl|2026-08-19 17:19:43|Login to Administrator Portal|Administrator
+Treslvl|2026-08-19 17:22:35|Logout from Administrator Portal|Administrator
+Treslvl|2026-08-19 17:22:44|Login to Administrator Portal|Administrator
+rose|2026-08-19 17:23:06|Logout from Administrator Portal|Administrator
+rose|2026-08-19 17:23:12|Login to Administrator Portal|Administrator
+rose|2026-08-19 17:23:21|Publish Data: 27|Administrator
+rose|2026-08-19 17:23:25|Publish Data: 15|Administrator

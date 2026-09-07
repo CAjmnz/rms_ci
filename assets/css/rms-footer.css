@@ -1,0 +1,16 @@
+/*
+ * Shared RMS admin footer
+ *
+ * This stylesheet controls only the reusable footer. Header, sidebar, and
+ * page content styles remain in their existing separate stylesheets.
+ */
+
+.rms-footer { display: none; }
+
+/* Let Users page content fill available height so the footer stays below it. */
+.main-area > .users-content {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+

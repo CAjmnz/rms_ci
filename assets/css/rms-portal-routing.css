@@ -1,0 +1,146 @@
+/* User Portal account-routing modal; kept separate from the reusable shell. */
+.portal-routing-backdrop {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    background: rgba(3,36,28,.62);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px)
+}
+
+.portal-routing-backdrop.is-visible {
+    display: flex
+}
+
+.portal-routing-modal {
+    width: 100%;
+    max-width: 430px;
+    padding: 34px;
+    border: 1px solid #cce5db;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 28px 70px rgba(2,35,26,.3);
+    text-align: center;
+    animation: portal-routing-in .22s ease-out both
+}
+
+.portal-routing-icon {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 18px;
+    border-radius: 18px;
+    color: #fff;
+    background: linear-gradient(145deg,#087052,#10a477);
+    box-shadow: 0 12px 25px rgba(8,112,82,.24)
+}
+
+.portal-routing-icon svg {
+    width: 29px;
+    height: 29px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+
+.portal-routing-kicker {
+    margin: 0 0 8px;
+    color: #087052;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .16em
+}
+
+.portal-routing-modal h2 {
+    margin: 0;
+    color: #173d32;
+    font-size: 25px;
+    line-height: 1.2
+}
+
+.portal-routing-modal > p:not(.portal-routing-kicker) {
+    max-width: 350px;
+    margin: 12px auto 0;
+    color: #667b73;
+    font-size: 13px;
+    line-height: 1.65
+}
+
+.portal-routing-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px
+}
+
+.portal-routing-actions a,
+.portal-routing-actions button {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 42px;
+    text-decoration: none;
+    cursor: pointer
+}
+
+.portal-routing-actions a {
+    color: #fff;
+    border: 1px solid #087052;
+    background: #087052
+}
+
+.portal-routing-actions button {
+    color: #285146;
+    border: 1px solid #c8ddd5;
+    background: #fff
+}
+
+.portal-routing-actions a:hover,
+.portal-routing-actions a:focus,
+.portal-routing-actions button:hover,
+.portal-routing-actions button:focus {
+    outline: 3px solid rgba(40,185,135,.18);
+    outline-offset: 2px
+}
+
+@keyframes portal-routing-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.98)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+}
+
+@media (max-width:480px) {
+    .portal-routing-modal {
+        padding: 28px 22px
+    }
+
+    .portal-routing-actions {
+        flex-direction: column
+    }
+
+    .portal-routing-actions a,
+    .portal-routing-actions button {
+        width: 100%
+    }
+}
+
+@media (prefers-reduced-motion:reduce) {
+    .portal-routing-modal {
+        animation: none
+    }
+}

@@ -1,0 +1,5093 @@
+/* ========================================================================== 
+   User Portal shell alignment with the Administrator interface
+   ========================================================================== */
+
+/* Shared shell dimensions */
+.portal-workspace-body {
+    --portal-sidebar-width: 272px;
+}
+
+/* ========================================================================== 
+   Self-contained Admin-style User Portal sidebar toggle
+   ========================================================================== */
+
+/* Keep the header untouched while the sidebar and workspace animate. */
+.portal-sidebar,
+.portal-workspace {
+    transition: width .24s ease,margin-left .24s ease;
+}
+
+.portal-sidebar-edge-toggle {
+    position: fixed;
+    top: 103px;
+    left: 239px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(6,75,56,.14);
+    border-radius: 50%;
+    color: #0b5b43;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(3,47,35,.18);
+    cursor: pointer;
+    visibility: visible;
+    opacity: 1;
+    transition: left .24s ease,color .18s ease,background .18s ease;
+}
+
+.portal-sidebar-edge-toggle:hover,
+.portal-sidebar-edge-toggle:focus-visible {
+    color: #fff;
+    background: #159464;
+    outline: 0;
+}
+
+.portal-sidebar-edge-toggle span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-bottom: 2px solid currentColor;
+    border-left: 2px solid currentColor;
+    transform: rotate(45deg) translate(1px,-1px);
+}
+
+body.portal-sidebar-collapsed {
+    --portal-sidebar-width: 82px !important;
+}
+
+body.portal-sidebar-collapsed .portal-sidebar {
+    width: 82px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+}
+
+body.portal-sidebar-collapsed .portal-workspace {
+    margin-left: 82px !important;
+}
+
+body.portal-sidebar-collapsed .portal-sidebar-edge-toggle {
+    left: 67px;
+}
+
+body.portal-sidebar-collapsed .portal-sidebar-edge-toggle span {
+    transform: rotate(225deg) translate(1px,-1px);
+}
+
+body.portal-sidebar-collapsed .portal-sidebar-brand {
+    justify-content: center;
+    padding-right: 7px !important;
+    padding-left: 7px !important;
+}
+
+body.portal-sidebar-collapsed .portal-brand-copy,
+body.portal-sidebar-collapsed .portal-nav-label,
+body.portal-sidebar-collapsed .portal-navigation a span,
+body.portal-sidebar-collapsed .portal-sidebar-support div {
+    display: none !important;
+}
+
+body.portal-sidebar-collapsed .portal-navigation a {
+    justify-content: center !important;
+    width: 48px !important;
+    min-height: 48px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+body.portal-sidebar-collapsed .portal-navigation a svg {
+    margin: 0 !important;
+}
+
+body.portal-sidebar-collapsed .portal-sidebar-support {
+    right: 12px !important;
+    left: 12px !important;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 !important;
+}
+
+@media (max-width:980px) {
+    .portal-sidebar-edge-toggle {
+        display: none !important;
+    }
+
+    body.portal-sidebar-collapsed .portal-workspace {
+        margin-left: 0 !important;
+    }
+}
+
+.portal-workspace {
+    margin-left: var(--portal-sidebar-width);
+}
+
+/* Administrator-matched header */
+.portal-workspace .topbar {
+    min-height: 89px;
+    padding: 0 42px;
+}
+
+.portal-workspace .topbar-left {
+    gap: 17px;
+}
+
+.portal-workspace .topbar-title {
+    display: block;
+    min-width: 0;
+}
+
+.portal-workspace .topbar-kicker {
+    display: block;
+    margin: 0 0 5px;
+    color: #087052;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: .16em;
+}
+
+.portal-workspace .topbar h1 {
+    display: block;
+    margin: 0;
+    color: #123c30;
+    font-size: 26px;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+}
+
+.portal-workspace .user-menu-button {
+    min-width: 210px;
+    min-height: 54px;
+}
+
+.portal-workspace .top-avatar {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    line-height: 44px;
+}
+
+/* Administrator-matched sidebar brand */
+.portal-sidebar {
+    width: var(--portal-sidebar-width);
+    padding: 18px 14px 16px;
+}
+
+.portal-sidebar-brand {
+    min-height: 72px;
+    padding: 5px 6px;
+    gap: 13px;
+}
+
+.portal-records-mark {
+    display: grid;
+    place-items: center;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 12px;
+    color: #d9f8ec;
+    background: linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.045));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
+}
+
+.portal-records-mark svg {
+    width: 29px;
+    height: 29px;
+    fill: rgba(91,218,169,.20);
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.portal-brand-copy strong {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: .12em;
+}
+
+.portal-brand-copy small {
+    margin-top: 3px;
+    color: #b9d8cc;
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+/* Active navigation matches the Administrator selected state */
+.portal-navigation a {
+    min-height: 46px;
+    color: #bbd6cc;
+}
+
+.portal-navigation a.active {
+    color: #fff;
+    border-color: rgba(129,226,188,.28);
+    background: linear-gradient(90deg,rgba(32,148,107,.70),rgba(39,135,102,.35));
+    box-shadow: inset 4px 0 0 #66ddaf,0 7px 18px rgba(0,33,24,.16);
+}
+
+.portal-navigation a.active svg {
+    color: #d8f8eb;
+    background: rgba(95,218,170,.20);
+}
+
+/* Tablet and mobile shell */
+@media (max-width:980px) {
+    .portal-workspace {
+        margin-left: 0;
+    }
+}
+
+@media (max-width:720px) {
+    .portal-workspace .topbar {
+        min-height: 76px;
+        padding: 0 18px;
+    }
+
+    .portal-workspace .topbar h1 {
+        font-size: 20px;
+    }
+}
+
+/* Equal compact sub-heroes for Dashboard and My Documents */
+.portal-workspace .portal-subhero,
+.portal-workspace .portal-dashboard-hero {
+    min-height: 172px;
+    padding: 26px 34px;
+    border-radius: 20px;
+}
+
+.portal-workspace .portal-subhero h1,
+.portal-workspace .portal-dashboard-hero h1 {
+    margin-top: 9px;
+    margin-bottom: 6px;
+    font-size: clamp(25px,2.5vw,32px);
+}
+
+.portal-workspace .portal-subhero p,
+.portal-workspace .portal-dashboard-hero p {
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.portal-workspace .portal-primary-link {
+    min-height: 36px;
+    margin-top: 14px;
+    padding: 0 14px;
+}
+
+.portal-workspace .hero-stat {
+    width: 132px;
+    min-width: 132px;
+    min-height: 116px;
+    padding: 16px 18px;
+}
+
+.portal-workspace .hero-stat strong {
+    font-size: 26px;
+}
+
+@media (max-width:760px) {
+    .portal-workspace .portal-subhero,
+    .portal-workspace .portal-dashboard-hero {
+        min-height: 0;
+        padding: 24px;
+    }
+}
+
+/* ========================================================================== 
+   Consistent input, button, link, and card interaction highlights
+   ========================================================================== */
+
+/* Shared transition for interactive document controls */
+.drive-search input,
+.drive-search button,
+.drive-access-badge,
+.drive-back-button,
+.drive-folder-card,
+.drive-file-actions a,
+.drive-breadcrumbs a {
+    transition:
+        color .18s ease,
+        border-color .18s ease,
+        background-color .18s ease,
+        box-shadow .18s ease,
+        transform .18s ease;
+}
+
+/* Text-field cursor and keyboard focus */
+.drive-search:focus-within .drive-search-icon {
+    color: #087052;
+    transform: scale(1.08);
+}
+
+.drive-search input:hover {
+    border-color: #8fc8b4;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(40,185,135,.07);
+}
+
+.drive-search input:focus,
+.drive-search input:focus-visible {
+    color: #173d32;
+    border-color: #15946c;
+    background: #fff;
+    box-shadow:
+        0 0 0 4px rgba(40,185,135,.18),
+        0 8px 20px rgba(6,83,62,.10);
+    outline: 0;
+}
+
+.drive-search input::placeholder {
+    color: #748880;
+    opacity: 1;
+}
+
+.drive-search input:focus::placeholder {
+    color: #9aaca5;
+}
+
+/* Search button interaction */
+.drive-search button:hover,
+.drive-search button:focus,
+.drive-search button:focus-visible {
+    border-color: #075f47;
+    background: #075f47;
+    box-shadow:
+        0 0 0 4px rgba(40,185,135,.16),
+        0 8px 18px rgba(6,83,62,.18);
+    outline: 0;
+    transform: translateY(-1px);
+}
+
+.drive-search button:active {
+    box-shadow: 0 0 0 3px rgba(40,185,135,.13);
+    transform: translateY(0);
+}
+
+/* Breadcrumb and Back interaction */
+.drive-breadcrumbs a {
+    padding: 5px 7px;
+    border-radius: 7px;
+}
+
+.drive-breadcrumbs a:hover,
+.drive-breadcrumbs a:focus,
+.drive-breadcrumbs a:focus-visible {
+    color: #075f47;
+    background: #e8f7f1;
+    box-shadow: 0 0 0 3px rgba(40,185,135,.11);
+    text-decoration: none;
+    outline: 0;
+}
+
+.drive-back-button:hover,
+.drive-back-button:focus,
+.drive-back-button:focus-visible {
+    color: #075f47;
+    border-color: #61b597;
+    background: #eaf8f2;
+    box-shadow:
+        0 0 0 4px rgba(40,185,135,.13),
+        0 7px 16px rgba(6,83,62,.10);
+    outline: 0;
+    transform: translateY(-1px);
+}
+
+/* Folder-card cursor and keyboard focus */
+.drive-folder-card:hover,
+.drive-folder-card:focus,
+.drive-folder-card:focus-visible {
+    color: #113e31;
+    border-color: #3fac86;
+    background: linear-gradient(145deg,#fff,#edf9f4);
+    box-shadow:
+        0 0 0 4px rgba(40,185,135,.13),
+        0 13px 27px rgba(6,83,62,.14);
+    outline: 0;
+    transform: translateY(-3px);
+}
+
+.drive-folder-card:hover .drive-folder-visual,
+.drive-folder-card:focus .drive-folder-visual,
+.drive-folder-card:focus-visible .drive-folder-visual {
+    color: #fff;
+    background: linear-gradient(145deg,#19a779,#087052);
+    box-shadow: 0 7px 16px rgba(8,112,82,.20);
+}
+
+.drive-folder-card:hover .drive-open-arrow,
+.drive-folder-card:focus .drive-open-arrow,
+.drive-folder-card:focus-visible .drive-open-arrow {
+    color: #087052;
+    transform: translateX(2px);
+}
+
+/* View and Download button interaction */
+.drive-file-actions a:hover,
+.drive-file-actions a:focus,
+.drive-file-actions a:focus-visible {
+    color: #fff;
+    border-color: #087052;
+    background: #087052;
+    box-shadow:
+        0 0 0 4px rgba(40,185,135,.14),
+        0 7px 16px rgba(6,83,62,.14);
+    outline: 0;
+    transform: translateY(-1px);
+}
+
+.drive-file-actions a:active {
+    box-shadow: 0 0 0 3px rgba(40,185,135,.12);
+    transform: translateY(0);
+}
+
+/* Global User Portal field and button focus standard */
+.portal-workspace input:not([type="hidden"]):not(:disabled):hover,
+.portal-workspace select:not(:disabled):hover,
+.portal-workspace textarea:not(:disabled):hover {
+    border-color: #8fc8b4;
+}
+
+.portal-workspace input:not([type="hidden"]):not(:disabled):focus,
+.portal-workspace input:not([type="hidden"]):not(:disabled):focus-visible,
+.portal-workspace select:not(:disabled):focus,
+.portal-workspace select:not(:disabled):focus-visible,
+.portal-workspace textarea:not(:disabled):focus,
+.portal-workspace textarea:not(:disabled):focus-visible {
+    border-color: #15946c;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.18);
+    outline: 0;
+}
+
+.portal-workspace button:not(:disabled):focus-visible,
+.portal-workspace a:focus-visible {
+    outline: 3px solid rgba(40,185,135,.28);
+    outline-offset: 3px;
+}
+
+/* Disabled controls remain visually inactive */
+.portal-workspace button:disabled,
+.portal-workspace input:disabled,
+.portal-workspace select:disabled,
+.portal-workspace textarea:disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: .58;
+    transform: none;
+}
+
+@media (prefers-reduced-motion:reduce) {
+    .drive-search input,
+    .drive-search button,
+    .drive-back-button,
+    .drive-folder-card,
+    .drive-file-actions a,
+    .drive-open-arrow {
+        transition: none;
+    }
+}
+
+/* Refined compact thumbnails and advanced viewer controls */
+.drive-file-list.is-grid-view {
+    grid-template-columns: repeat(auto-fill,minmax(230px,260px));
+    gap: 13px;
+}
+
+.drive-file-list.is-grid-view .drive-file-row {
+    min-height: 244px;
+    padding: 12px;
+    border-radius: 13px;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview {
+    height: 122px;
+    border-radius: 9px;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview img {
+    padding: 5px;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy {
+    margin-top: 9px;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy strong {
+    font-size: 13px;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy small,
+.drive-file-list.is-grid-view .drive-file-row time {
+    font-size: 9px;
+}
+
+.document-viewer-zoom {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid #c9dcd5;
+    border-radius: 10px;
+    background: #f3f8f6;
+}
+
+.document-viewer-zoom button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 32px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 7px;
+    color: #315e52;
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.document-viewer-zoom button:hover,
+.document-viewer-zoom button:focus-visible {
+    color: #056f53;
+    background: #def1ea;
+    outline: 2px solid rgba(47,190,143,.22);
+}
+
+.document-viewer-zoom button:disabled {
+    color: #9cafaa;
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.document-viewer-zoom button svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+#document-viewer-zoom-reset {
+    min-width: 52px;
+}
+
+.document-viewer-stage {
+    overflow: auto;
+}
+
+.document-viewer-stage img,
+.document-viewer-stage iframe {
+    transform-origin: center center;
+}
+
+.document-viewer-navigation {
+    position: fixed;
+    top: 50%;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 54px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 13px;
+    color: #fff;
+    background: rgba(4,42,31,.7);
+    box-shadow: 0 10px 24px rgba(0,0,0,.2);
+    cursor: pointer;
+    transform: translateY(-50%);
+    backdrop-filter: blur(6px);
+    transition: background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+
+.document-viewer-navigation.is-previous {
+    left: max(18px,calc((100vw - min(1120px,94vw))/2 + 18px));
+}
+
+.document-viewer-navigation.is-next {
+    right: max(18px,calc((100vw - min(1120px,94vw))/2 + 18px));
+}
+
+.document-viewer-navigation:hover,
+.document-viewer-navigation:focus-visible {
+    background: #087458;
+    box-shadow: 0 13px 28px rgba(0,0,0,.28);
+    outline: 3px solid rgba(91,211,171,.26);
+}
+
+.document-viewer-navigation.is-previous:hover,
+.document-viewer-navigation.is-previous:focus-visible {
+    transform: translate(-2px,-50%);
+}
+
+.document-viewer-navigation.is-next:hover,
+.document-viewer-navigation.is-next:focus-visible {
+    transform: translate(2px,-50%);
+}
+
+.document-viewer-navigation svg {
+    width: 25px;
+    height: 25px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+@media (max-width:780px) {
+    .document-viewer-header {
+        flex-wrap: wrap;
+    }
+
+    .document-viewer-heading {
+        flex: 1 1 150px;
+    }
+
+    .document-viewer-actions {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+    }
+
+    .document-viewer-navigation {
+        position: absolute;
+        top: auto;
+        bottom: 18px;
+        width: 43px;
+        height: 48px;
+        transform: none;
+    }
+
+    .document-viewer-navigation.is-previous {
+        left: 16px;
+    }
+
+    .document-viewer-navigation.is-next {
+        right: 16px;
+    }
+
+    .document-viewer-navigation.is-previous:hover,
+    .document-viewer-navigation.is-previous:focus-visible {
+        transform: translateX(-2px);
+    }
+
+    .document-viewer-navigation.is-next:hover,
+    .document-viewer-navigation.is-next:focus-visible {
+        transform: translateX(2px);
+    }
+}
+
+@media (max-width:620px) {
+    .drive-file-list.is-grid-view {
+        grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+    }
+
+    .document-viewer-zoom {
+        margin-right: auto;
+    }
+}
+
+/* Bottom modal navigation, draggable previews, and AJAX workspace loading */
+.document-viewer-stage {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.document-viewer-stage.is-panning {
+    cursor: grabbing;
+}
+
+.document-viewer-stage iframe {
+    pointer-events: none;
+}
+
+.document-viewer-footer {
+    display: flex;
+    flex: 0 0 58px;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 58px;
+    padding: 8px 16px;
+    border-top: 1px solid #dce8e3;
+    background: linear-gradient(90deg,#f7fbf9,#fff,#f7fbf9);
+}
+
+.document-viewer-footer .document-viewer-navigation {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid #bed6cd;
+    border-radius: 9px;
+    color: #28584a;
+    background: #fff;
+    box-shadow: none;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    transform: none;
+    backdrop-filter: none;
+}
+
+.document-viewer-footer .document-viewer-navigation:hover,
+.document-viewer-footer .document-viewer-navigation:focus-visible {
+    border-color: #49a98c;
+    color: #fff;
+    background: #087458;
+    box-shadow: 0 6px 14px rgba(7,93,69,.17);
+    outline: 3px solid rgba(47,190,143,.22);
+    transform: translateY(-1px);
+}
+
+.document-viewer-footer .document-viewer-navigation svg {
+    width: 17px;
+    height: 17px;
+}
+
+#document-viewer-position {
+    min-width: 64px;
+    color: #547067;
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.drive-workspace {
+    position: relative;
+}
+
+.drive-workspace::after {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    color: #087458;
+    background: rgba(245,251,248,.82);
+    content: "Loading folder...";
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    backdrop-filter: blur(2px);
+    transition: opacity .16s ease;
+}
+
+.drive-workspace.is-ajax-loading::after {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (max-width:780px) {
+    .document-viewer-footer {
+        gap: 10px;
+    }
+
+    .document-viewer-footer .document-viewer-navigation {
+        flex: 1 1 0;
+        max-width: 130px;
+    }
+}
+
+/* ========================================================================== 
+   Professional Drive-style document workspace
+   ========================================================================== */
+
+/* Compact document sub-hero */
+.portal-workspace .portal-drive-hero {
+    width: 100%;
+    height: 119px;
+    min-height: 119px;
+    padding: 18px 28px;
+    border-radius: 20px;
+}
+
+.portal-workspace .portal-drive-hero h1 {
+    margin: 5px 0 3px;
+    font-size: 26px;
+}
+
+.portal-workspace .portal-drive-hero p {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.portal-workspace .portal-drive-hero .hero-stat {
+    width: 108px;
+    min-width: 108px;
+    min-height: 86px;
+    padding: 10px 14px;
+}
+
+/* Main workspace surface */
+.drive-workspace {
+    overflow: hidden;
+    margin-top: 20px;
+    border: 1px solid #d9e6e1;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 16px 38px rgba(6,63,47,.08);
+}
+
+.drive-command-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e5eeea;
+    background: #fbfdfc;
+}
+
+/* Search control */
+.drive-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 760px;
+}
+
+.drive-search-icon {
+    position: absolute;
+    left: 15px;
+    display: grid;
+    place-items: center;
+    color: #70877f;
+    pointer-events: none;
+}
+
+.drive-search-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.drive-search input {
+    width: 100%;
+    height: 46px;
+    padding: 0 110px 0 45px;
+    border: 1px solid #d4e2dd;
+    border-radius: 12px;
+    color: #173d32;
+    background: #f5f9f7;
+    font: inherit;
+    font-size: 13px;
+    outline: 0;
+    transition: border-color .18s ease,background .18s ease,box-shadow .18s ease;
+}
+
+.drive-search input:focus {
+    border-color: #62b797;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.12);
+}
+
+.drive-search button {
+    position: absolute;
+    right: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    background: #087052;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.drive-search button svg {
+    display: none;
+    width: 17px;
+    height: 17px;
+}
+
+.drive-search button:hover,
+.drive-search button:focus {
+    background: #095f47;
+    outline: 3px solid rgba(40,185,135,.17);
+}
+
+.drive-access-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid #cfe8de;
+    border-radius: 18px;
+    color: #087052;
+    background: #edf8f4;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.drive-access-badge svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* Folder location and breadcrumb path */
+.drive-location-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 58px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e5eeea;
+}
+
+.drive-breadcrumbs {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 7px;
+    color: #6d817a;
+    font-size: 11px;
+}
+
+.drive-breadcrumbs a,
+.drive-breadcrumbs strong {
+    overflow: hidden;
+    max-width: 190px;
+    color: #31564b;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drive-breadcrumbs a:hover,
+.drive-breadcrumbs a:focus {
+    color: #087052;
+    text-decoration: underline;
+    outline: 0;
+}
+
+.drive-home-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: #087052;
+    background: #edf8f4;
+}
+
+.drive-home-icon svg,
+.drive-crumb-arrow {
+    width: 15px;
+    height: 15px;
+}
+
+.drive-crumb-arrow {
+    flex: 0 0 15px;
+    color: #9baca6;
+}
+
+.drive-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid #d2e2dc;
+    border-radius: 9px;
+    color: #31564b;
+    background: #fff;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.drive-back-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+.drive-back-button:hover,
+.drive-back-button:focus {
+    color: #087052;
+    border-color: #8ac9b3;
+    background: #f1faf6;
+    outline: 0;
+}
+
+/* Workspace content heading */
+.drive-content {
+    padding: 22px;
+}
+
+.drive-section-heading,
+.drive-file-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.drive-section-heading {
+    margin-bottom: 21px;
+}
+
+.drive-section-heading small {
+    display: block;
+    margin-bottom: 5px;
+    color: #0b8663;
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: .15em;
+}
+
+.drive-section-heading h2 {
+    margin: 0;
+    color: #173d32;
+    font-size: 19px;
+}
+
+.drive-section-heading > span,
+.drive-file-heading > span {
+    color: #71857e;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Folder cards */
+.drive-folder-section h3,
+.drive-file-heading h3 {
+    margin: 0;
+    color: #314f47;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.drive-folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(225px,1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.drive-folder-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0,1fr) 18px;
+    align-items: center;
+    gap: 12px;
+    min-height: 72px;
+    padding: 12px 13px;
+    border: 1px solid #dce8e3;
+    border-radius: 12px;
+    color: #173d32;
+    background: #fff;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(6,63,47,.04);
+    transition: border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+
+.drive-folder-card:hover,
+.drive-folder-card:focus {
+    border-color: #77c1a7;
+    background: #f5fbf8;
+    box-shadow: 0 9px 22px rgba(6,83,62,.11);
+    outline: 0;
+    transform: translateY(-2px);
+}
+
+.drive-folder-visual {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    color: #087052;
+    background: #dff4eb;
+}
+
+.drive-folder-visual svg {
+    width: 23px;
+    height: 23px;
+}
+
+.drive-folder-copy {
+    display: grid;
+    min-width: 0;
+    gap: 3px;
+}
+
+.drive-folder-copy strong,
+.drive-folder-copy small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drive-folder-copy strong {
+    font-size: 12px;
+}
+
+.drive-folder-copy small {
+    color: #7a8d86;
+    font-size: 9px;
+}
+
+.drive-open-arrow {
+    width: 17px;
+    height: 17px;
+    color: #6d9184;
+}
+
+/* File list */
+.drive-file-section {
+    margin-top: 25px;
+}
+
+.drive-file-heading {
+    margin-bottom: 10px;
+}
+
+.drive-file-list {
+    overflow: hidden;
+    border: 1px solid #e0eae6;
+    border-radius: 12px;
+}
+
+.drive-file-list-head,
+.drive-file-row {
+    display: grid;
+    grid-template-columns: minmax(240px,1.6fr) minmax(120px,.7fr) minmax(120px,.7fr) minmax(180px,.8fr);
+    align-items: center;
+    gap: 16px;
+}
+
+.drive-file-list-head {
+    min-height: 38px;
+    padding: 0 16px;
+    color: #71857e;
+    background: #f6faf8;
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.drive-file-row {
+    min-height: 66px;
+    padding: 9px 16px;
+    border-top: 1px solid #e8efec;
+    background: #fff;
+    transition: background .16s ease;
+}
+
+.drive-file-row:hover {
+    background: #f7fbf9;
+}
+
+.drive-file-name {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 11px;
+}
+
+.drive-file-name > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 3px;
+}
+
+.drive-file-name strong,
+.drive-file-name small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drive-file-name strong {
+    color: #27483e;
+    font-size: 11px;
+}
+
+.drive-file-name small,
+.drive-file-row time {
+    color: #7b8e87;
+    font-size: 9px;
+}
+
+.drive-file-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    color: #1685a3;
+    background: #e5f5f9;
+}
+
+.drive-file-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.drive-file-access {
+    width: max-content;
+    max-width: 100%;
+    padding: 5px 8px;
+    border-radius: 12px;
+    color: #087052;
+    background: #edf8f4;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.drive-file-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.drive-file-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid #d2e2dc;
+    border-radius: 8px;
+    color: #31564b;
+    background: #fff;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.drive-file-actions a svg {
+    width: 15px;
+    height: 15px;
+}
+
+.drive-file-actions a:hover,
+.drive-file-actions a:focus {
+    color: #fff;
+    border-color: #087052;
+    background: #087052;
+    outline: 0;
+}
+
+/* Empty workspace state */
+.drive-empty-state {
+    padding: 54px 24px;
+    text-align: center;
+}
+
+.drive-empty-state > span {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 14px;
+    border-radius: 16px;
+    color: #0b8663;
+    background: #e8f7f1;
+}
+
+.drive-empty-state svg {
+    width: 29px;
+    height: 29px;
+}
+
+.drive-empty-state h3 {
+    margin: 0;
+    color: #27483e;
+    font-size: 16px;
+}
+
+.drive-empty-state p {
+    margin: 7px auto 0;
+    text-align: center;
+}
+
+/* Responsive document workspace */
+@media (max-width:980px) {
+    .drive-file-list-head {
+        display: none;
+    }
+
+    .drive-file-row {
+        grid-template-columns: minmax(220px,1fr) auto;
+    }
+
+    .drive-file-row time,
+    .drive-file-access {
+        display: none;
+    }
+}
+
+@media (max-width:760px) {
+    .portal-workspace .portal-drive-hero {
+        height: auto;
+        min-height: 0;
+        padding: 22px;
+    }
+
+    .drive-command-bar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .drive-access-badge {
+        width: max-content;
+    }
+
+    .drive-content {
+        padding: 18px;
+    }
+
+    .drive-folder-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:560px) {
+    .drive-location-bar,
+    .drive-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .drive-search input {
+        padding-right: 50px;
+    }
+
+    .drive-search button {
+        width: 36px;
+        padding: 0;
+    }
+
+    .drive-search button svg {
+        display: block;
+    }
+
+    .drive-search button span {
+        display: none;
+    }
+
+    .drive-file-row {
+        align-items: flex-start;
+        grid-template-columns: 1fr;
+    }
+
+    .drive-file-actions {
+        justify-content: flex-start;
+        padding-left: 49px;
+    }
+}
+
+/* ========================================================================== 
+   Document workspace visibility and readability enhancement
+   ========================================================================== */
+
+/* Stronger workspace frame and controls */
+.drive-workspace {
+    border-color: #cbded6;
+    box-shadow: 0 18px 42px rgba(6,63,47,.11);
+}
+
+.drive-command-bar {
+    padding: 20px 22px;
+    background: linear-gradient(90deg,#fbfdfc,#f4faf7);
+}
+
+.drive-search input {
+    height: 50px;
+    padding-left: 48px;
+    color: #23473d;
+    border-color: #c6dad2;
+    background: #fff;
+    font-size: 14px;
+}
+
+.drive-search button {
+    right: 6px;
+    height: 38px;
+    padding: 0 17px;
+    font-size: 12px;
+}
+
+.drive-access-badge {
+    min-height: 38px;
+    padding: 0 14px;
+    border-color: #abd8c8;
+    font-size: 11px;
+}
+
+/* More noticeable breadcrumb path */
+.drive-location-bar {
+    min-height: 64px;
+    padding: 12px 22px;
+    background: #fff;
+}
+
+.drive-breadcrumbs {
+    gap: 9px;
+    color: #526e65;
+    font-size: 12px;
+}
+
+.drive-breadcrumbs a,
+.drive-breadcrumbs strong {
+    max-width: 220px;
+    color: #294f44;
+    font-weight: 700;
+}
+
+.drive-home-icon {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+}
+
+.drive-back-button {
+    min-height: 38px;
+    padding: 0 14px;
+    border-color: #bdd5cc;
+    font-size: 11px;
+}
+
+/* Larger library headings and improved spacing */
+.drive-content {
+    min-height: 245px;
+    padding: 26px 24px 30px;
+}
+
+.drive-section-heading {
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid #e4ede9;
+}
+
+.drive-section-heading small {
+    margin-bottom: 6px;
+    font-size: 9px;
+}
+
+.drive-section-heading h2 {
+    font-size: 22px;
+    line-height: 1.25;
+}
+
+.drive-section-heading > span,
+.drive-file-heading > span {
+    padding: 5px 9px;
+    border-radius: 12px;
+    color: #506f65;
+    background: #f0f7f4;
+    font-size: 11px;
+}
+
+.drive-folder-section h3,
+.drive-file-heading h3 {
+    font-size: 13px;
+}
+
+/* Larger folder cards with stronger visual identity */
+.drive-folder-grid {
+    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+    gap: 15px;
+    margin-top: 13px;
+}
+
+.drive-folder-card {
+    grid-template-columns: 50px minmax(0,1fr) 20px;
+    min-height: 86px;
+    padding: 15px;
+    border-color: #cedfd8;
+    border-radius: 14px;
+    box-shadow: 0 5px 14px rgba(6,63,47,.06);
+}
+
+.drive-folder-visual {
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+    color: #076c50;
+    background: linear-gradient(145deg,#dff5ec,#ccecdf);
+}
+
+.drive-folder-visual svg {
+    width: 27px;
+    height: 27px;
+}
+
+.drive-folder-copy {
+    gap: 5px;
+}
+
+.drive-folder-copy strong {
+    color: #173d32;
+    font-size: 14px;
+}
+
+.drive-folder-copy small {
+    color: #657b73;
+    font-size: 10px;
+}
+
+.drive-open-arrow {
+    width: 19px;
+    height: 19px;
+    color: #41796a;
+}
+
+/* More readable file list */
+.drive-file-section {
+    margin-top: 30px;
+}
+
+.drive-file-heading {
+    margin-bottom: 13px;
+}
+
+.drive-file-list {
+    border-color: #cfdfd9;
+    border-radius: 14px;
+}
+
+.drive-file-list-head {
+    min-height: 44px;
+    padding: 0 18px;
+    color: #536e65;
+    background: #f1f7f4;
+    font-size: 9px;
+}
+
+.drive-file-row {
+    min-height: 78px;
+    padding: 12px 18px;
+}
+
+.drive-file-name {
+    gap: 13px;
+}
+
+.drive-file-name strong {
+    color: #173d32;
+    font-size: 13px;
+}
+
+.drive-file-name small,
+.drive-file-row time {
+    color: #647970;
+    font-size: 10px;
+}
+
+.drive-file-icon {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+}
+
+.drive-file-icon svg {
+    width: 23px;
+    height: 23px;
+}
+
+.drive-file-access {
+    padding: 7px 10px;
+    border: 1px solid #cce9de;
+    font-size: 9px;
+}
+
+.drive-file-actions {
+    gap: 9px;
+}
+
+.drive-file-actions a {
+    min-height: 36px;
+    padding: 0 12px;
+    border-color: #bdd4cb;
+    font-size: 10px;
+}
+
+.drive-file-actions a svg {
+    width: 17px;
+    height: 17px;
+}
+
+@media (max-width:760px) {
+    .drive-content {
+        min-height: 0;
+        padding: 21px 18px 24px;
+    }
+
+    .drive-folder-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Document workspace view and batch action controls */
+.drive-file-heading {
+    align-items: flex-end;
+    gap: 18px;
+}
+
+.drive-file-heading > div:first-child p {
+    margin: 5px 0 0;
+    color: #6a7f78;
+    font-size: 11px;
+}
+
+.drive-file-heading-tools,
+.drive-selection-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.drive-view-switch {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid #c6dcd4;
+    border-radius: 11px;
+    background: #f4f9f7;
+}
+
+.drive-view-switch button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #4c6b61;
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease;
+}
+
+.drive-view-switch button svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.drive-view-switch button:hover,
+.drive-view-switch button:focus-visible {
+    color: #076e53;
+    background: #e3f3ed;
+}
+
+.drive-view-switch button:focus-visible {
+    outline: 3px solid rgba(47,190,143,.22);
+    outline-offset: 2px;
+}
+
+.drive-view-switch button.is-active {
+    border-color: #0b8263;
+    color: #fff;
+    background: #0b7a5d;
+    box-shadow: 0 4px 10px rgba(7,91,69,.17);
+}
+
+.drive-selection-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 58px;
+    margin: 14px 0;
+    padding: 10px 13px 10px 16px;
+    border: 1px solid #c8dfd6;
+    border-radius: 13px;
+    background: linear-gradient(90deg,#f4faf7,#edf8f4);
+}
+
+.drive-select-all,
+.drive-file-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #254e42;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.drive-select-all input,
+.drive-file-check input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.drive-select-all > span,
+.drive-file-check > span {
+    display: inline-flex;
+    flex: 0 0 20px;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #91bbae;
+    border-radius: 6px;
+    color: transparent;
+    background: #fff;
+    transition: border-color .18s ease,background .18s ease,box-shadow .18s ease;
+}
+
+.drive-select-all svg,
+.drive-file-check svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.4;
+}
+
+.drive-select-all input:checked + span,
+.drive-select-all input:indeterminate + span,
+.drive-file-check input:checked + span {
+    border-color: #087458;
+    color: #fff;
+    background: #087458;
+}
+
+.drive-select-all input:focus-visible + span,
+.drive-file-check input:focus-visible + span {
+    outline: 3px solid rgba(47,190,143,.25);
+    outline-offset: 2px;
+}
+
+#document-selection-count {
+    color: #496a60;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+#download-selected-documents {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #087458;
+    border-radius: 9px;
+    color: #fff;
+    background: #087458;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(6,105,78,.16);
+    transition: transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+
+#download-selected-documents svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+#download-selected-documents:hover:not(:disabled),
+#download-selected-documents:focus-visible:not(:disabled) {
+    background: #045f48;
+    box-shadow: 0 7px 16px rgba(6,105,78,.23);
+    transform: translateY(-1px);
+}
+
+#download-selected-documents:focus-visible {
+    outline: 3px solid rgba(47,190,143,.25);
+    outline-offset: 2px;
+}
+
+#download-selected-documents:disabled {
+    border-color: #b9cec7;
+    color: #789188;
+    background: #e2ece8;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Professional card layout used as the default file view */
+.drive-file-list.is-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(245px,1fr));
+    gap: 15px;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+}
+
+.drive-file-list.is-grid-view .drive-file-list-head {
+    display: none;
+}
+
+.drive-file-list.is-grid-view .drive-file-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "file check"
+        "date date"
+        "access access"
+        "actions actions";
+    gap: 14px 10px;
+    min-height: 220px;
+    padding: 18px;
+    border: 1px solid #c9ddd6;
+    border-radius: 15px;
+    background: linear-gradient(145deg,#fff,#f7fbf9);
+    box-shadow: 0 7px 18px rgba(4,59,44,.07);
+    transition: border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+
+.drive-file-list.is-grid-view .drive-file-row:hover,
+.drive-file-list.is-grid-view .drive-file-row:focus-within {
+    border-color: #64b79e;
+    box-shadow: 0 12px 24px rgba(4,87,63,.12);
+    transform: translateY(-2px);
+}
+
+.drive-file-list.is-grid-view .drive-file-check {
+    grid-area: check;
+    align-self: start;
+}
+
+.drive-file-list.is-grid-view .drive-file-name {
+    grid-area: file;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.drive-file-list.is-grid-view .drive-file-icon {
+    flex-basis: 58px;
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    color: #087658;
+    background: linear-gradient(145deg,#e5f6f0,#d4eee5);
+}
+
+.drive-file-list.is-grid-view .drive-file-icon svg {
+    width: 29px;
+    height: 29px;
+}
+
+.drive-file-list.is-grid-view .drive-file-name strong {
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drive-file-list.is-grid-view .drive-file-row time {
+    grid-area: date;
+    padding-top: 11px;
+    border-top: 1px solid #e3ede9;
+}
+
+.drive-file-list.is-grid-view .drive-file-row time::before {
+    content: "Uploaded: ";
+    color: #355f53;
+    font-weight: 800;
+}
+
+.drive-file-list.is-grid-view .drive-file-access {
+    grid-area: access;
+    justify-self: start;
+}
+
+.drive-file-list.is-grid-view .drive-file-actions {
+    grid-area: actions;
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    width: 100%;
+}
+
+.drive-file-list.is-grid-view .drive-file-actions a {
+    justify-content: center;
+}
+
+/* Compact table layout for users who prefer scanning rows */
+.drive-file-list.is-list-view.has-selection .drive-file-list-head,
+.drive-file-list.is-list-view.has-selection .drive-file-row {
+    grid-template-columns: 28px minmax(230px,1.5fr) minmax(145px,.75fr) minmax(125px,.65fr) auto;
+}
+
+.drive-file-list.is-list-view .drive-file-check {
+    justify-self: center;
+}
+
+@media (max-width:900px) {
+    .drive-file-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .drive-file-heading-tools {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .drive-file-list.is-list-view .drive-file-list-head {
+        display: none;
+    }
+
+    .drive-file-list.is-list-view .drive-file-row,
+    .drive-file-list.is-list-view.has-selection .drive-file-row {
+        grid-template-columns: 28px minmax(0,1fr);
+        gap: 10px 13px;
+    }
+
+    .drive-file-list.is-list-view .drive-file-name {
+        grid-column: 2;
+    }
+
+    .drive-file-list.is-list-view .drive-file-row time,
+    .drive-file-list.is-list-view .drive-file-access,
+    .drive-file-list.is-list-view .drive-file-actions {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
+
+/* ========================================================================== 
+   Approved compact file-manager design
+   ========================================================================== */
+
+/* Create one cohesive workspace with minimal unused space. */
+.portal-drive-page .drive-workspace {
+    overflow: hidden;
+    border: 1px solid #cadbd4;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(6,63,47,.09);
+}
+
+.portal-drive-page .drive-command-bar {
+    display: grid;
+    grid-template-columns: minmax(320px,1fr) auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0eae6;
+    background: #fff;
+}
+
+.portal-drive-page .drive-search {
+    max-width: none;
+}
+
+.portal-drive-page .drive-search input {
+    height: 46px;
+    border-radius: 12px;
+}
+
+.portal-drive-page .drive-command-view-switch {
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.portal-drive-page .drive-command-view-switch button {
+    min-height: 42px;
+    padding: 0 14px;
+}
+
+.portal-drive-page .drive-access-badge {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+/* Keep breadcrumbs directly beneath the primary workspace controls. */
+.portal-drive-page .drive-location-bar {
+    min-height: 52px;
+    padding: 8px 20px;
+    border-bottom: 1px solid #e5ede9;
+    background: #fbfdfc;
+}
+
+.portal-drive-page .drive-home-icon {
+    color: #087052;
+    background: #e8f6f1;
+}
+
+/* Remove the repeated library heading and bring content upward. */
+.portal-drive-page .drive-content {
+    min-height: 0;
+    padding: 20px 20px 24px;
+}
+
+.portal-drive-page .drive-section-heading {
+    display: none;
+}
+
+/* Display assigned folders as compact Quick access tiles. */
+.portal-drive-page .drive-folder-section h3,
+.portal-drive-page .drive-file-heading h3 {
+    margin: 0;
+    color: #173f34;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.portal-drive-page .drive-folder-grid {
+    grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.portal-drive-page .drive-folder-card {
+    grid-template-columns: 52px minmax(0,1fr) 18px;
+    min-height: 78px;
+    padding: 12px 14px;
+    border: 1px solid #cdded7;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#fff,#f7fbf9);
+    box-shadow: 0 4px 12px rgba(6,63,47,.05);
+}
+
+.portal-drive-page .drive-folder-visual {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    color: #087052;
+    background: linear-gradient(145deg,#e5f7f0,#d1eee3);
+}
+
+.portal-drive-page .drive-folder-visual svg {
+    width: 27px;
+    height: 27px;
+}
+
+.portal-drive-page .drive-folder-copy {
+    gap: 5px;
+}
+
+.portal-drive-page .drive-folder-copy strong {
+    overflow: hidden;
+    color: #163e33;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.portal-drive-page .drive-folder-copy small {
+    color: #657b73;
+    font-size: 10px;
+}
+
+.portal-drive-page .drive-folder-card:hover,
+.portal-drive-page .drive-folder-card:focus-visible {
+    border-color: #42a985;
+    background: #f4fbf8;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.11),0 10px 22px rgba(6,83,62,.12);
+    transform: translateY(-2px);
+}
+
+/* Present real files immediately below Quick access. */
+.portal-drive-page .drive-file-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #e1ebe7;
+}
+
+.portal-drive-page .drive-file-heading {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.portal-drive-page .drive-file-heading p {
+    margin-top: 3px;
+    color: #6b7e77;
+    font-size: 10px;
+}
+
+.portal-drive-page .drive-file-heading-tools .drive-view-switch {
+    display: none;
+}
+
+.portal-drive-page .drive-file-list {
+    border-color: #cfddd7;
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.portal-drive-page .drive-file-list-head {
+    min-height: 40px;
+    background: #f4f7f6;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row {
+    min-height: 58px;
+}
+
+/* Preserve the existing professional grid while keeping cards compact. */
+.portal-drive-page .drive-file-list.is-grid-view {
+    grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+    gap: 14px;
+    padding: 14px;
+    background: #fafcfb;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-row {
+    min-width: 0;
+    border-radius: 12px;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-preview {
+    height: 118px;
+}
+
+/* Stack controls cleanly on narrower screens. */
+@media (max-width:980px) {
+    .portal-drive-page .drive-command-bar {
+        grid-template-columns: 1fr auto;
+    }
+
+    .portal-drive-page .drive-search {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width:680px) {
+    .portal-drive-page .drive-command-bar {
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+
+    .portal-drive-page .drive-command-view-switch,
+    .portal-drive-page .drive-access-badge {
+        justify-self: stretch;
+    }
+
+    .portal-drive-page .drive-command-view-switch button {
+        flex: 1 1 50%;
+    }
+
+    .portal-drive-page .drive-access-badge {
+        justify-content: center;
+    }
+
+    .portal-drive-page .drive-location-bar,
+    .portal-drive-page .drive-content {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .portal-drive-page .drive-folder-grid,
+    .portal-drive-page .drive-file-list.is-grid-view {
+        grid-template-columns: minmax(0,1fr);
+    }
+}
+
+/* Google Drive-inspired grid proportions and professional file viewer */
+.drive-file-open {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.drive-file-list.is-grid-view {
+    grid-template-columns: repeat(auto-fill,minmax(280px,320px));
+}
+
+.drive-file-list.is-grid-view .drive-file-row {
+    grid-template-areas:
+        "file check"
+        "date date"
+        "access access";
+    min-height: 300px;
+    padding: 14px;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview {
+    height: 174px;
+    border-color: #d4e3de;
+    border-radius: 11px;
+    background: #eef4f1;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview img {
+    object-fit: contain;
+    padding: 7px;
+    background: #f3f6f5;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy {
+    margin-top: 12px;
+    padding: 0 3px;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy strong {
+    font-size: 14px;
+}
+
+.drive-file-list.is-grid-view .drive-file-row time {
+    margin-top: 0;
+}
+
+.drive-file-list.is-list-view .drive-file-open {
+    display: flex;
+}
+
+body.document-viewer-open {
+    overflow: hidden;
+}
+
+.document-viewer-modal[hidden] {
+    display: none;
+}
+
+.document-viewer-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    opacity: 0;
+    transition: opacity .22s ease;
+}
+
+.document-viewer-modal.is-open {
+    opacity: 1;
+}
+
+.document-viewer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3,28,21,.76);
+    backdrop-filter: blur(6px);
+}
+
+.document-viewer-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(1120px,94vw);
+    height: min(790px,90vh);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 28px 80px rgba(0,24,17,.36);
+    opacity: 0;
+    transform: translateY(18px) scale(.965);
+    transition: opacity .22s ease,transform .28s cubic-bezier(.2,.8,.2,1);
+}
+
+.document-viewer-modal.is-open .document-viewer-panel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.document-viewer-panel:focus {
+    outline: 0;
+}
+
+.document-viewer-header {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 13px;
+    min-height: 72px;
+    padding: 11px 14px 11px 18px;
+    border-bottom: 1px solid #dce8e3;
+    background: linear-gradient(90deg,#fff,#f2faf7);
+}
+
+.document-viewer-file-icon {
+    display: flex;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    color: #087559;
+    background: #def2ea;
+}
+
+.document-viewer-file-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.document-viewer-heading {
+    min-width: 0;
+}
+
+.document-viewer-heading h2 {
+    overflow: hidden;
+    margin: 0;
+    color: #153c31;
+    font-size: 15px;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.document-viewer-heading p {
+    margin: 4px 0 0;
+    color: #6b7f78;
+    font-size: 10px;
+}
+
+.document-viewer-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+#document-viewer-download,
+.document-viewer-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#document-viewer-download {
+    padding: 0 14px;
+    border: 1px solid #087458;
+    color: #fff;
+    background: #087458;
+    text-decoration: none;
+}
+
+.document-viewer-close {
+    width: 40px;
+    padding: 0;
+    border: 1px solid #c8d9d3;
+    color: #345e53;
+    background: #fff;
+}
+
+#document-viewer-download svg,
+.document-viewer-close svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+#document-viewer-download:hover,
+#document-viewer-download:focus-visible,
+.document-viewer-close:hover,
+.document-viewer-close:focus-visible {
+    outline: 3px solid rgba(47,190,143,.25);
+    outline-offset: 2px;
+}
+
+.document-viewer-stage {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+    background:
+        linear-gradient(45deg,rgba(255,255,255,.025) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.025) 75%),
+        #17251f;
+    background-size: 24px 24px;
+}
+
+.document-viewer-stage img {
+    max-width: calc(100% - 42px);
+    max-height: calc(100% - 42px);
+    border-radius: 5px;
+    object-fit: contain;
+    box-shadow: 0 14px 38px rgba(0,0,0,.3);
+}
+
+.document-viewer-stage iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+}
+
+.document-viewer-stage img,
+.document-viewer-stage iframe {
+    opacity: 0;
+    transform: scale(.985);
+    transition: opacity .22s ease,transform .28s ease;
+}
+
+.document-viewer-stage .is-ready {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.document-viewer-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 13px;
+    color: #d9ebe4;
+}
+
+.document-viewer-loading[hidden] {
+    display: none;
+}
+
+.document-viewer-loading span {
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(255,255,255,.2);
+    border-top-color: #61d3ad;
+    border-radius: 50%;
+    animation: document-viewer-spin .75s linear infinite;
+}
+
+.document-viewer-loading p {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+@keyframes document-viewer-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width:700px) {
+    .document-viewer-modal {
+        padding: 10px;
+    }
+
+    .document-viewer-panel {
+        width: 100%;
+        height: 94vh;
+        border-radius: 14px;
+    }
+
+    .document-viewer-header {
+        min-height: 64px;
+        padding-left: 12px;
+    }
+
+    .document-viewer-file-icon {
+        display: none;
+    }
+
+    #document-viewer-download span {
+        display: none;
+    }
+
+    #document-viewer-download {
+        width: 40px;
+        padding: 0;
+    }
+
+    .drive-file-list.is-grid-view {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion:reduce) {
+    .document-viewer-modal,
+    .document-viewer-panel,
+    .document-viewer-stage img,
+    .document-viewer-stage iframe {
+        transition: none;
+    }
+
+    .document-viewer-loading span {
+        animation-duration: 1.5s;
+    }
+}
+
+@media (max-width:620px) {
+    .drive-file-heading-tools,
+    .drive-selection-bar,
+    .drive-selection-actions {
+        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .drive-view-switch,
+    .drive-view-switch button,
+    #download-selected-documents {
+        width: 100%;
+    }
+
+    .drive-view-switch button {
+        flex: 1;
+    }
+
+    .drive-file-list.is-grid-view {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Secure file thumbnails and compact overflow actions */
+.drive-file-open {
+    color: inherit;
+    text-decoration: none;
+}
+
+.drive-file-preview {
+    position: relative;
+    display: flex;
+    flex: 0 0 52px;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    overflow: hidden;
+    border: 1px solid #d1e5de;
+    border-radius: 13px;
+    color: #087559;
+    background: linear-gradient(145deg,#e8f7f2,#d7efe7);
+}
+
+.drive-file-preview img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .22s ease;
+}
+
+.drive-file-preview-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drive-file-preview-fallback svg {
+    width: 27px;
+    height: 27px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.drive-file-preview.is-document .drive-file-preview-fallback,
+.drive-file-preview.has-preview-error .drive-file-preview-fallback {
+    position: static;
+}
+
+.drive-file-copy {
+    min-width: 0;
+}
+
+.drive-file-open:hover strong,
+.drive-file-open:focus-visible strong {
+    color: #087358;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.drive-file-open:hover .drive-file-preview img,
+.drive-file-open:focus-visible .drive-file-preview img {
+    transform: scale(1.05);
+}
+
+.drive-file-open:focus-visible {
+    border-radius: 9px;
+    outline: 3px solid rgba(47,190,143,.25);
+    outline-offset: 3px;
+}
+
+.drive-file-menu {
+    position: relative;
+    z-index: 8;
+    justify-self: end;
+}
+
+.drive-overflow-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #bdd5cc;
+    border-radius: 9px;
+    color: #315f52;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease;
+}
+
+.drive-overflow-button svg {
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+}
+
+.drive-overflow-button:hover,
+.drive-overflow-button:focus-visible,
+.drive-overflow-button[aria-expanded="true"] {
+    border-color: #42a88a;
+    color: #066f53;
+    background: #e8f6f1;
+    box-shadow: 0 5px 12px rgba(6,93,70,.12);
+}
+
+.drive-overflow-button:focus-visible {
+    outline: 3px solid rgba(47,190,143,.24);
+    outline-offset: 2px;
+}
+
+.drive-overflow-menu[hidden] {
+    display: none;
+}
+
+.drive-overflow-menu {
+    position: absolute;
+    top: calc(100% + 7px);
+    right: 0;
+    z-index: 30;
+    min-width: 168px;
+    padding: 6px;
+    border: 1px solid #cadfd7;
+    border-radius: 11px;
+    background: #fff;
+    box-shadow: 0 14px 32px rgba(3,55,41,.17);
+}
+
+.drive-overflow-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 39px;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: #294f44;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.drive-overflow-menu a:hover,
+.drive-overflow-menu a:focus-visible {
+    color: #056c51;
+    background: #e8f6f1;
+    outline: 0;
+}
+
+.drive-overflow-menu a svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.drive-file-list.is-list-view {
+    overflow: visible;
+}
+
+.drive-file-list.is-list-view .drive-file-row {
+    position: relative;
+}
+
+.drive-file-list.is-grid-view .drive-file-row {
+    grid-template-areas:
+        "file check"
+        "date date"
+        "access menu";
+}
+
+.drive-file-list.is-grid-view .drive-file-open {
+    align-items: stretch;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview {
+    flex-basis: auto;
+    width: 100%;
+    height: 142px;
+    border-radius: 12px;
+}
+
+.drive-file-list.is-grid-view .drive-file-preview.is-document {
+    color: #087559;
+    background:
+        radial-gradient(circle at 82% 18%,rgba(89,202,165,.18),transparent 28%),
+        linear-gradient(145deg,#edf9f5,#dff2eb);
+}
+
+.drive-file-list.is-grid-view .drive-file-preview.is-document svg {
+    width: 43px;
+    height: 43px;
+}
+
+.drive-file-list.is-grid-view .drive-file-copy {
+    display: block;
+    width: 100%;
+}
+
+.drive-file-list.is-grid-view .drive-file-menu {
+    grid-area: menu;
+    align-self: end;
+}
+
+.drive-file-list.is-grid-view .drive-file-access {
+    align-self: center;
+}
+
+@media (max-width:900px) {
+    .drive-file-list.is-list-view .drive-file-menu {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
+
+/* ========================================================================== 
+   Approved enhanced Edit Profile interface
+   ========================================================================== */
+
+/* Keep the approved visual treatment isolated from Admin and document pages. */
+.portal-profile-page .profile-workspace {
+    grid-template-columns: 286px minmax(0,1fr);
+}
+
+.portal-profile-page .profile-summary-card,
+.portal-profile-page .profile-form-card {
+    border-color: #cfddd8;
+    box-shadow: 0 10px 28px rgba(7,75,57,.08);
+}
+
+.portal-profile-page .profile-summary-card {
+    padding: 20px 20px 16px;
+}
+
+.portal-profile-page .profile-photo-shell {
+    position: relative;
+    width: 102px;
+    margin: 0 auto 10px;
+}
+
+.portal-profile-page .profile-summary-avatar {
+    width: 102px;
+    height: 102px;
+    margin: 0;
+    border-width: 6px;
+    font-size: 30px;
+}
+
+.portal-profile-page .profile-photo-camera {
+    position: absolute;
+    right: -2px;
+    bottom: 3px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    color: #07694f;
+    background: #f5fbf8;
+    box-shadow: 0 3px 9px rgba(4,67,50,.16);
+}
+
+.portal-profile-page .profile-photo-camera svg,
+.portal-profile-page .profile-photo-button svg,
+.portal-profile-page .profile-detail-icon svg,
+.portal-profile-page .profile-section-icon svg,
+.portal-profile-page .profile-input-shell > svg,
+.portal-profile-page .profile-input-leading-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.portal-profile-page .profile-photo-camera svg {
+    width: 16px;
+    height: 16px;
+}
+
+.portal-profile-page .profile-photo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 0 13px;
+    border: 1px solid #76bba4;
+    border-radius: 8px;
+    color: #07694f;
+    background: #fff;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.portal-profile-page .profile-photo-button:disabled {
+    cursor: not-allowed;
+    opacity: .82;
+}
+
+.portal-profile-page .profile-photo-button svg {
+    width: 15px;
+    height: 15px;
+}
+
+.portal-profile-page .profile-photo-note {
+    display: block;
+    margin: 5px 0 10px;
+    color: #798a84;
+    font-size: 8px;
+}
+
+.portal-profile-page .profile-summary-card > p {
+    margin-bottom: 12px;
+}
+
+.portal-profile-page .profile-summary-card dl div {
+    display: grid;
+    grid-template-columns: 34px minmax(0,1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+}
+
+.portal-profile-page .profile-detail-icon,
+.portal-profile-page .profile-section-icon {
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    color: #087358;
+    background: #eaf7f2;
+}
+
+.portal-profile-page .profile-detail-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.portal-profile-page .profile-detail-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.portal-profile-page .profile-summary-card dl div > span:last-child {
+    min-width: 0;
+}
+
+.portal-profile-page .profile-summary-card dd em {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 9px;
+    border: 1px solid #b9dfd1;
+    border-radius: 7px;
+    color: #087052;
+    background: #eaf8f2;
+    font-style: normal;
+    font-size: 10px;
+}
+
+.portal-profile-page .profile-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.portal-profile-page .profile-section-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+}
+
+.portal-profile-page .profile-section-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.portal-profile-page .profile-section-heading > span:last-child {
+    min-width: 0;
+}
+
+.portal-profile-page .profile-input-shell,
+.portal-profile-page .profile-password-field {
+    position: relative;
+    display: block;
+}
+
+.portal-profile-page .profile-input-shell > svg,
+.portal-profile-page .profile-input-leading-icon {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+    z-index: 1;
+    width: 17px;
+    height: 17px;
+    color: #647c73;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.portal-profile-page .profile-input-shell input,
+.portal-profile-page .profile-password-field input {
+    padding-left: 41px !important;
+}
+
+.portal-profile-page .profile-password-field input {
+    padding-right: 44px !important;
+}
+
+.portal-profile-page .profile-password-guidance {
+    background: #f1faf6;
+}
+
+.portal-profile-page .profile-password-guidance li {
+    position: relative;
+    padding-left: 18px;
+    list-style: none;
+}
+
+.portal-profile-page .profile-password-guidance li::before {
+    content: '\2713';
+    position: absolute;
+    top: .05em;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 13px;
+    height: 13px;
+    border: 1px solid #15946c;
+    border-radius: 50%;
+    color: #087052;
+    font-size: 8px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.portal-profile-page .profile-password-guidance ul {
+    padding-left: 0;
+}
+
+/* Retain the enhanced treatment while keeping 768px desktop screens scroll-free. */
+@media (min-width:981px) and (min-height:700px) and (max-height:900px) {
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: 260px minmax(0,1fr) !important;
+    }
+
+    .portal-profile-page .profile-summary-card {
+        padding: 10px 16px !important;
+    }
+
+    .portal-profile-page .profile-photo-shell {
+        width: 68px;
+        margin-bottom: 5px;
+    }
+
+    .portal-profile-page .profile-summary-avatar {
+        width: 68px !important;
+        height: 68px !important;
+        margin: 0 !important;
+        font-size: 23px !important;
+    }
+
+    .portal-profile-page .profile-photo-camera {
+        width: 25px;
+        height: 25px;
+        border-width: 2px;
+    }
+
+    .portal-profile-page .profile-photo-camera svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .portal-profile-page .profile-photo-button {
+        min-height: 28px;
+        padding: 0 10px;
+        font-size: 9px;
+    }
+
+    .portal-profile-page .profile-photo-note {
+        margin: 3px 0 5px;
+        font-size: 7px;
+    }
+
+    .portal-profile-page .profile-summary-card dl div {
+        grid-template-columns: 29px minmax(0,1fr);
+        gap: 8px;
+        padding: 5px 0 !important;
+    }
+
+    .portal-profile-page .profile-detail-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .portal-profile-page .profile-section-heading {
+        gap: 9px;
+    }
+
+    .portal-profile-page .profile-section-icon {
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .portal-profile-page .profile-section-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width:780px) {
+    .portal-profile-page .profile-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-profile-page .profile-photo-shell {
+        margin-left: 0;
+    }
+
+    .portal-profile-page .profile-summary-card {
+        text-align: left;
+    }
+}
+
+/* ========================================================================== 
+   Complete approved ALTURAS file-manager interface
+   ========================================================================== */
+
+/* Use one consistent enterprise shell across the complete User Portal. */
+.portal-workspace-body {
+    --portal-sidebar-width: 254px;
+    color: #173d32;
+    background: #f6f9f8;
+}
+
+.portal-workspace {
+    min-height: 100vh;
+    margin-left: var(--portal-sidebar-width);
+    background: #f8faf9;
+}
+
+/* Match the clean white application header from the approved design. */
+.portal-workspace .topbar {
+    min-height: 76px;
+    padding: 0 28px;
+    border-bottom: 1px solid #cfe1da;
+    background: rgba(255,255,255,.98);
+    box-shadow: 0 2px 10px rgba(6,63,47,.04);
+}
+
+.portal-workspace .topbar-kicker {
+    margin-bottom: 3px;
+    color: #087052;
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: .15em;
+}
+
+.portal-workspace .topbar h1 {
+    color: #173d32;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.portal-workspace .user-menu-button {
+    min-width: 220px;
+    min-height: 50px;
+    border-color: #d4e1dc;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 4px 13px rgba(6,63,47,.06);
+}
+
+.portal-workspace .user-menu-button:hover,
+.portal-workspace .user-menu-button:focus-visible {
+    border-color: #65b79a;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.12),0 7px 17px rgba(6,63,47,.09);
+}
+
+.portal-workspace .top-avatar {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+    line-height: 40px;
+    color: #075f47;
+    background: linear-gradient(145deg,#d9f7eb,#91e0be);
+}
+
+/* Refine the green records-management sidebar and selected navigation. */
+.portal-sidebar {
+    width: var(--portal-sidebar-width);
+    padding: 18px 14px;
+    background:
+        radial-gradient(circle at 18% 92%,rgba(78,201,157,.11),transparent 28%),
+        linear-gradient(180deg,#075f47 0%,#004c3a 100%);
+    box-shadow: 8px 0 24px rgba(0,49,37,.08);
+}
+
+.portal-sidebar-brand {
+    min-height: 64px;
+    margin-bottom: 30px;
+    padding: 4px 8px;
+}
+
+.portal-records-mark {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    border-color: rgba(255,255,255,.25);
+    border-radius: 11px;
+}
+
+.portal-brand-copy strong {
+    font-size: 17px;
+    letter-spacing: .11em;
+}
+
+.portal-brand-copy small {
+    color: #d2e9e0;
+    font-size: 10px;
+}
+
+.portal-nav-label {
+    padding-left: 13px;
+    color: #93cdb8;
+    font-size: 9px;
+    letter-spacing: .16em;
+}
+
+.portal-navigation {
+    gap: 9px;
+}
+
+.portal-navigation a {
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: #d0e6de;
+    font-size: 13px;
+}
+
+.portal-navigation a:hover,
+.portal-navigation a:focus-visible {
+    color: #fff;
+    background: rgba(255,255,255,.09);
+}
+
+.portal-navigation a.active {
+    color: #fff;
+    border-color: rgba(132,230,193,.28);
+    background: linear-gradient(90deg,rgba(44,166,122,.64),rgba(255,255,255,.10));
+    box-shadow: inset 4px 0 0 #77e1b8,0 8px 18px rgba(0,34,25,.15);
+}
+
+.portal-sidebar-support {
+    right: 14px;
+    bottom: 18px;
+    left: 14px;
+    padding: 15px;
+    border: 1px solid rgba(155,230,201,.20);
+    border-radius: 13px;
+    background: rgba(255,255,255,.055);
+}
+
+/* Keep page content wide and balanced like the approved visual. */
+.portal-drive-page {
+    padding: 26px 28px 28px;
+}
+
+.portal-drive-page .portal-content-container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* Use the compact 119-pixel records hero selected for this project. */
+.portal-workspace .portal-drive-hero {
+    width: 100%;
+    height: 119px;
+    min-height: 119px;
+    margin: 0 0 18px;
+    padding: 18px 28px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg,rgba(255,255,255,.04),transparent 42%),
+        linear-gradient(105deg,#075f47,#078161);
+    box-shadow: 0 11px 24px rgba(6,83,62,.16);
+}
+
+.portal-workspace .portal-drive-hero small {
+    color: #9ee0c5;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .16em;
+}
+
+.portal-workspace .portal-drive-hero h1 {
+    margin: 5px 0 3px;
+    color: #fff;
+    font-size: 26px;
+    line-height: 1.15;
+}
+
+.portal-workspace .portal-drive-hero p {
+    color: #e0f2eb;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.portal-workspace .portal-drive-hero .hero-stat {
+    width: 108px;
+    min-width: 108px;
+    min-height: 84px;
+    padding: 10px 14px;
+    border-color: rgba(255,255,255,.22);
+    border-radius: 15px;
+    background: rgba(255,255,255,.07);
+}
+
+.portal-workspace .portal-drive-hero .hero-stat strong {
+    color: #fff;
+    font-size: 25px;
+}
+
+.portal-workspace .portal-drive-hero .hero-stat span {
+    color: #dff3eb;
+    font-size: 9px;
+}
+
+/* Combine location, search, layout, and permission into one toolbar. */
+.portal-drive-page .drive-workspace {
+    overflow: hidden;
+    border: 1px solid #cbdcd5;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 13px 30px rgba(6,63,47,.08);
+}
+
+.portal-drive-page .drive-command-bar {
+    display: grid;
+    grid-template-columns: minmax(165px,auto) minmax(300px,1fr) auto auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    border-bottom: 1px solid #e0e9e5;
+    background: #fff;
+}
+
+.portal-drive-page .drive-command-breadcrumbs {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.portal-drive-page .drive-command-breadcrumbs a,
+.portal-drive-page .drive-command-breadcrumbs strong {
+    overflow: hidden;
+    max-width: 125px;
+    text-overflow: ellipsis;
+}
+
+.portal-drive-page .drive-home-icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    color: #087052;
+    background: #e7f5ef;
+}
+
+.portal-drive-page .drive-search {
+    max-width: none;
+}
+
+.portal-drive-page .drive-search input {
+    height: 44px;
+    padding-right: 96px;
+    border-color: #cadad4;
+    border-radius: 11px;
+    font-size: 12px;
+}
+
+.portal-drive-page .drive-search button {
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 8px;
+}
+
+.portal-drive-page .drive-command-view-switch {
+    margin: 0;
+    border-radius: 10px;
+}
+
+.portal-drive-page .drive-command-view-switch button {
+    min-height: 40px;
+    padding: 0 12px;
+}
+
+.portal-drive-page .drive-access-badge,
+.portal-drive-page .drive-back-button {
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* Bring Quick access folders and files immediately below the toolbar. */
+.portal-drive-page .drive-content {
+    min-height: 0;
+    padding: 18px 20px 22px;
+}
+
+.portal-drive-page .drive-section-heading {
+    display: none;
+}
+
+.portal-drive-page .drive-folder-section h3,
+.portal-drive-page .drive-file-heading h3 {
+    margin: 0;
+    color: #173f34;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.portal-drive-page .drive-folder-grid {
+    grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.portal-drive-page .drive-folder-card {
+    grid-template-columns: 52px minmax(0,1fr) 18px;
+    min-height: 78px;
+    padding: 12px 14px;
+    border: 1px solid #cdded7;
+    border-radius: 11px;
+    background: linear-gradient(135deg,#fff,#f7fbf9);
+    box-shadow: 0 4px 12px rgba(6,63,47,.05);
+}
+
+.portal-drive-page .drive-folder-visual {
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 10px;
+    color: #087052;
+    background: linear-gradient(145deg,#e2f6ee,#ccecdf);
+}
+
+.portal-drive-page .drive-folder-visual svg {
+    width: 28px;
+    height: 28px;
+}
+
+.portal-drive-page .drive-folder-copy {
+    gap: 5px;
+}
+
+.portal-drive-page .drive-folder-copy strong {
+    overflow: hidden;
+    color: #163e33;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.portal-drive-page .drive-folder-copy small {
+    color: #627970;
+    font-size: 10px;
+}
+
+.portal-drive-page .drive-folder-card:hover,
+.portal-drive-page .drive-folder-card:focus-visible {
+    border-color: #42a985;
+    background: #f4fbf8;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.11),0 10px 22px rgba(6,83,62,.12);
+    transform: translateY(-2px);
+}
+
+.portal-drive-page .drive-file-section {
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid #e1ebe7;
+}
+
+.portal-drive-page .drive-file-heading {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.portal-drive-page .drive-file-heading p {
+    margin-top: 3px;
+    color: #687d75;
+    font-size: 10px;
+}
+
+.portal-drive-page .drive-file-list {
+    border-color: #cfddd7;
+    border-radius: 11px;
+    box-shadow: none;
+}
+
+.portal-drive-page .drive-file-list-head {
+    min-height: 40px;
+    background: #f3f6f5;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row {
+    min-height: 58px;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view {
+    grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+    gap: 14px;
+    padding: 14px;
+    background: #fafcfb;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-row {
+    min-width: 0;
+    border-radius: 11px;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-preview {
+    height: 118px;
+}
+
+/* Match the simple bottom edge used by the approved design. */
+.portal-main-footer {
+    min-height: 56px;
+    margin-top: auto;
+    padding: 0 28px;
+    color: #667870;
+    border-top: 1px solid #dfe9e5;
+    background: #fff;
+    font-size: 10px;
+}
+
+.portal-main-footer strong {
+    color: #087052;
+}
+
+/* Maintain the complete design across tablet and mobile widths. */
+@media (max-width:1180px) {
+    .portal-drive-page .drive-command-bar {
+        grid-template-columns: minmax(150px,auto) minmax(260px,1fr) auto auto;
+    }
+
+    .portal-drive-page .drive-access-badge {
+        grid-column: 4;
+    }
+
+    .portal-drive-page .drive-back-button {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+    }
+}
+
+@media (max-width:980px) {
+    .portal-workspace {
+        margin-left: 0;
+    }
+
+    .portal-drive-page .drive-command-bar {
+        grid-template-columns: minmax(0,1fr) auto auto;
+    }
+
+    .portal-drive-page .drive-command-breadcrumbs,
+    .portal-drive-page .drive-search {
+        grid-column: 1 / -1;
+    }
+
+    .portal-drive-page .drive-access-badge {
+        grid-column: auto;
+    }
+}
+
+@media (max-width:680px) {
+    .portal-workspace .topbar {
+        min-height: 70px;
+        padding: 0 15px;
+    }
+
+    .portal-workspace .topbar h1 {
+        font-size: 17px;
+    }
+
+    .portal-drive-page {
+        padding: 16px 12px 20px;
+    }
+
+    .portal-workspace .portal-drive-hero {
+        height: auto;
+        min-height: 119px;
+        padding: 18px;
+    }
+
+    .portal-drive-page .drive-command-bar {
+        grid-template-columns: 1fr;
+        padding: 13px;
+    }
+
+    .portal-drive-page .drive-command-breadcrumbs,
+    .portal-drive-page .drive-search,
+    .portal-drive-page .drive-command-view-switch,
+    .portal-drive-page .drive-access-badge,
+    .portal-drive-page .drive-back-button {
+        grid-column: 1;
+        justify-self: stretch;
+    }
+
+    .portal-drive-page .drive-command-view-switch button {
+        flex: 1 1 50%;
+    }
+
+    .portal-drive-page .drive-access-badge,
+    .portal-drive-page .drive-back-button {
+        justify-content: center;
+    }
+
+    .portal-drive-page .drive-content {
+        padding: 16px 13px 18px;
+    }
+
+    .portal-drive-page .drive-folder-grid,
+    .portal-drive-page .drive-file-list.is-grid-view {
+        grid-template-columns: minmax(0,1fr);
+    }
+
+    .portal-main-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        padding: 12px 16px;
+    }
+}
+
+/* ========================================================================== 
+   Local Plus Jakarta Sans User Portal typography
+   ========================================================================== */
+
+/* Load approved font weights locally so the portal works without internet. */
+@font-face {
+    font-family: "Plus Jakarta Sans RMS";
+    src: url("../fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Regular.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans RMS";
+    src: url("../fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Medium.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans RMS";
+    src: url("../fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-SemiBold.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans RMS";
+    src: url("../fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Bold.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* Apply the approved font only inside the complete User Portal. */
+.portal-workspace-body,
+.portal-workspace-body button,
+.portal-workspace-body input,
+.portal-workspace-body select,
+.portal-workspace-body textarea {
+    font-family: "Plus Jakarta Sans RMS",Arial,sans-serif !important;
+}
+
+/* Use controlled weights so hierarchy remains professional and readable. */
+.portal-workspace-body {
+    font-weight: 400;
+}
+
+.portal-workspace-body input,
+.portal-workspace-body select,
+.portal-workspace-body textarea {
+    font-weight: 500;
+}
+
+.portal-workspace-body button,
+.portal-workspace-body .portal-navigation a,
+.portal-workspace-body label {
+    font-weight: 600;
+}
+
+.portal-workspace-body h1,
+.portal-workspace-body h2,
+.portal-workspace-body h3,
+.portal-workspace-body strong {
+    font-weight: 700;
+}
+
+/* ========================================================================== 
+   Desktop Edit Profile single-screen fit
+   ========================================================================== */
+
+/* Compact spacing only on standard desktop-height screens. */
+@media (min-width:981px) and (min-height:700px) {
+    .portal-profile-page {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+    }
+
+    .portal-workspace .portal-profile-hero {
+        height: 88px !important;
+        min-height: 88px !important;
+        margin-bottom: 10px !important;
+        padding: 12px 24px !important;
+    }
+
+    .portal-profile-hero-icon {
+        flex-basis: 48px !important;
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .portal-workspace .portal-profile-hero h1 {
+        margin-top: 2px !important;
+        margin-bottom: 1px !important;
+        font-size: 25px !important;
+    }
+
+    .profile-alert {
+        margin-bottom: 9px !important;
+        padding: 8px 13px !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+    }
+
+    .profile-workspace {
+        gap: 14px !important;
+    }
+
+    .profile-summary-card {
+        padding: 18px 20px !important;
+    }
+
+    .profile-summary-avatar {
+        width: 88px !important;
+        height: 88px !important;
+        margin-bottom: 12px !important;
+        border-width: 6px !important;
+        font-size: 29px !important;
+    }
+
+    .profile-summary-card > p {
+        margin-top: 4px !important;
+        margin-bottom: 13px !important;
+    }
+
+    .profile-summary-card dl div {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .profile-summary-card dt {
+        margin-bottom: 3px !important;
+    }
+
+    .profile-summary-card dd span {
+        min-height: 29px !important;
+    }
+
+    .profile-form-section {
+        padding: 15px 22px !important;
+    }
+
+    .profile-form-section > header {
+        margin-bottom: 10px !important;
+    }
+
+    .profile-form-section > header p {
+        margin-top: 3px !important;
+    }
+
+    .profile-field-grid {
+        gap: 10px 16px !important;
+    }
+
+    .profile-field {
+        gap: 5px !important;
+    }
+
+    .portal-profile-page .profile-field input {
+        height: 43px !important;
+    }
+
+    .profile-security-layout {
+        gap: 15px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance {
+        padding: 13px 15px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance h3 {
+        margin-bottom: 4px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance ul {
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .profile-form-actions {
+        padding: 11px 22px !important;
+    }
+
+    .portal-profile-page .profile-form-actions button {
+        min-height: 42px !important;
+    }
+}
+
+/* Preserve normal document scrolling on short screens and mobile devices. */
+@media (max-height:699px), (max-width:980px) {
+    .portal-profile-page {
+        overflow: visible;
+    }
+}
+
+/* ========================================================================== 
+   Final compact Edit Profile desktop fit
+   ========================================================================== */
+
+/* Reduce page and text sizes slightly so all actions remain above the fold. */
+@media (min-width:981px) and (min-height:700px) and (max-height:900px) {
+    .portal-profile-page {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .portal-workspace .portal-profile-hero {
+        height: 72px !important;
+        min-height: 72px !important;
+        margin-bottom: 8px !important;
+        padding: 8px 20px !important;
+        gap: 14px !important;
+    }
+
+    .portal-profile-hero-icon {
+        flex-basis: 42px !important;
+        width: 42px !important;
+        height: 42px !important;
+    }
+
+    .portal-profile-hero-icon svg {
+        width: 23px !important;
+        height: 23px !important;
+    }
+
+    .portal-workspace .portal-profile-hero small {
+        font-size: 8px !important;
+    }
+
+    .portal-workspace .portal-profile-hero h1 {
+        margin: 1px 0 0 !important;
+        font-size: 22px !important;
+        line-height: 1.15 !important;
+    }
+
+    .portal-workspace .portal-profile-hero p {
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+    }
+
+    .profile-alert {
+        margin-bottom: 7px !important;
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+    }
+
+    .profile-workspace {
+        grid-template-columns: 250px minmax(0,1fr) !important;
+        gap: 12px !important;
+    }
+
+    .profile-summary-card {
+        padding: 13px 16px !important;
+    }
+
+    .profile-summary-avatar {
+        width: 72px !important;
+        height: 72px !important;
+        margin-bottom: 8px !important;
+        border-width: 5px !important;
+        font-size: 25px !important;
+    }
+
+    .portal-profile-page .profile-summary-card h2 {
+        font-size: 18px !important;
+        line-height: 1.3 !important;
+    }
+
+    .portal-profile-page .profile-summary-card > p {
+        margin: 2px 0 8px !important;
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+    }
+
+    .profile-summary-card dl div {
+        padding: 6px 0 !important;
+    }
+
+    .portal-profile-page .profile-summary-card dt {
+        margin-bottom: 2px !important;
+        font-size: 10px !important;
+    }
+
+    .portal-profile-page .profile-summary-card dd {
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+    }
+
+    .portal-profile-page .profile-summary-card dd span {
+        min-height: 27px !important;
+        padding: 0 9px !important;
+        font-size: 11px !important;
+    }
+
+    .profile-form-section {
+        padding: 11px 18px !important;
+    }
+
+    .profile-form-section > header {
+        margin-bottom: 7px !important;
+    }
+
+    .portal-profile-page .profile-form-section > header h2 {
+        font-size: 17px !important;
+        line-height: 1.3 !important;
+    }
+
+    .portal-profile-page .profile-form-section > header p {
+        margin-top: 2px !important;
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+    }
+
+    .profile-field-grid {
+        gap: 7px 13px !important;
+    }
+
+    .portal-profile-page .profile-field,
+    .portal-profile-page .profile-field > span:first-child {
+        gap: 4px !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+    }
+
+    .portal-profile-page .profile-field input {
+        height: 38px !important;
+        padding-right: 12px !important;
+        padding-left: 12px !important;
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-password-field input {
+        padding-right: 42px !important;
+    }
+
+    .portal-profile-page .profile-field input::placeholder {
+        font-size: 11px !important;
+    }
+
+    .profile-security-layout {
+        grid-template-columns: minmax(0,1fr) 205px !important;
+        gap: 12px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance {
+        padding: 10px 12px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance h3 {
+        margin-bottom: 2px !important;
+        font-size: 12px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance p,
+    .portal-profile-page .profile-password-guidance li,
+    .portal-profile-page .profile-password-guidance small {
+        font-size: 9px !important;
+        line-height: 1.45 !important;
+    }
+
+    .portal-profile-page .profile-password-guidance ul {
+        margin: 4px 0 !important;
+        padding-left: 16px !important;
+    }
+
+    .profile-form-actions {
+        padding: 8px 18px !important;
+    }
+
+    .portal-profile-page .profile-form-actions button {
+        min-height: 38px !important;
+        padding: 0 18px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* ========================================================================== 
+   Strong Edit Profile text-size override
+   ========================================================================== */
+
+/* Keep these larger sizes limited to the User Portal Profile page. */
+.portal-profile-page .profile-summary-card h2 {
+    font-size: 22px !important;
+    line-height: 1.4 !important;
+}
+
+.portal-profile-page .profile-summary-card > p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+.portal-profile-page .profile-summary-card dt {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+
+.portal-profile-page .profile-summary-card dd {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+}
+
+.portal-profile-page .profile-summary-card dd span {
+    min-height: 34px !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
+}
+
+/* Enlarge every form heading and supporting description. */
+.portal-profile-page .profile-form-section > header h2 {
+    font-size: 20px !important;
+    line-height: 1.4 !important;
+}
+
+.portal-profile-page .profile-form-section > header p {
+    margin-top: 7px !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+/* Enlarge labels and actual input text, including read-only fields. */
+.portal-profile-page .profile-field {
+    gap: 9px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+.portal-profile-page .profile-field > span:first-child {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.portal-profile-page .profile-field input {
+    height: 50px !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+}
+
+.portal-profile-page .profile-password-field input {
+    padding-right: 48px !important;
+}
+
+.portal-profile-page .profile-field input::placeholder {
+    color: #6f827a !important;
+    font-size: 14px !important;
+    opacity: 1 !important;
+}
+
+.portal-profile-page .profile-field-error {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+
+/* Enlarge all text inside the password guidance card. */
+.portal-profile-page .profile-password-guidance {
+    padding: 19px !important;
+}
+
+.portal-profile-page .profile-password-guidance h3 {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+}
+
+.portal-profile-page .profile-password-guidance p,
+.portal-profile-page .profile-password-guidance li,
+.portal-profile-page .profile-password-guidance small {
+    font-size: 13px !important;
+    line-height: 1.65 !important;
+}
+
+.portal-profile-page .profile-password-guidance ul {
+    margin: 11px 0 !important;
+    padding-left: 20px !important;
+}
+
+/* Keep both profile actions prominent and readable. */
+.portal-profile-page .profile-form-actions button {
+    min-height: 48px !important;
+    padding: 0 24px !important;
+    font-size: 14px !important;
+}
+
+@media (max-width:680px) {
+    .portal-profile-page .profile-summary-card h2 {
+        font-size: 20px !important;
+    }
+
+    .portal-profile-page .profile-form-section > header h2 {
+        font-size: 18px !important;
+    }
+
+    .portal-profile-page .profile-field,
+    .portal-profile-page .profile-field > span:first-child {
+        font-size: 13px !important;
+    }
+
+    .portal-profile-page .profile-field input {
+        font-size: 14px !important;
+    }
+}
+
+/* ========================================================================== 
+   Edit Profile readability enhancement
+   ========================================================================== */
+
+/* Increase important profile text without changing the approved layout. */
+.profile-summary-card h2 {
+    font-size: 20px;
+    line-height: 1.35;
+}
+
+.profile-summary-card > p {
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.profile-summary-card dt {
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.profile-summary-card dd {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.profile-summary-card dd span {
+    min-height: 30px;
+    padding: 0 11px;
+    font-size: 11px;
+}
+
+/* Make form section headings and descriptions easier to scan. */
+.profile-form-section > header h2 {
+    font-size: 17px;
+    line-height: 1.35;
+}
+
+.profile-form-section > header p {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Make labels, values, and placeholders clearly readable. */
+.profile-field {
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.profile-field input {
+    height: 46px;
+    padding: 0 14px;
+    font-size: 13px;
+}
+
+.profile-field input::placeholder {
+    color: #788a83;
+    opacity: 1;
+}
+
+.profile-field-error {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* Enlarge password help while preserving its compact panel. */
+.profile-password-guidance {
+    padding: 18px;
+}
+
+.profile-password-guidance h3 {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.profile-password-guidance p,
+.profile-password-guidance li,
+.profile-password-guidance small {
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.profile-password-guidance ul {
+    margin: 10px 0;
+    padding-left: 19px;
+}
+
+/* Keep profile actions readable and visually balanced. */
+.profile-form-actions button {
+    min-height: 44px;
+    padding: 0 22px;
+    font-size: 12px;
+}
+
+@media (max-width:680px) {
+    .profile-summary-card h2 {
+        font-size: 18px;
+    }
+
+    .profile-form-section > header h2 {
+        font-size: 16px;
+    }
+}
+
+/* ========================================================================== 
+   Professional User Portal profile workspace
+   ========================================================================== */
+
+/* Arrange the account dropdown actions with consistent icons and focus. */
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 12px;
+    border-radius: 9px;
+}
+
+.user-dropdown a svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.user-dropdown a:hover,
+.user-dropdown a:focus-visible {
+    color: #075f47;
+    background: #eaf7f2;
+    outline: 0;
+}
+
+/* Keep the Edit Profile page aligned with the approved User Portal shell. */
+.portal-profile-page {
+    padding: 26px 28px 28px;
+}
+
+.portal-profile-page .portal-content-container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.portal-workspace .portal-profile-hero {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    width: 100%;
+    height: 119px;
+    min-height: 119px;
+    margin: 0 0 18px;
+    padding: 18px 28px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg,rgba(255,255,255,.04),transparent 42%),
+        linear-gradient(105deg,#075f47,#078161);
+    box-shadow: 0 11px 24px rgba(6,83,62,.16);
+}
+
+.portal-profile-hero-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(255,255,255,.06);
+}
+
+.portal-profile-hero-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.portal-workspace .portal-profile-hero small {
+    color: #9ee0c5;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .16em;
+}
+
+.portal-workspace .portal-profile-hero h1 {
+    margin: 5px 0 3px;
+    color: #fff;
+    font-size: 26px;
+    line-height: 1.15;
+}
+
+.portal-workspace .portal-profile-hero p {
+    color: #e0f2eb;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Display success and validation feedback without shifting form sections. */
+.profile-alert {
+    margin-bottom: 14px;
+    padding: 12px 15px;
+    border: 1px solid;
+    border-radius: 11px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.profile-alert.is-success {
+    color: #075f47;
+    border-color: #a9d9c8;
+    background: #eaf8f2;
+}
+
+.profile-alert.is-error {
+    color: #9a3737;
+    border-color: #e7baba;
+    background: #fff1f1;
+}
+
+/* Separate the profile summary from the editable account form. */
+.profile-workspace {
+    display: grid;
+    grid-template-columns: 280px minmax(0,1fr);
+    align-items: stretch;
+    gap: 18px;
+}
+
+.profile-summary-card,
+.profile-form-card {
+    border: 1px solid #d1dfda;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 9px 24px rgba(6,63,47,.07);
+}
+
+.profile-summary-card {
+    padding: 28px 22px;
+    text-align: center;
+}
+
+.profile-summary-avatar {
+    display: grid;
+    place-items: center;
+    width: 118px;
+    height: 118px;
+    margin: 0 auto 18px;
+    border: 8px solid #f0faf6;
+    border-radius: 50%;
+    color: #075f47;
+    background: linear-gradient(145deg,#d9f8eb,#8cdfbb);
+    box-shadow: 0 0 0 1px #b8dfd0;
+    font-size: 34px;
+    font-weight: 850;
+}
+
+.profile-summary-card h2 {
+    margin: 0;
+    color: #133f32;
+    font-size: 18px;
+    font-weight: 850;
+    line-height: 1.3;
+}
+
+.profile-summary-card > p {
+    margin: 7px 0 24px;
+    color: #64786f;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.profile-summary-card dl {
+    margin: 0;
+    text-align: left;
+}
+
+.profile-summary-card dl div {
+    padding: 13px 0;
+    border-top: 1px solid #e4ece8;
+}
+
+.profile-summary-card dt {
+    margin-bottom: 6px;
+    color: #6a7d75;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.profile-summary-card dd {
+    margin: 0;
+    color: #23483d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.profile-summary-card dd span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid #b9dfd1;
+    border-radius: 8px;
+    color: #087052;
+    background: #eaf8f2;
+}
+
+.profile-form-card {
+    overflow: hidden;
+}
+
+.profile-form-section {
+    padding: 24px 26px;
+}
+
+.profile-form-section + .profile-form-section {
+    border-top: 1px solid #e1eae6;
+}
+
+.profile-form-section > header {
+    margin-bottom: 18px;
+}
+
+.profile-form-section > header h2 {
+    margin: 0;
+    color: #123f32;
+    font-size: 15px;
+    font-weight: 850;
+}
+
+.profile-form-section > header p {
+    margin: 5px 0 0;
+    color: #6b7d76;
+    font-size: 10px;
+}
+
+.profile-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 15px 18px;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    color: #425f56;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.profile-field > span:first-child strong {
+    color: #c84646;
+}
+
+.profile-field input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #cbd9d4;
+    border-radius: 9px;
+    color: #233f36;
+    background: #fff;
+    font-family: inherit;
+    font-size: 11px;
+    transition: border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+
+.profile-field input:hover:not([readonly]) {
+    border-color: #86c3ad;
+}
+
+.profile-field input:focus,
+.profile-field input:focus-visible {
+    border-color: #15946c;
+    box-shadow: 0 0 0 4px rgba(40,185,135,.16);
+    outline: 0;
+}
+
+.profile-field input[readonly] {
+    color: #718079;
+    background: #f3f6f5;
+    cursor: default;
+}
+
+.profile-field-error {
+    color: #b83e3e;
+    font-size: 9px;
+    font-weight: 650;
+}
+
+.profile-password-field {
+    position: relative;
+    display: block;
+}
+
+.profile-password-field input {
+    padding-right: 44px;
+}
+
+.profile-password-field button {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    color: #667d74;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.profile-password-field button:hover,
+.profile-password-field button:focus-visible,
+.profile-password-field button.is-visible {
+    color: #087052;
+    background: #e8f6f1;
+    outline: 0;
+}
+
+.profile-password-field button svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.profile-security-layout {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 245px;
+    align-items: start;
+    gap: 20px;
+}
+
+.profile-password-guidance {
+    padding: 16px;
+    border: 1px solid #c5e1d6;
+    border-radius: 11px;
+    color: #4a6a5f;
+    background: linear-gradient(145deg,#f5fbf8,#eaf7f2);
+}
+
+.profile-password-guidance h3 {
+    margin: 0 0 7px;
+    color: #075f47;
+    font-size: 11px;
+    font-weight: 850;
+}
+
+.profile-password-guidance p,
+.profile-password-guidance li,
+.profile-password-guidance small {
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.profile-password-guidance p {
+    margin: 0;
+}
+
+.profile-password-guidance ul {
+    margin: 8px 0;
+    padding-left: 17px;
+}
+
+.profile-password-guidance small {
+    display: block;
+    color: #61786f;
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 11px;
+    padding: 17px 26px;
+    border-top: 1px solid #e1eae6;
+    background: #fbfdfc;
+}
+
+.profile-form-actions button {
+    min-height: 42px;
+    padding: 0 20px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+
+.profile-reset-button {
+    color: #075f47;
+    border: 1px solid #70b99f;
+    background: #fff;
+}
+
+.profile-save-button {
+    color: #fff;
+    border: 1px solid #075f47;
+    background: #075f47;
+    box-shadow: 0 7px 15px rgba(7,95,71,.16);
+}
+
+.profile-form-actions button:hover:not(:disabled),
+.profile-form-actions button:focus-visible:not(:disabled) {
+    box-shadow: 0 0 0 4px rgba(40,185,135,.13),0 9px 18px rgba(6,83,62,.13);
+    outline: 0;
+    transform: translateY(-1px);
+}
+
+.profile-reset-button:hover,
+.profile-reset-button:focus-visible {
+    background: #edf8f4;
+}
+
+.profile-save-button:hover,
+.profile-save-button:focus-visible {
+    border-color: #064c3a;
+    background: #064c3a;
+}
+
+.profile-form-actions button:disabled {
+    cursor: wait;
+    opacity: .68;
+}
+
+/* Adapt the account workspace to tablet and phone widths. */
+@media (max-width:1050px) {
+    .profile-workspace {
+        grid-template-columns: 230px minmax(0,1fr);
+    }
+
+    .profile-security-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:780px) {
+    .profile-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-summary-card {
+        text-align: left;
+    }
+
+    .profile-summary-avatar {
+        width: 86px;
+        height: 86px;
+        margin: 0 0 16px;
+        font-size: 25px;
+    }
+
+    .profile-field-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:680px) {
+    .portal-profile-page {
+        padding: 16px 12px 20px;
+    }
+
+    .portal-workspace .portal-profile-hero {
+        height: auto;
+        min-height: 119px;
+        padding: 18px;
+    }
+
+    .portal-profile-hero-icon {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+    }
+
+    .profile-form-section,
+    .profile-form-actions {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .profile-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .profile-form-actions button {
+        width: 100%;
+    }
+}
+
+/* ========================================================================== 
+   Equal professional Quick access folders
+   ========================================================================== */
+
+/* Keep every folder the same size regardless of the number in the branch. */
+.portal-drive-page .drive-folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(280px,360px));
+    justify-content: start;
+    align-items: stretch;
+    gap: 14px;
+}
+
+.portal-drive-page .drive-folder-card {
+    grid-template-columns: 50px minmax(0,1fr) 20px;
+    width: 100%;
+    min-width: 0;
+    max-width: 360px;
+    min-height: 82px;
+    height: 82px;
+    padding: 14px;
+    border: 1px solid #cbded6;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#fff 0%,#f7fbf9 100%);
+    box-shadow: 0 5px 14px rgba(6,63,47,.06);
+}
+
+/* Use a polished folder tile with consistent alignment and proportions. */
+.portal-drive-page .drive-folder-visual {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #cce9dd;
+    border-radius: 11px;
+    color: #087052;
+    background: linear-gradient(145deg,#e6f8f1,#ccecdf);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.portal-drive-page .drive-folder-visual svg {
+    width: 29px;
+    height: 29px;
+    stroke-width: 1.8;
+}
+
+.portal-drive-page .drive-folder-copy {
+    align-self: center;
+    gap: 5px;
+}
+
+.portal-drive-page .drive-folder-copy strong {
+    display: block;
+    overflow: hidden;
+    color: #153f33;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.portal-drive-page .drive-folder-copy small {
+    color: #60776e;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.portal-drive-page .drive-open-arrow {
+    width: 18px;
+    height: 18px;
+    color: #41806e;
+}
+
+.portal-drive-page .drive-folder-card:hover,
+.portal-drive-page .drive-folder-card:focus-visible {
+    border-color: #42a985;
+    background: linear-gradient(135deg,#fff,#eef9f5);
+    box-shadow: 0 0 0 4px rgba(40,185,135,.11),0 12px 24px rgba(6,83,62,.13);
+    transform: translateY(-2px);
+}
+
+.portal-drive-page .drive-folder-card:hover .drive-folder-visual,
+.portal-drive-page .drive-folder-card:focus-visible .drive-folder-visual {
+    color: #fff;
+    border-color: #087052;
+    background: linear-gradient(145deg,#20a97b,#087052);
+    box-shadow: 0 7px 15px rgba(8,112,82,.18);
+}
+
+/* Allow equal folders to fill the available row on medium screens. */
+@media (max-width:1100px) {
+    .portal-drive-page .drive-folder-grid {
+        grid-template-columns: repeat(2,minmax(240px,1fr));
+    }
+
+    .portal-drive-page .drive-folder-card {
+        max-width: none;
+    }
+}
+
+/* Stack equal folder cards safely on phones. */
+@media (max-width:680px) {
+    .portal-drive-page .drive-folder-grid {
+        grid-template-columns: minmax(0,1fr);
+    }
+
+    .portal-drive-page .drive-folder-card {
+        max-width: none;
+        height: auto;
+        min-height: 82px;
+    }
+}
+
+/* ========================================================================== 
+   Exact approved mockup details
+   ========================================================================== */
+
+/* The approved header shows the portal label without a repeated page title. */
+.portal-workspace .topbar h1:empty {
+    display: none;
+}
+
+.portal-workspace .topbar-title.is-kicker-only .topbar-kicker {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* Place the folder emblem beside the compact My Documents heading. */
+.portal-workspace .portal-drive-hero {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.portal-drive-hero-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(255,255,255,.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.13);
+}
+
+.portal-drive-hero-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+/* Show the same compact folder count treatment as the approved Quick access. */
+.portal-drive-page .drive-folder-copy small {
+    color: #536f65;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+/* Add the real folder column to the list without changing Grid cards. */
+.portal-drive-page .drive-file-folder {
+    overflow: hidden;
+    color: #536d64;
+    font-size: 10px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-list-head,
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row {
+    grid-template-columns: minmax(240px,1.35fr) minmax(170px,.8fr) minmax(125px,.62fr) minmax(130px,.62fr);
+}
+
+.portal-drive-page .drive-file-list.is-list-view.has-selection .drive-file-list-head,
+.portal-drive-page .drive-file-list.is-list-view.has-selection .drive-file-row {
+    grid-template-columns: 28px minmax(240px,1.35fr) minmax(170px,.8fr) minmax(125px,.62fr) minmax(130px,.62fr);
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-folder {
+    display: none;
+}
+
+/* Distinguish common document formats with professional file-type colors. */
+.portal-drive-page .drive-file-preview.file-type-pdf {
+    color: #d74747;
+    background: #fff0f0;
+}
+
+.portal-drive-page .drive-file-preview.file-type-word {
+    color: #2e69c7;
+    background: #eef5ff;
+}
+
+.portal-drive-page .drive-file-preview.file-type-excel {
+    color: #16835b;
+    background: #eaf8f1;
+}
+
+.portal-drive-page .drive-file-preview.file-type-document {
+    color: #6b7580;
+    background: #f1f4f6;
+}
+
+.portal-drive-page .drive-file-preview.is-document::after {
+    position: absolute;
+    right: 4px;
+    bottom: 3px;
+    padding: 1px 3px;
+    border-radius: 3px;
+    color: currentColor;
+    background: rgba(255,255,255,.82);
+    font-size: 6px;
+    font-weight: 900;
+    letter-spacing: .04em;
+}
+
+.portal-drive-page .drive-file-preview.file-type-pdf::after {
+    content: "PDF";
+}
+
+.portal-drive-page .drive-file-preview.file-type-word::after {
+    content: "DOC";
+}
+
+.portal-drive-page .drive-file-preview.file-type-excel::after {
+    content: "XLS";
+}
+
+.portal-drive-page .drive-file-preview.file-type-document::after {
+    content: "FILE";
+}
+
+@media (max-width:900px) {
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-list-head,
+    .portal-drive-page .drive-file-list.is-list-view.has-selection .drive-file-list-head {
+        display: none;
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-row,
+    .portal-drive-page .drive-file-list.is-list-view.has-selection .drive-file-row {
+        grid-template-columns: 28px minmax(0,1fr);
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view:not(.has-selection) .drive-file-row {
+        grid-template-columns: minmax(0,1fr);
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-folder,
+    .portal-drive-page .drive-file-list.is-list-view time,
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-access {
+        grid-column: 2;
+        margin-left: 0;
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view:not(.has-selection) .drive-file-folder,
+    .portal-drive-page .drive-file-list.is-list-view:not(.has-selection) time,
+    .portal-drive-page .drive-file-list.is-list-view:not(.has-selection) .drive-file-access {
+        grid-column: 1;
+        margin-left: 64px;
+    }
+}
+
+@media (max-width:680px) {
+    .portal-drive-hero-icon {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+    }
+}
+
+/* Keep the approved profile controls inside common 768px desktop screens. */
+@media (min-width:981px) and (min-height:700px) and (max-height:900px) {
+    .portal-profile-page .profile-form-section > header.profile-section-heading {
+        margin-bottom: 5px !important;
+    }
+
+    .portal-profile-page .profile-section-icon {
+        flex-basis: 30px;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+    }
+
+    .portal-profile-page .profile-section-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .portal-profile-page .profile-input-shell > svg,
+    .portal-profile-page .profile-input-leading-icon {
+        left: 11px;
+        width: 15px;
+        height: 15px;
+    }
+
+    .portal-profile-page .profile-input-shell input,
+    .portal-profile-page .profile-password-field input {
+        padding-left: 35px !important;
+    }
+
+    .portal-profile-page .profile-password-guidance li {
+        padding-left: 16px;
+    }
+
+    .portal-profile-page .profile-password-guidance li::before {
+        width: 11px;
+        height: 11px;
+        font-size: 7px;
+    }
+}

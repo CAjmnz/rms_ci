@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /rms_ci/
+
+    # Do not rewrite existing files or directories.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Route clean URLs through CodeIgniter without relying on PATH_INFO.
+    RewriteRule ^(.*)$ index.php?/$1 [L,QSA]
+</IfModule>

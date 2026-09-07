@@ -1,0 +1,913 @@
+/*
+ * Shared admin header styles
+ *
+ * This file controls only the top header. Sidebar, footer, dashboard content,
+ * and module-specific designs remain in their own stylesheets.
+ */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/user-portal/plus-jakarta-sans/PlusJakartaSans-Bold.woff2") format("woff2");
+}
+
+.topbar {
+  /*
+     * Keep the shared administrator header visible while the page scrolls.
+     * Sticky positioning preserves the header's space in the layout, so the
+     * first page section is never hidden underneath it.
+     */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Balanced header scale: slightly larger without becoming bulky. */
+  min-height: 89px;
+  padding: 0 42px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: 22px;
+  /*
+     * A light RMS-green wash adds brand color without competing with the
+     * stronger green sub-hero displayed immediately below the header.
+     */
+  border-bottom: 1px solid #b9dfd0;
+  background: #f7fcfa;
+  background: linear-gradient(110deg, #ffffff 0%, #f2faf7 48%, #e4f6ee 100%);
+  box-shadow:
+    0 5px 20px rgba(7, 81, 60, 0.1),
+    inset 0 -3px 0 rgba(10, 138, 101, 0.08);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================================================== 
+   ALTURAS Management brand alignment
+
+   These finishing rules coordinate the shared Admin header with the deep
+   emerald sidebar, mint page surfaces, and green sub-heroes. They intentionally
+   preserve the existing header size, sticky behavior, and responsive layout.
+   ========================================================================== */
+.topbar {
+  border-bottom-color: #9fcfbe;
+  background: #f5fbf8;
+  background:
+    radial-gradient(circle at 92% 0, rgba(70, 205, 153, 0.13), transparent 29%),
+    linear-gradient(105deg, #ffffff 0%, #f5fbf8 46%, #e5f5ee 100%);
+  box-shadow:
+    0 7px 24px rgba(6, 63, 47, 0.11),
+    inset 0 -3px 0 rgba(8, 112, 82, 0.11);
+}
+
+.topbar:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #07533e,
+    #28b987 55%,
+    rgba(40, 185, 135, 0)
+  );
+  opacity: 0.38;
+}
+
+.topbar-kicker {
+  color: #087052;
+  font-weight: 800;
+}
+.topbar h1 {
+  color: #123c30;
+  font-weight: 750;
+}
+
+.user-menu-button {
+  border-color: rgba(8, 112, 82, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  -webkit-transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    -webkit-transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #8fcbb5;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 9px 22px rgba(6, 83, 62, 0.13);
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+
+.top-avatar {
+  color: #064b38;
+  background: linear-gradient(135deg, #c7f3dd 0%, #7cddb0 100%);
+  box-shadow:
+    0 5px 15px rgba(6, 83, 62, 0.19),
+    0 0 0 1px rgba(8, 112, 82, 0.08);
+}
+
+.top-user-copy strong {
+  color: #173f33;
+}
+.topbar-create {
+  border-color: #b9ddcf;
+  background: rgba(233, 248, 242, 0.82);
+}
+
+/* Align the page title and action/profile groups. */
+.topbar-left,
+.topbar-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.topbar-left {
+  min-width: 0;
+  gap: 17px;
+}
+
+.topbar-title {
+  min-width: 0;
+}
+
+.topbar-actions {
+  position: relative;
+  gap: 14px;
+}
+
+.topbar-kicker {
+  margin: 0 0 5px;
+  color: var(--green-700);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+}
+
+.topbar h1 {
+  margin: 0;
+  overflow: hidden;
+  color: #123f32;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile navigation trigger is visible only below the tablet breakpoint. */
+.mobile-menu {
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  display: none;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  -webkit-transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    -webkit-transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.mobile-menu:hover,
+.mobile-menu:focus-visible {
+  border-color: #8ecdb6;
+  background: #e7f7f0;
+  box-shadow: 0 7px 16px rgba(7, 81, 60, 0.12);
+  outline: none;
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+
+.mobile-menu span {
+  width: 19px;
+  height: 2px;
+  margin: 3px auto;
+  display: block;
+  border-radius: 2px;
+  background: var(--green-900);
+}
+
+/* Optional primary action shown on the right side of the header. */
+.topbar-create {
+  min-height: 44px;
+  padding: 0 17px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-900);
+  border: 1px solid #cfe6da;
+  border-radius: 11px;
+  background: var(--green-50);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.topbar-create:hover,
+.topbar-create:focus {
+  color: #fff;
+  border-color: var(--green-700);
+  background: var(--green-700);
+  outline: none;
+}
+
+.topbar-create span {
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* Signed-in user button and dropdown. */
+.user-menu-button {
+  min-width: 210px;
+  min-height: 54px;
+  padding: 6px 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.48);
+  cursor: pointer;
+  text-align: left;
+}
+
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #a9d8c7;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 20px rgba(7, 81, 60, 0.1);
+  outline: none;
+}
+
+.top-avatar {
+  width: 44px;
+  height: 44px;
+  -ms-flex: 0 0 44px;
+  flex: 0 0 44px;
+  display: inline-block;
+  color: #07513c;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  background: linear-gradient(135deg, #b9efd2, #7edcaf);
+  box-shadow: 0 5px 13px rgba(7, 81, 60, 0.15);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 44px;
+  text-align: center;
+}
+
+.top-user-copy {
+  min-width: 0;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.top-user-copy strong,
+.top-user-copy small {
+  display: block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.top-user-copy strong {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.top-user-copy small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.user-menu-button > i {
+  width: 7px;
+  height: 7px;
+  margin: 0 3px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  -webkit-transform: rotate(45deg) translateY(-2px);
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.user-dropdown {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 9px);
+  right: 0;
+  width: 172px;
+  padding: 7px;
+  visibility: hidden;
+  opacity: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(9, 63, 45, 0.13);
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+  -webkit-transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    -webkit-transform 0.16s ease;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    transform 0.16s ease;
+}
+
+.user-dropdown.is-open {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.user-dropdown a {
+  padding: 10px 11px;
+  display: block;
+  color: #3d554e;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.user-dropdown a:hover,
+.user-dropdown a:focus {
+  color: var(--green-800);
+  background: var(--green-50);
+  outline: none;
+}
+
+/* Tablet layout exposes the sidebar menu trigger. */
+@media (max-width: 980px) {
+  .mobile-menu {
+    display: block;
+  }
+}
+
+/* Phone layout keeps the header compact without causing horizontal overflow. */
+@media (max-width: 720px) {
+  .topbar {
+    /* Keep the larger desktop design compact on phones. */
+    min-height: 76px;
+    padding: 0 18px;
+  }
+
+  .topbar-kicker,
+  .top-user-copy,
+  .topbar-create {
+    display: none;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .user-menu-button {
+    min-width: 0;
+    padding: 5px;
+  }
+
+  .user-menu-button > i {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    gap: 10px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .mobile-menu {
+    width: 40px;
+    height: 40px;
+    -ms-flex: 0 0 40px;
+    flex: 0 0 40px;
+  }
+}
+
+/* ==========================================================================
+   Generated-picture compact RMS header
+
+   Uses the local Plus Jakarta Sans font and keeps the approved mockup scale:
+   compact mint header, clear title hierarchy, small stat/profile cards, and
+   visible dropdown. Presentation-only; no process or route changes.
+   ========================================================================== */
+body {
+  color: #203a33;
+  background:
+    radial-gradient(circle at 84% 4%, rgba(16, 135, 96, .08), transparent 28%),
+    linear-gradient(180deg, #f6fbf8 0%, #eef7f2 100%);
+  font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.main-area {
+  width: calc(100% - 268px) !important;
+  margin-left: 268px !important;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(10, 132, 92, .06), transparent 22%),
+    linear-gradient(180deg, #f7fcfa 0%, #eef8f3 100%);
+}
+
+.topbar {
+  min-height: 112px;
+  padding: 5px 40px 17px 44px;
+  overflow: visible;
+  border-bottom: 1px solid rgba(7, 83, 62, .18);
+  background:
+    radial-gradient(circle at 84% 30%, rgba(22, 147, 103, .10), transparent 18%),
+    linear-gradient(100deg, #fbfffd 0%, #f6fbf8 52%, #e9f6f0 100%);
+  box-shadow: 0 10px 30px rgba(6, 63, 47, .08);
+}
+
+.topbar:before {
+  content: "";
+  position: absolute;
+  right: 330px;
+  bottom: 8px;
+  width: 112px;
+  height: 70px;
+  opacity: .12;
+  pointer-events: none;
+  background:
+    linear-gradient(#0a7758, #0a7758) 22px 23px / 48px 3px no-repeat,
+    linear-gradient(#0a7758, #0a7758) 22px 36px / 40px 3px no-repeat,
+    linear-gradient(#0a7758, #0a7758) 22px 49px / 56px 3px no-repeat,
+    linear-gradient(135deg, transparent 0 15px, rgba(12, 129, 94, .50) 16px) right top / 34px 34px no-repeat,
+    linear-gradient(#dff3ec, #dff3ec);
+  border-radius: 11px;
+}
+
+.topbar-kicker {
+  margin: 0 0 7px;
+  color: #075f46;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .22em;
+}
+
+.topbar h1 {
+  margin: 0;
+  color: #103d31;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0;
+  white-space: normal;
+}
+
+.topbar-description,
+.topbar-title::after {
+  max-width: 760px;
+  margin-top: 8px;
+  color: #6b7f78;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.topbar-actions {
+  gap: 16px;
+  align-items: center;
+}
+
+.topbar-stat {
+  min-width: 184px;
+  min-height: 64px;
+  padding: 10px 16px 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid rgba(214, 231, 224, .95);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .90);
+  box-shadow: 0 14px 30px rgba(6, 63, 47, .08);
+}
+
+.topbar-stat-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #087653;
+  border-radius: 14px;
+  background: #effaf5;
+  box-shadow: inset 0 0 0 1px #ccebdd;
+}
+
+.topbar-stat-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.85;
+}
+
+.topbar-stat-copy strong,
+.topbar-stat-copy small {
+  display: block;
+}
+
+.topbar-stat-copy strong {
+  color: #123d32;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.topbar-stat-copy small {
+  margin-top: 6px;
+  color: #657a73;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.user-menu-button {
+  min-width: 238px;
+  min-height: 64px;
+  padding: 8px 15px 8px 11px;
+  border: 1px solid rgba(214, 231, 224, .95);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .90);
+  box-shadow: 0 14px 30px rgba(6, 63, 47, .08);
+}
+
+.top-avatar {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  color: #076246;
+  background: linear-gradient(135deg, #e2faee 0%, #b9ecd3 100%);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 44px;
+}
+
+.top-user-copy strong {
+  max-width: 140px;
+  color: #134236;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.top-user-copy small {
+  color: #6c7d77;
+  font-size: 11px;
+}
+
+.user-dropdown {
+  z-index: 350;
+  top: calc(100% + 9px);
+}
+
+@media (max-width: 980px) {
+  .main-area {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .topbar {
+    padding-right: 24px;
+    padding-left: 72px;
+  }
+}
+
+/* Final ALTURAS header layer: kept last so module CSS cannot dilute branding. */
+.topbar {
+  border-bottom-color: #9fcfbe;
+  background:
+    radial-gradient(circle at 92% 0, rgba(70, 205, 153, 0.13), transparent 29%),
+    linear-gradient(105deg, #fff 0%, #f5fbf8 46%, #e5f5ee 100%);
+  box-shadow:
+    0 7px 24px rgba(6, 63, 47, 0.11),
+    inset 0 -3px 0 rgba(8, 112, 82, 0.11);
+}
+.topbar:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #07533e,
+    #28b987 55%,
+    rgba(40, 185, 135, 0)
+  );
+  opacity: 0.38;
+}
+.topbar-kicker {
+  color: #087052;
+  font-weight: 800;
+}
+.topbar h1 {
+  color: #123c30;
+  font-weight: 750;
+}
+.user-menu-button {
+  border-color: rgba(8, 112, 82, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #8fcbb5;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 9px 22px rgba(6, 83, 62, 0.13);
+  transform: translateY(-1px);
+}
+.top-avatar {
+  color: #064b38;
+  background: linear-gradient(135deg, #c7f3dd 0%, #7cddb0 100%);
+  box-shadow:
+    0 5px 15px rgba(6, 83, 62, 0.19),
+    0 0 0 1px rgba(8, 112, 82, 0.08);
+}
+.top-user-copy strong {
+  color: #173f33;
+}
+.topbar-create {
+  border-color: #b9ddcf;
+  background: rgba(233, 248, 242, 0.82);
+}
+
+/* ========================================================================== */
+/* Professional compact header typography                                    */
+/* Keeps the approved 112px header height while reducing the text/card scale. */
+/* Visual-only: no routes, data, dropdown behavior, or page processes change. */
+/* ========================================================================== */
+@media (min-width: 981px) {
+  .topbar {
+    min-height: 112px !important;
+    padding: 17px 40px 16px 44px !important;
+    overflow: visible !important;
+  }
+
+  .topbar-left {
+    gap: 14px !important;
+  }
+
+  .topbar-kicker {
+    margin-bottom: 6px !important;
+    color: #075f46 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: .24em !important;
+  }
+
+  .topbar h1 {
+    color: #113d31 !important;
+    font-size: 27px !important;
+    font-weight: 700 !important;
+    line-height: 1.08 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .topbar-description,
+  .topbar-title::after {
+    max-width: 720px !important;
+    margin-top: 7px !important;
+    color: #6b7d76 !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.42 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .topbar-actions {
+    gap: 14px !important;
+  }
+
+  .topbar-stat {
+    min-width: 172px !important;
+    min-height: 58px !important;
+    padding: 8px 14px 8px 10px !important;
+    gap: 11px !important;
+    border-radius: 14px !important;
+  }
+
+  .topbar-stat-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  .topbar-stat-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .topbar-stat-copy strong {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+
+  .topbar-stat-copy small {
+    margin-top: 5px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+  }
+
+  .user-menu-button {
+    min-width: 220px !important;
+    min-height: 58px !important;
+    padding: 7px 13px 7px 10px !important;
+    gap: 10px !important;
+    border-radius: 14px !important;
+  }
+
+  .top-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    flex-basis: 40px !important;
+    font-size: 11px !important;
+    line-height: 40px !important;
+  }
+
+  .top-user-copy strong {
+    max-width: 132px !important;
+    color: #173f33 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+  }
+
+  .top-user-copy small {
+    margin-top: 2px !important;
+    color: #6c7d77 !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .topbar h1 {
+    font-size: 23px !important;
+  }
+
+  .topbar-kicker {
+    font-size: 9px !important;
+  }
+}
+
+/* ========================================================================== */
+/* Final spacing-only header correction                                        */
+/* Keeps the approved header fonts. Only spacing, height, and layout are tuned. */
+/* ========================================================================== */
+@media (min-width: 981px) {
+  .main-area {
+    width: calc(100% - 268px) !important;
+    margin-left: 268px !important;
+  }
+
+  .topbar {
+    min-height: 108px !important;
+    padding: 15px 40px 14px 44px !important;
+    overflow: visible !important;
+  }
+
+  .topbar-left {
+    gap: 14px !important;
+  }
+
+  .topbar-actions {
+    gap: 14px !important;
+  }
+
+  body.sidebar-collapsed .main-area {
+    width: calc(100% - 82px) !important;
+    margin-left: 82px !important;
+  }
+}
+
+/* ========================================================================== */
+/* Final header vertical-center fix                                            */
+/* Keeps the approved fonts and height. Only centers header content vertically. */
+/* Applies to Users, Subsidiaries, Departments, and System shared headers.      */
+/* ========================================================================== */
+@media (min-width: 981px) {
+  .topbar {
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .topbar-left,
+  .topbar-actions {
+    align-self: stretch !important;
+    align-items: center !important;
+  }
+
+  .topbar-title {
+    display: flex !important;
+    min-height: 100% !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+
+  .topbar-kicker {
+    margin-top: 0 !important;
+  }
+
+  .topbar-description,
+  .topbar-title::after {
+    margin-bottom: 0 !important;
+  }
+
+  .topbar-stat,
+  .user-menu-button {
+    align-self: center !important;
+  }
+}

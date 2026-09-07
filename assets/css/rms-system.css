@@ -1,0 +1,1494 @@
+/* --------------------------------------------------------------------------
+   Theme variables and shared sizing
+   -------------------------------------------------------------------------- */
+:root {
+    --green:#087a55;
+    --dark:#123b32;
+    --line:#dbe8e2;
+    --soft:#f2faf6;
+    --muted:#6b7f78
+}
+
+/* --------------------------------------------------------------------------
+   File Type Setting panel
+   -------------------------------------------------------------------------- */
+.system-hero-compact {
+    min-height:150px
+}
+
+.filetype-panel {
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 12px 35px rgba(21,68,54,.08);
+    overflow:hidden
+}
+
+.filetype-heading {
+    padding:24px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    border-bottom:1px solid var(--line)
+}
+
+.filetype-heading p {
+    margin:0 0 5px;
+    color:var(--green);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.16em
+}
+
+.filetype-heading h2 {
+    margin:0 0 5px;
+    font-size:22px
+}
+
+.filetype-heading > div > span {
+    color:var(--muted);
+    font-size:13px
+}
+
+.primary-action,
+.secondary-action,
+.danger-action,
+.bulk-actions button {
+    border:0;
+    border-radius:10px;
+    height:40px;
+    padding:0 15px;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer
+}
+
+.primary-action {
+    color:#fff;
+    background:linear-gradient(135deg,#087653,#0b9166);
+    box-shadow:0 7px 15px rgba(8,122,85,.18)
+}
+
+.primary-action:hover {
+    filter:brightness(1.05)
+}
+
+.primary-action:disabled,
+.danger-action:disabled {
+    opacity:.65;
+    cursor:not-allowed
+}
+
+.filetype-toolbar {
+    padding:16px 28px;
+    background:#f8fbfa;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    border-bottom:1px solid var(--line)
+}
+
+.table-search {
+    width:270px;
+    height:39px;
+    padding:0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    border:1px solid #cedfd7;
+    border-radius:10px;
+    color:#799088
+}
+
+.table-search input {
+    min-width:0;
+    flex:1;
+    border:0;
+    outline:0;
+    color:#27493f;
+    background:transparent
+}
+
+.bulk-actions {
+    display:flex;
+    gap:7px
+}
+
+.bulk-actions button,
+.secondary-action {
+    color:#426057;
+    background:#fff;
+    border:1px solid #cedfd7
+}
+
+.bulk-actions button:hover,
+.secondary-action:hover {
+    color:var(--green);
+    border-color:#8bcbb5;
+    background:#f1faf6
+}
+
+.bulk-actions .danger,
+.danger-action {
+    color:#b54242;
+    border-color:#f0cccc;
+    background:#fff7f7
+}
+
+.danger-action {
+    color:#fff;
+    background:#c74d4d
+}
+
+.filetype-table-wrap {
+    overflow-x:auto
+}
+
+.filetype-table {
+    width:100%;
+    border-collapse:collapse
+}
+
+.filetype-table th,
+.filetype-table td {
+    padding:15px 18px;
+    border-bottom:1px solid #e6efeb;
+    text-align:left;
+    font-size:13px
+}
+
+.filetype-table th {
+    background:#fbfdfc;
+    color:#667d75;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em
+}
+
+.filetype-table tbody tr:hover {
+    background:#f8fcfa
+}
+
+.filetype-table .select-column {
+    width:54px;
+    text-align:center
+}
+
+.filetype-table input[type=checkbox] {
+    width:16px;
+    height:16px;
+    accent-color:var(--green)
+}
+
+.id-chip {
+    color:#71877f;
+    font-family:monospace;
+    font-size:12px
+}
+
+.status-pill {
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    min-width:82px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:800
+}
+
+.status-pill i {
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:currentColor
+}
+
+.status-pill.enabled {
+    color:#087653;
+    background:#e8f7f0
+}
+
+.status-pill.disabled {
+    color:#9a5f5f;
+    background:#faeeee
+}
+
+.empty-row td {
+    padding:45px;
+    color:var(--muted);
+    text-align:center
+}
+
+.filetype-footer {
+    padding:14px 28px;
+    display:flex;
+    justify-content:space-between;
+    background:#f2faf6;
+    color:#597068;
+    font-size:12px
+}
+
+/* --------------------------------------------------------------------------
+   File Type static modals and notification
+   -------------------------------------------------------------------------- */
+body.modal-open {
+    overflow:hidden
+}
+
+.system-modal[hidden],
+.system-toast[hidden] {
+    display:none
+}
+
+.system-modal {
+    position:fixed;
+    z-index:3000;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:rgba(10,35,29,.58);
+    backdrop-filter:blur(3px)
+}
+
+.system-modal-card {
+    width:min(480px,100%);
+    overflow:hidden;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 28px 70px rgba(8,38,30,.3)
+}
+
+.system-modal-card > header {
+    padding:20px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#fff;
+    background:linear-gradient(135deg,#076044,#0b8c63)
+}
+
+.system-modal-card > header small {
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.16em;
+    opacity:.8
+}
+
+.system-modal-card > header h2 {
+    margin:4px 0 0;
+    font-size:20px
+}
+
+.modal-close {
+    width:34px;
+    height:34px;
+    border:1px solid rgba(255,255,255,.55);
+    border-radius:8px;
+    color:#fff;
+    background:rgba(255,255,255,.08);
+    font-size:24px;
+    line-height:28px;
+    cursor:pointer
+}
+
+.modal-close:hover {
+    background:rgba(255,255,255,.2)
+}
+
+.modal-body {
+    padding:25px 24px
+}
+
+.modal-body > label {
+    display:block;
+    margin-bottom:8px;
+    color:#294c42;
+    font-size:13px;
+    font-weight:800
+}
+
+.modal-body > label b {
+    color:#c54848
+}
+
+.extension-input {
+    display:flex;
+    height:44px;
+    border:1px solid #ccddd5;
+    border-radius:10px;
+    overflow:hidden
+}
+
+.extension-input:focus-within {
+    border-color:#15906a;
+    box-shadow:0 0 0 3px rgba(21,144,106,.12)
+}
+
+.extension-input span {
+    width:42px;
+    display:grid;
+    place-items:center;
+    background:#f0f6f3;
+    border-right:1px solid #d5e3dd;
+    color:#48675e;
+    font-size:20px;
+    font-weight:800
+}
+
+.extension-input input {
+    flex:1;
+    min-width:0;
+    border:0;
+    outline:0;
+    padding:0 13px;
+    color:#24483e;
+    font-size:14px
+}
+
+.modal-body > p {
+    margin:9px 0 0;
+    color:#72867f;
+    font-size:11px
+}
+
+.modal-error {
+    display:none;
+    margin-top:14px;
+    padding:10px 12px;
+    border-radius:8px;
+    color:#a23c3c;
+    background:#fff0f0;
+    font-size:12px
+}
+
+.modal-error.visible {
+    display:block
+}
+
+.system-modal-card form > footer {
+    padding:16px 24px;
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    background:#f8fbfa;
+    border-top:1px solid var(--line)
+}
+
+.confirm-card {
+    padding:30px;
+    text-align:center
+}
+
+.confirm-icon {
+    width:52px;
+    height:52px;
+    margin:0 auto 14px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    color:#ba4242;
+    background:#ffeded;
+    font-size:24px;
+    font-weight:900
+}
+
+.confirm-card h2 {
+    margin:0 0 8px;
+    color:#23483e;
+    font-size:20px
+}
+
+.confirm-card p {
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.55
+}
+
+.confirm-actions {
+    margin-top:23px;
+    display:flex;
+    justify-content:center;
+    gap:9px
+}
+
+.system-toast {
+    position:fixed;
+    z-index:4000;
+    right:24px;
+    bottom:24px;
+    max-width:360px;
+    padding:13px 17px;
+    border-radius:10px;
+    color:#fff;
+    box-shadow:0 14px 35px rgba(17,54,44,.2);
+    font-size:13px;
+    font-weight:700
+}
+
+.system-toast.success {
+    background:#087653
+}
+
+.system-toast.error {
+    background:#b64a4a
+}
+
+@media (max-width:760px) {
+    .filetype-heading,
+    .filetype-toolbar {
+        align-items:stretch;
+        flex-direction:column
+    }
+
+    .table-search {
+        width:100%
+    }
+
+    .bulk-actions {
+        flex-wrap:wrap
+    }
+
+    .system-tabs {
+        overflow-x:auto
+    }
+
+    .system-tabs a,
+    .system-tabs span {
+        white-space:nowrap
+    }
+}
+
+* {
+    box-sizing:border-box
+}
+
+/* --------------------------------------------------------------------------
+   Page layout and hero
+   -------------------------------------------------------------------------- */
+.system-content {
+    padding:28px;
+    max-width:1440px;
+    margin:auto;
+    color:#173b32
+}
+
+.system-hero {
+    min-height:166px;
+    border-radius:22px;
+    padding:34px 38px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:linear-gradient(135deg,#075f45,#0b8b62);
+    color:#fff;
+    box-shadow:0 16px 36px rgba(5,91,65,.18);
+    overflow:hidden
+}
+
+.system-hero span,
+.settings-heading p {
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.16em
+}
+
+.system-hero h1 {
+    font-size:30px;
+    margin:7px 0
+}
+
+.system-hero p {
+    margin:0;
+    opacity:.83
+}
+
+.system-hero-icon {
+    font-size:78px;
+    opacity:.18
+}
+
+/* --------------------------------------------------------------------------
+   System section navigation
+   -------------------------------------------------------------------------- */
+.system-tabs {
+    display:flex;
+    gap:8px;
+    margin:18px 0;
+    padding:7px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:0 6px 22px rgba(25,75,59,.06)
+}
+
+.system-tabs a,
+.system-tabs span {
+    padding:11px 17px;
+    border-radius:10px;
+    color:#60756e;
+    font-weight:700;
+    font-size:13px;
+    text-decoration:none
+}
+
+.system-tabs .active {
+    background:var(--soft);
+    color:var(--green);
+    box-shadow:inset 0 0 0 1px #cbe7da
+}
+
+/* --------------------------------------------------------------------------
+   Settings panel, heading, and form grid
+   -------------------------------------------------------------------------- */
+.settings-panel {
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 12px 35px rgba(21,68,54,.08);
+    overflow:hidden
+}
+
+.settings-heading {
+    padding:25px 29px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center
+}
+
+.settings-heading p {
+    color:var(--green);
+    margin:0 0 5px
+}
+
+.settings-heading h2 {
+    margin:0 0 5px;
+    font-size:22px
+}
+
+.settings-heading > div > span {
+    color:var(--muted);
+    font-size:13px
+}
+
+.settings-count {
+    background:var(--soft);
+    border:1px solid #cfe9dc;
+    padding:7px 11px;
+    border-radius:999px;
+    color:var(--green);
+    font-size:12px;
+    font-weight:800
+}
+
+.settings-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:20px;
+    padding:28px 29px
+}
+
+.setting-field {
+    padding:17px 18px;
+    border:1px solid #e2ece7;
+    border-radius:14px;
+    background:#fcfefd
+}
+
+.setting-field label {
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:9px
+}
+
+.setting-field label small {
+    color:#93a59f
+}
+
+.setting-field input[type=text],
+.setting-field input[type=number] {
+    width:100%;
+    height:43px;
+    border:1px solid #cfded7;
+    border-radius:10px;
+    padding:0 13px;
+    color:#24473e;
+    background:#fff;
+    outline:none
+}
+
+.setting-field input:focus {
+    border-color:#15906a;
+    box-shadow:0 0 0 3px rgba(21,144,106,.12)
+}
+
+.setting-field p {
+    font-size:11px;
+    color:var(--muted);
+    margin:8px 0 0
+}
+
+/* Unit label displayed inside the file-size input. */
+.input-wrap {
+    position:relative
+}
+
+.input-wrap b {
+    position:absolute;
+    right:13px;
+    top:13px;
+    font-size:12px;
+    color:var(--muted)
+}
+
+.input-wrap input {
+    padding-right:50px
+}
+
+/* Maintenance mode Yes/No control. */
+.mode-toggle {
+    display:flex;
+    background:#edf4f1;
+    border-radius:10px;
+    padding:4px;
+    max-width:210px
+}
+
+.mode-toggle label {
+    width:50%;
+    margin:0;
+    cursor:pointer
+}
+
+.mode-toggle input {
+    position:absolute;
+    opacity:0
+}
+
+.mode-toggle span {
+    width:100%;
+    padding:8px;
+    text-align:center;
+    border-radius:7px;
+    color:#637a72
+}
+
+.mode-toggle input:checked + span {
+    background:var(--green);
+    color:#fff;
+    box-shadow:0 3px 8px rgba(8,122,85,.22)
+}
+
+/* --------------------------------------------------------------------------
+   Form actions and validation feedback
+   -------------------------------------------------------------------------- */
+.settings-actions {
+    padding:18px 29px;
+    background:#f8fbfa;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:flex-end;
+    gap:10px
+}
+
+.settings-actions a,
+.settings-actions button {
+    height:42px;
+    border-radius:10px;
+    padding:0 18px;
+    font-weight:800;
+    font-size:13px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none
+}
+
+.settings-actions .cancel {
+    color:#526b63;
+    border:1px solid #ccdcd5;
+    background:#fff
+}
+
+.settings-actions button {
+    border:0;
+    background:var(--green);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 7px 16px rgba(8,122,85,.2)
+}
+
+.settings-actions button:disabled {
+    opacity:.65
+}
+
+.settings-error {
+    display:none;
+    margin:0 29px 20px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:#fff2f2;
+    color:#aa3030;
+    font-size:13px
+}
+
+.settings-error.show {
+    display:block
+}
+
+/* --------------------------------------------------------------------------
+   Successful-save confirmation modal
+   -------------------------------------------------------------------------- */
+.system-message {
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(7,37,29,.62);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px
+}
+
+.system-message.open {
+    display:flex
+}
+
+.message-card {
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    width:min(390px,100%);
+    box-shadow:0 25px 70px rgba(0,0,0,.25)
+}
+
+.message-mark {
+    display:grid;
+    place-items:center;
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    background:#e7f7ef;
+    color:var(--green);
+    font-size:28px;
+    margin:0 auto 15px
+}
+
+.message-card h2 {
+    margin:0 0 8px;
+    color:var(--dark)
+}
+
+.message-card p {
+    color:var(--muted);
+    font-size:13px
+}
+
+.message-card button {
+    border:0;
+    border-radius:9px;
+    background:var(--green);
+    color:#fff;
+    padding:11px 26px;
+    font-weight:800;
+    cursor:pointer
+}
+
+/* --------------------------------------------------------------------------
+   Responsive layout
+   -------------------------------------------------------------------------- */
+@media (max-width:900px) {
+    .settings-grid {
+        grid-template-columns:1fr
+    }
+    
+    .system-tabs {
+        overflow-x:auto
+    }
+    
+    .system-tabs a,
+    .system-tabs span {
+        white-space:nowrap
+    }
+}
+
+@media (max-width:600px) {
+    .system-content {
+        padding:16px
+    }
+    
+    .system-hero {
+        padding:25px
+    }
+    
+    .system-hero-icon {
+        display:none
+    }
+    
+    .settings-grid,
+    .settings-heading,
+    .settings-actions {
+        padding-left:18px;
+        padding-right:18px
+    }
+    
+    .settings-actions {
+        flex-direction:column-reverse
+    }
+    
+    .settings-actions a,
+    .settings-actions button {
+        justify-content:center;
+        width:100%
+    }
+}
+
+/* ==========================================================================
+   Full-width System layout
+
+   Keep System pages consistent with Users, Subsidiaries, and Departments.
+   These final scoped rules intentionally override the older centered hero
+   layout without changing shared dashboard styles or other admin modules.
+   ========================================================================== */
+.system-page,
+.system-page .dashboard-app {
+    min-height: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.system-page .main-area {
+    min-width: 0;
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+}
+
+.system-page .system-content {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 24px 30px 48px;
+}
+
+/* Compact navigation sits directly under the normal shared page header. */
+.system-page .system-tabs {
+    margin: 0 0 16px;
+}
+
+/*
+ * Compact Users-style sub-hero.
+ * The decorative circles are created with pseudo-elements so no image asset
+ * or extra markup is required.
+ */
+.system-page-intro {
+    position: relative;
+    min-height: 120px;
+    margin: 0 0 16px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    overflow: hidden;
+    border-radius: 18px;
+    color: #fff;
+    background: linear-gradient(110deg, #075d45 0%, #087755 56%, #11956b 100%);
+    box-shadow: 0 14px 30px rgba(5, 91, 65, .16);
+}
+
+.system-page-intro::before,
+.system-page-intro::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, .11);
+    border-radius: 50%;
+}
+
+.system-page-intro::before {
+    width: 180px;
+    height: 180px;
+    right: 140px;
+    bottom: -100px;
+}
+
+.system-page-intro::after {
+    width: 86px;
+    height: 86px;
+    right: 50px;
+    top: -58px;
+}
+
+.system-page-copy,
+.system-page-stat {
+    position: relative;
+    z-index: 1;
+}
+
+.system-page-copy > span {
+    color: rgba(255, 255, 255, .76);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .16em;
+}
+
+.system-page-intro h1 {
+    margin: 5px 0 3px;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.system-page-intro p {
+    margin: 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 12px;
+}
+
+.system-page-stat {
+    min-width: 122px;
+    min-height: 74px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 14px;
+    color: #fff;
+    background: rgba(255, 255, 255, .09);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+    text-align: center;
+}
+
+.system-page-stat span {
+    color: rgba(255, 255, 255, .72);
+    font-size: 10px;
+}
+
+.system-page-stat strong {
+    margin-top: 2px;
+    color: #fff;
+    font-size: 25px;
+    line-height: 1;
+}
+
+/* Use the full content width for both implemented System panels. */
+.system-page .settings-panel,
+.system-page .filetype-panel,
+.system-page .access-log-panel,
+.system-page .backup-panel {
+    width: 100%;
+    min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Backup options and confirmation
+   -------------------------------------------------------------------------- */
+.backup-panel {
+    overflow: hidden;
+    border: 1px solid #d9e5e0;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(22, 62, 49, .07);
+}
+
+.backup-stat { min-width: 122px; }
+.backup-hero-icon {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.backup-options {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.backup-option {
+    position: relative;
+    min-height: 146px;
+    padding: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border: 1px solid #d5e4de;
+    border-radius: 16px;
+    background: #fbfdfc;
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.backup-option:hover {
+    transform: translateY(-1px);
+    border-color: #8dcab5;
+    box-shadow: 0 10px 25px rgba(8, 112, 80, .08);
+}
+.backup-option.selected {
+    border-color: #07815c;
+    background: #f2fbf7;
+    box-shadow: 0 0 0 3px rgba(7, 129, 92, .09);
+}
+.backup-option.unavailable { opacity: .58; cursor: not-allowed; }
+.backup-option.unavailable:hover { transform: none; box-shadow: none; }
+.backup-option > input { position: absolute; opacity: 0; pointer-events: none; }
+.backup-radio {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #afc4bc;
+    border-radius: 50%;
+    background: #fff;
+}
+.backup-option input:checked + .backup-radio { border: 5px solid #07815c; }
+.backup-option-icon {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 48px;
+    border-radius: 13px;
+    color: #087653;
+    background: #e5f5ee;
+}
+.backup-option-icon svg,
+.backup-confirm-icon svg {
+    width: 25px;
+    height: 25px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.system-icon { color: #2e6a82; background: #eaf3f7; }
+.backup-option-copy { min-width: 0; padding-right: 20px; }
+.backup-option-copy strong { display: block; color: #183e33; font-size: 16px; }
+.backup-option-copy small {
+    margin: 7px 0 13px;
+    display: block;
+    color: #6a7f77;
+    font-size: 12px;
+    line-height: 1.55;
+}
+.backup-option-copy em {
+    color: #087653;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 900;
+    letter-spacing: .12em;
+}
+.backup-alert {
+    margin: 0 28px 18px;
+    padding: 11px 13px;
+    border: 1px solid #efc9cc;
+    border-radius: 9px;
+    color: #9b3941;
+    background: #fff6f6;
+    font-size: 12px;
+}
+.backup-actions { margin-top: 0; }
+.backup-actions button { display: inline-flex; align-items: center; gap: 7px; }
+.backup-confirm-card { position: relative; text-align: center; }
+.modal-close-box {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #c9ded5;
+    border-radius: 9px;
+    color: #356156;
+    background: #f5faf8;
+    font-size: 22px;
+    cursor: pointer;
+}
+.modal-close-box:hover { color: #fff; border-color: #07815c; background: #07815c; }
+.backup-confirm-icon {
+    width: 58px;
+    height: 58px;
+    margin: 2px auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    color: #087653;
+    background: #e6f6ef;
+}
+.backup-confirm-card > p { margin: 0 0 5px; color: #07815c; font-size: 10px; font-weight: 900; letter-spacing: .14em; }
+.backup-confirm-card > h2 { margin: 0 0 8px; color: #183e33; }
+.backup-confirm-card > span:not(.backup-confirm-icon) { display: block; color: #6c7f78; font-size: 12px; line-height: 1.55; }
+.backup-confirm-card .confirm-actions { margin-top: 22px; }
+
+@media (max-width: 760px) {
+    .backup-options { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+    .backup-options { padding: 18px; }
+    .backup-option { padding: 18px; }
+    .backup-alert { margin-right: 18px; margin-left: 18px; }
+}
+
+/* Small outline icons keep toolbar actions recognizable and compact. */
+.action-icon {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.primary-action,
+.bulk-actions button,
+.toolbar-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+/* Access Logs reuses the established table card and green footer language. */
+.access-log-panel {
+    overflow: hidden;
+    border: 1px solid #d9e5e0;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(22, 62, 49, .07);
+}
+
+.toolbar-danger {
+    min-height: 40px;
+    border: 1px solid #f0cfd2;
+    border-radius: 10px;
+    padding: 0 15px;
+    color: #af3741;
+    background: #fff7f7;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.access-log-toolbar { gap: 18px; }
+.access-log-toolbar .table-search { width: min(390px, 100%); }
+.entries-control {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+    color: #61746d;
+    font-size: 12px;
+    font-weight: 700;
+}
+.entries-control select {
+    height: 36px;
+    border: 1px solid #cddbd6;
+    border-radius: 8px;
+    padding: 0 26px 0 10px;
+    color: #24453a;
+    background: #fff;
+}
+.access-log-table th:nth-child(1) { width: 20%; }
+.access-log-table th:nth-child(2) { width: 22%; }
+.access-log-table th:nth-child(4) { width: 14%; }
+.source-pill {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 5px 9px;
+    color: #087354;
+    background: #e8f7f1;
+    font-size: 10px;
+    font-weight: 800;
+}
+.access-log-footer { align-items: center; }
+.pagination-controls { display: flex; align-items: center; gap: 8px; }
+.pagination-controls button {
+    width: 32px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    background: #07815c;
+    font-size: 20px;
+    cursor: pointer;
+}
+.pagination-controls button:disabled { color: #8ba098; background: #dce9e4; cursor: default; }
+.pagination-controls span {
+    border: 1px solid #c9ded5;
+    border-radius: 8px;
+    padding: 6px 11px;
+    color: #17684f;
+    background: #f6fbf9;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+@media (max-width: 680px) {
+    .access-log-toolbar { align-items: flex-start; flex-direction: column; }
+    .entries-control { margin-left: 0; }
+    .access-log-table { min-width: 760px; }
+    .access-log-footer { gap: 12px; flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 600px) {
+    .system-page .system-content {
+        padding: 16px 14px 34px;
+    }
+
+    .system-page-intro {
+        min-height: 0;
+        padding: 18px;
+    }
+
+    .system-page-stat {
+        min-width: 86px;
+        min-height: 64px;
+        padding: 10px 12px;
+    }
+
+    .system-page-stat strong {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 440px) {
+    .system-page-intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .system-page-stat {
+        width: 100%;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Shared professional interaction highlights
+   --------------------------------------------------------------------------
+   These rules enhance every System page without changing its layout. Mouse,
+   keyboard, and touch users receive the same clear green interaction language.
+   -------------------------------------------------------------------------- */
+.system-page .system-tabs a,
+.system-page button,
+.system-page a.cancel,
+.system-page .setting-field,
+.system-page .table-search,
+.system-page .entries-control select,
+.system-page .backup-option,
+.system-page input[type="text"],
+.system-page input[type="search"],
+.system-page input[type="number"],
+.system-page input[type="email"],
+.system-page input[type="url"],
+.system-page input[type="password"],
+.system-page textarea,
+.system-page select {
+    transition:
+        color .2s ease,
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+/* System navigation receives a soft lift and a green highlight. */
+.system-page .system-tabs a:hover {
+    color: #076f50;
+    border-color: #b8dfd0;
+    background: linear-gradient(135deg, #f1fbf7, #e5f7ef);
+    box-shadow: 0 6px 16px rgba(8, 122, 85, .11);
+    transform: translateY(-1px);
+}
+
+.system-page .system-tabs a.active:hover {
+    color: #056c4c;
+    border-color: #9fd3bf;
+    background: linear-gradient(135deg, #e5f7ef, #d9f1e7);
+}
+
+.system-page .system-tabs a:focus-visible,
+.system-page button:focus-visible,
+.system-page a.cancel:focus-visible,
+.system-page .backup-option:focus-within {
+    outline: 3px solid rgba(18, 161, 113, .2);
+    outline-offset: 2px;
+}
+
+/* Form cards and controls become clearer without changing their dimensions. */
+.system-page .setting-field:hover,
+.system-page .setting-field:focus-within {
+    border-color: #a9d7c5;
+    background: linear-gradient(145deg, #ffffff, #f7fcfa);
+    box-shadow: 0 9px 22px rgba(8, 122, 85, .09);
+    transform: translateY(-1px);
+}
+
+.system-page input[type="text"]:hover,
+.system-page input[type="search"]:hover,
+.system-page input[type="number"]:hover,
+.system-page input[type="email"]:hover,
+.system-page input[type="url"]:hover,
+.system-page input[type="password"]:hover,
+.system-page textarea:hover,
+.system-page select:hover {
+    border-color: #8fcdb6;
+    background-color: #fbfffd;
+    box-shadow: 0 4px 12px rgba(8, 122, 85, .07);
+}
+
+.system-page input[type="text"]:focus,
+.system-page input[type="search"]:focus,
+.system-page input[type="number"]:focus,
+.system-page input[type="email"]:focus,
+.system-page input[type="url"]:focus,
+.system-page input[type="password"]:focus,
+.system-page textarea:focus,
+.system-page select:focus {
+    outline: 0;
+    border-color: #0b9166;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(11, 145, 102, .14), 0 7px 18px rgba(8, 122, 85, .08);
+}
+
+.system-page .table-search:hover,
+.system-page .table-search:focus-within {
+    color: #087653;
+    border-color: #91ceb8;
+    background: #fbfffd;
+    box-shadow: 0 0 0 3px rgba(11, 145, 102, .1), 0 6px 16px rgba(8, 122, 85, .07);
+}
+
+/* Buttons lift slightly; destructive actions retain their red meaning. */
+.system-page button:not(:disabled):hover,
+.system-page a.cancel:hover {
+    transform: translateY(-2px);
+}
+
+.system-page .primary-action:not(:disabled):hover,
+.system-page #settings-save:not(:disabled):hover,
+.system-page #backup-open-confirm:not(:disabled):hover,
+.system-page #system-message-close:not(:disabled):hover {
+    color: #fff;
+    background: linear-gradient(135deg, #076f50, #0aa172);
+    box-shadow: 0 10px 22px rgba(8, 122, 85, .24);
+    filter: none;
+}
+
+.system-page .secondary-action:not(:disabled):hover,
+.system-page .bulk-actions button:not(.danger):not(:disabled):hover,
+.system-page a.cancel:hover {
+    color: #076f50;
+    border-color: #8fcdb6;
+    background: #eef9f4;
+    box-shadow: 0 7px 17px rgba(8, 122, 85, .1);
+}
+
+.system-page .danger-action:not(:disabled):hover,
+.system-page .toolbar-danger:not(:disabled):hover,
+.system-page .bulk-actions .danger:not(:disabled):hover {
+    color: #fff;
+    border-color: #bd4148;
+    background: #bd4148;
+    box-shadow: 0 9px 19px rgba(189, 65, 72, .2);
+}
+
+.system-page .pagination-controls button:not(:disabled):hover {
+    color: #fff;
+    background: #056f50;
+    box-shadow: 0 7px 15px rgba(8, 122, 85, .2);
+}
+
+.system-page button:not(:disabled):active,
+.system-page a.cancel:active,
+.system-page .system-tabs a:active {
+    box-shadow: none;
+    transform: translateY(0) scale(.98);
+}
+
+/* Backup choices use the same interactive card treatment as configuration. */
+.system-page .backup-option:not(.unavailable):hover,
+.system-page .backup-option:not(.unavailable):focus-within {
+    border-color: #91ceb8;
+    background: linear-gradient(145deg, #ffffff, #effaf5);
+    box-shadow: 0 10px 24px rgba(8, 122, 85, .11);
+    transform: translateY(-2px);
+}
+
+.system-page .backup-option:not(.unavailable):hover .backup-option-icon,
+.system-page .backup-option:not(.unavailable):focus-within .backup-option-icon {
+    box-shadow: 0 7px 16px rgba(8, 122, 85, .16);
+    transform: scale(1.04);
+}
+
+.system-page .backup-option-icon {
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+/* Checkbox and radio controls keep the shared application green. */
+.system-page input[type="checkbox"],
+.system-page input[type="radio"] {
+    accent-color: #087a55;
+    cursor: pointer;
+}
+
+/* Disabled controls remain visually quiet and never appear actionable. */
+.system-page button:disabled,
+.system-page input:disabled,
+.system-page select:disabled,
+.system-page .backup-option.unavailable {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Respect operating-system motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+    .system-page .system-tabs a,
+    .system-page button,
+    .system-page a.cancel,
+    .system-page .setting-field,
+    .system-page .table-search,
+    .system-page .entries-control select,
+    .system-page .backup-option,
+    .system-page .backup-option-icon,
+    .system-page input,
+    .system-page textarea,
+    .system-page select {
+        transition: none;
+    }
+}
+
+/* ========================================================================== */
+/* Final content spacing matched to Documents                                  */
+/* Applies the same header-to-content gap to all System pages.                  */
+/* ========================================================================== */
+.system-content,
+.filetype-content,
+.backup-content,
+.access-logs-content {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 18px 34px 36px !important;
+    box-sizing: border-box !important;
+}

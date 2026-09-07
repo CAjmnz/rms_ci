@@ -1,0 +1,57 @@
+rose|2026-08-20 08:12:41|Login to Administrator Portal|Administrator
+rose|2026-08-20 09:21:26|Unpublish Data: 12|Administrator
+rose|2026-08-20 09:23:08|Create Subfolder: call me|Administrator
+rose|2026-08-20 09:23:22|Publish Data: 32|Administrator
+rose|2026-08-20 09:23:28|Unpublish Data: 32|Administrator
+rose|2026-08-20 09:23:39|Create Subfolder: call me|Administrator
+rose|2026-08-20 09:24:22|Unpublish Data: 2|Administrator
+rose|2026-08-20 09:24:27|Unpublish Data: 2|Administrator
+rose|2026-08-20 09:24:31|Unpublish Data: 5|Administrator
+rose|2026-08-20 09:25:31|Unpublish Data: 24|Administrator
+rose|2026-08-20 09:25:35|Delete Document Record: 24|Administrator
+rose|2026-08-20 09:25:44|Unpublish Data: 24|Administrator
+rose|2026-08-20 09:26:02|Create Subfolder: test 1|Administrator
+rose|2026-08-20 09:26:04|Create Subfolder: test 1|Administrator
+rose|2026-08-20 09:26:33|Delete Document Record: 24|Administrator
+rose|2026-08-20 09:26:45|Create Subfolder: call me|Administrator
+rose|2026-08-20 09:27:04|Unpublish Data: 31|Administrator
+rose|2026-08-20 09:27:14|Create Subfolder: test|Administrator
+rose|2026-08-20 09:40:04|Create Subfolder: ples|Administrator
+rose|2026-08-20 09:40:14|Publish Data: 32|Administrator
+rose|2026-08-20 09:40:19|Unpublish Data: 32|Administrator
+rose|2026-08-20 09:49:00|Unpublish Data: 27|Administrator
+rose|2026-08-20 09:49:05|Unpublish Data: 15|Administrator
+rose|2026-08-20 11:35:48|Unpublish Data: 10|Administrator
+rose|2026-08-20 11:46:10|Create Subfolder: test|Administrator
+rose|2026-08-20 11:56:28|Publish Data: 31|Administrator
+rose|2026-08-20 11:56:34|Publish Data: 12|Administrator
+rose|2026-08-20 11:56:59|Publish Data: 32|Administrator
+rose|2026-08-20 13:11:43|Publish Data: 4, 10, 14, 15, 16, 27|Administrator
+rose|2026-08-20 13:11:57|Unpublish Data: 4|Administrator
+rose|2026-08-20 13:12:03|Publish Data: 4|Administrator
+rose|2026-08-20 13:43:12|Logout from Administrator Portal|Administrator
+rose|2026-08-20 13:43:25|Login to Administrator Portal|Administrator
+rose|2026-08-20 13:53:27|Login to Administrator Portal|Administrator
+rose|2026-08-20 14:47:00|Login to Administrator Portal|Administrator
+rose|2026-08-20 14:47:38|Create Filename: atp|Administrator
+rose|2026-08-20 14:48:02|Create Subfolder: icm|Administrator
+rose|2026-08-20 14:48:22|Create Subfolder: year 2025|Administrator
+rose|2026-08-20 14:48:38|Create Subfolder: 03 mar|Administrator
+rose|2026-08-20 14:49:23|Upload Data: BORROWING.png, Capture.PNG, REMARKS  (3).png, pngtree-minimal-3d-warehouse-and-parcel-storage-icon-for-factory-logistics-png-image_20547655-removebg-preview.png|Administrator
+rose|2026-08-20 14:50:38|Export User Access Data|Administrator
+rose|2026-08-20 15:11:16|Publish Data: 33|Administrator
+rose|2026-08-20 16:31:04|Login to Administrator Portal|Administrator
+rose|2026-08-20 16:33:02|Login to Administrator Portal|Administrator
+rose|2026-08-20 16:33:26|Logout from Administrator Portal|Administrator
+rose|2026-08-20 16:33:34|Login to Administrator Portal|Administrator
+rose|2026-08-20 16:38:47|Unpublish Data: 17|Administrator
+rose|2026-08-20 16:39:01|Unpublish Data: 6|Administrator
+rose|2026-08-20 16:44:16|Unpublish Data: 10|Administrator
+rose|2026-08-20 16:45:52|Upload Data: Untitled.png, received_1701223177881643.jpeg|Administrator
+rose|2026-08-20 16:53:31|RMS Action: Documents / delete_uploaded_files (level=3, record_id=10, data_ids=156,155,173,172,230,171,170,174,169,168)|Administrator
+rose|2026-08-20 16:53:41|RMS Action: Documents / delete_uploaded_files (level=3, record_id=10, data_ids=167,166,164,165,229,163)|Administrator
+rose|2026-08-20 17:02:48|Download Backup: database|Administrator
+rose|2026-08-20 17:03:25|Download Backup: system_database|Administrator
+rose|2026-08-20 17:05:26|Login to Administrator Portal|Administrator
+rose|2026-08-20 17:24:58|Unpublish Data: 4|Administrator
+rose|2026-08-20 17:56:50|Unpublish Data: 2|Administrator

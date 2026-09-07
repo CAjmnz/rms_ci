@@ -1,0 +1,22 @@
+rose|2026-08-24 13:06:39|Login to Administrator Portal|Administrator
+rose|2026-08-24 14:13:11|Login to Administrator Portal|Administrator
+rose|2026-08-24 14:16:36|Upload Data: Screenshot_2026-08-17_162104.png, table upgrade.png, underinvestiation.png, why .png, z z zz z.png, 4jD5aG.jpg, anit highlight.png, back at it again .png, bms login.png|Administrator
+rose|2026-08-24 14:16:37|Upload Data: bms login.png, bulk action .png, ChatGPT Image Aug 20, 2026, 01_41_28 PM (1).png, ChatGPT Image Aug 20, 2026, 10_53_08 AM.png, circle this .png, color.png, current login page of the bms.png, dashboard.png, document page .png|Administrator
+rose|2026-08-24 14:16:37|Upload Data: document page .png, drop down .png, follow the ui.png, going back .png, highlight.png, hover.png, ideal login redesign.png, ki.png, kk.png|Administrator
+rose|2026-08-24 14:16:37|Upload Data: kk.png, modal resizing.png, my profile.png, no changes.png, oh yeah.png, pin.png, placement of the back button .png, sakadingkaduu.png, Screenshot 2026-08-18 141257.png|Administrator
+rose|2026-08-24 14:16:38|Upload Data: Screenshot 2026-08-18 141257.png, Screenshot 2026-08-18 154003.png, Screenshot 2026-08-19 093944.png, Screenshot 2026-08-19 113841.png, Screenshot 2026-08-20 092343.png, Screenshot 2026-08-20 095612.png, Screenshot 2026-08-20 114532.png, Screenshot 2026-08-20 132643.png, Screenshot 2026-08-20 171249.png|Administrator
+rose|2026-08-24 14:16:38|Upload Data: Screenshot 2026-08-20 171249.png, Screenshot_2026-08-17_162104.png|Administrator
+rose|2026-08-24 14:34:29|Unpublish Data: 33|Administrator
+rose|2026-08-24 14:34:33|Unpublish Data: 32|Administrator
+rose|2026-08-24 14:34:42|Delete Document Record: 33|Administrator
+rose|2026-08-24 14:35:01|Delete Document Record: 11|Administrator
+rose|2026-08-24 14:35:12|Delete Document Record: 19|Administrator
+rose|2026-08-24 14:35:22|Delete Document Record: 33|Administrator
+rose|2026-08-24 14:35:30|Delete Document Record: 27|Administrator
+rose|2026-08-24 14:35:37|Delete Document Record: 33|Administrator
+rose|2026-08-24 14:36:59|RMS Action: Documents / delete_uploaded_files (level=1, record_id=11, data_ids=26,71)|Administrator
+rose|2026-08-24 15:03:08|Upload Data: bms login.png|Administrator
+rose|2026-08-24 17:20:46|Create Subfolder: fds|Administrator
+rose|2026-08-24 17:26:32|Login to Administrator Portal|Administrator
+rose|2026-08-24 17:31:37|Logout from Administrator Portal|Administrator
+rose|2026-08-24 18:49:52|Logout from Administrator Portal|Administrator

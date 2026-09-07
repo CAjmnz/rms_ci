@@ -1,0 +1,79 @@
+rose|2026-08-26 08:20:26|Login to Administrator Portal|Administrator
+rose|2026-08-26 08:47:34|Logout from Administrator Portal|Administrator
+rose|2026-08-26 08:56:47|Login to Administrator Portal|Administrator
+rose|2026-08-26 09:15:10|Publish Data: 2|Administrator
+rose|2026-08-26 09:24:12|Unpublish Data: 2|Administrator
+rose|2026-08-26 09:24:15|Publish Data: 2|Administrator
+rose|2026-08-26 09:24:37|Unpublish Data: 2|Administrator
+rose|2026-08-26 09:25:04|Publish Data: 2|Administrator
+rose|2026-08-26 09:32:14|Unpublish Data: 2|Administrator
+rose|2026-08-26 09:33:43|Logout from Administrator Portal|Administrator
+rose|2026-08-26 09:33:50|Login to Administrator Portal|Administrator
+rose|2026-08-26 09:35:02|Create User: Treslvl2|Administrator
+Treslvl2|2026-08-26 09:35:38|Login to Administrator Portal|Administrator
+Treslvl|2026-08-26 09:35:54|Login to Administrator Portal|Administrator
+Treslvl2|2026-08-26 09:37:21|Unpublish Data: 4|Administrator
+Treslvl2|2026-08-26 09:39:20|Unpublish Data: 2|Administrator
+Treslvl|2026-08-26 09:53:10|Unpublish Data: 1|Administrator
+Treslvl|2026-08-26 09:56:20|Publish Data: 1|Administrator
+Treslvl|2026-08-26 09:56:34|Unpublish Data: 1|Administrator
+rose|2026-08-26 13:03:54|Login to Administrator Portal|Administrator
+rose|2026-08-26 13:04:00|Login to Administrator Portal|Administrator
+rose|2026-08-26 13:04:20|Upload Data: unplish original.png, water.png|Administrator
+Juanlvl|2026-08-26 13:05:08|[Portal] Login|Records
+Juanlvl|2026-08-26 13:05:10|[Portal] Viewed: upload _1.png|Records
+Juanlvl|2026-08-26 13:05:10|[Portal] Viewed: Screenshot 2026-08-19 093944.png|Records
+Treslvl2|2026-08-26 13:23:35|Login to Administrator Portal|Administrator
+Treslvl2|2026-08-26 13:24:29|Publish Data: 1|Administrator
+Treslvl2|2026-08-26 13:24:32|Unpublish Data: 1|Administrator
+rose|2026-08-26 13:28:15|Login to Administrator Portal|Administrator
+rose|2026-08-26 13:28:54|Upload Data: unplish original.png, water.png|Administrator
+rose|2026-08-26 13:29:03|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=280)|Administrator
+rose|2026-08-26 15:02:24|Upload Data: unplish original.png, water.png|Administrator
+rose|2026-08-26 15:05:17|Upload Data: unplish original.png, water.png|Administrator
+rose|2026-08-26 15:13:51|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=282,281,279,275,277,276)|Administrator
+rose|2026-08-26 15:14:01|Upload Data: water.png, unplish original.png|Administrator
+rose|2026-08-26 15:14:57|Upload Data: water2.png, unplish original.png|Administrator
+rose|2026-08-26 15:15:16|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=284)|Administrator
+rose|2026-08-26 15:16:28|Upload Data: water.png, unplish original.png|Administrator
+rose|2026-08-26 15:16:35|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=285)|Administrator
+rose|2026-08-26 15:16:43|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=283)|Administrator
+rose|2026-08-26 15:17:15|Upload Data: unplish original.png, uploading.png, water2.png, water.png|Administrator
+rose|2026-08-26 15:22:00|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=287,286)|Administrator
+rose|2026-08-26 15:22:34|Upload Data: unplish original.png, water2.png|Administrator
+rose|2026-08-26 15:22:54|Upload Data: unplish original.png, water2.png|Administrator
+rose|2026-08-26 15:23:07|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=289,288)|Administrator
+rose|2026-08-26 15:23:23|Upload Data: water2.png, unplish original.png|Administrator
+rose|2026-08-26 15:24:31|Logout from Administrator Portal|Administrator
+rose|2026-08-26 15:24:41|Login to Administrator Portal|Administrator
+rose|2026-08-26 15:24:43|Login to Administrator Portal|Administrator
+rose|2026-08-26 15:25:06|Upload Data: unplish original.png, water2.png|Administrator
+rose|2026-08-26 15:30:53|Upload Data: water2.png, unplish original.png|Administrator
+rose|2026-08-26 15:42:42|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=291)|Administrator
+rose|2026-08-26 15:43:41|Upload Data: water.png, unplish original.png|Administrator
+rose|2026-08-26 15:43:51|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=1)|Administrator
+rose|2026-08-26 15:44:03|Upload Data: unplish original.png, water.png|Administrator
+rose|2026-08-26 15:44:10|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=293)|Administrator
+rose|2026-08-26 15:44:22|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=292)|Administrator
+rose|2026-08-26 15:44:31|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=175,176,177,294)|Administrator
+rose|2026-08-26 15:44:40|Upload Data: water.png, unplish original.png|Administrator
+rose|2026-08-26 15:44:48|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=295)|Administrator
+rose|2026-08-26 15:44:56|Upload Data: unplish original.png, water2.png|Administrator
+rose|2026-08-26 16:00:33|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=290)|Administrator
+rose|2026-08-26 16:00:46|Upload Data: unplish original.png, water2.png|Administrator
+rose|2026-08-26 16:02:40|Upload Data: unplish original.png, water.png|Administrator
+rose|2026-08-26 16:03:04|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=297)|Administrator
+rose|2026-08-26 16:03:12|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=298)|Administrator
+rose|2026-08-26 16:04:50|Upload Data: uploading.png, water.png, water2.png, laravel dashboard.png, unplish original.png, 4b13a160-e6e7-44b5-9870-122ae87024f0.png, login page laravel.png, ChatGPT Image Aug 24, 2026, 04_28_38 PM.png|Administrator
+rose|2026-08-26 16:04:52|Upload Data: bread 22.jpg, current preview modal .png, modal.png, 51rvbdEZHeL.jpg, Screenshot 2026-07-27 092843.png, Screenshot 2026-07-27 182402.png, Screenshot 2026-07-30 154937.png, motorola-razr-fold-3840x4267-26566.jpg|Administrator
+rose|2026-08-26 16:04:52|Upload Data: pexels-diva-33386712.jpg, screenshot.png, two-people-packing-parcels-boxes-while-working-delivery-service-1-scaled.jpg, 20944142-scaled-1.jpg, 1000014629.jpg, Color Hunt Palette fff8f0c085528c5a3c4b2e2b.png, Desktop-Wallpaper-Aesthetic-Wallpaper-Anime.jpg, download.png|Administrator
+rose|2026-08-26 16:04:52|Upload Data: employee_record_management_software_transforming_hr_process_across_workplace_slide01.jpg, Minimalist-HD-Wallpaper-4K.jpg, Annotation 2026-02-25 040825.png, Annotation 2026-02-25 040923.png, Annotation 2026-02-25 041139.png, baw.jpg, dropdwon.jpg, improvement .jpg|Administrator
+rose|2026-08-26 16:04:52|Upload Data: Long Outstanding 2.png, Long Outstanding 3.png, Long outstanding.png, long outstanding_fixrite.png, Long Outstanding_Supermarket.png, long outstanding1.png, no datatabl;e.jpg, nonmoving.png|Administrator
+rose|2026-08-26 16:04:53|Upload Data: rud.jpg, Screenshot 2026-08-25 174534.jpg, Screenshot 2026-08-26 085422.jpg, Screenshot 2026-08-26 085440.jpg, Screenshot 2026-08-26 092516.jpg, Screenshot 2026-08-26 092555.jpg, Screenshot 2026-08-26 095714.jpg, Screenshot 2026-08-26 145956.jpg|Administrator
+rose|2026-08-26 16:04:53|Upload Data: worsdt.jpg, abnm_admin.png, abnm2.png, abnormal andnonmoving.png, Abnormal anfd nonmoving_supermarket.png, ABNORMAL.png, abnormal_supermarket.png, action button .jpg|Administrator
+rose|2026-08-26 16:12:37|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=347,301,300,299,303,317,346,345,344,343)|Administrator
+rose|2026-08-26 16:12:47|RMS Action: Documents / delete_uploaded_files (level=1, record_id=2, data_ids=342,341,340,313,312,311,316,339,315,337)|Administrator
+rose|2026-08-26 16:24:00|Login to Administrator Portal|Administrator
+rose|2026-08-26 17:41:34|Login to Administrator Portal|Administrator
+rose|2026-08-26 17:49:32|Logout from Administrator Portal|Administrator
+rose|2026-08-26 17:49:38|Login to Administrator Portal|Administrator

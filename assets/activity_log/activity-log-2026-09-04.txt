@@ -1,0 +1,116 @@
+rose|2026-09-04 08:19:30|Login to Administrator Portal|Administrator
+rose|2026-09-04 08:31:00|Unpublish Data: 10|Administrator
+rose|2026-09-04 08:40:12|Logout from Administrator Portal|Administrator
+rose|2026-09-04 08:40:31|Login to Administrator Portal|Administrator
+rose|2026-09-04 08:41:15|Update User Access|Administrator
+rose|2026-09-04 08:41:20|Logout from Administrator Portal|Administrator
+Doslvl|2026-09-04 08:41:32|Login to Administrator Portal|Administrator
+DOSlvl|2026-09-04 08:41:45|[Portal] Login|Records
+DOSlvl|2026-09-04 08:41:54|Login to Administrator Portal|Administrator
+DOSlvl|2026-09-04 08:42:14|Login to Administrator Portal|Administrator
+rose|2026-09-04 08:42:27|Logout from Administrator Portal|Administrator
+DOSlvl|2026-09-04 08:42:51|[Portal] Login|Records
+DOSlvl|2026-09-04 08:54:40|Login to Administrator Portal|Administrator
+rose|2026-09-04 09:16:30|Logout from Administrator Portal|Administrator
+Juanlvl|2026-09-04 09:16:42|[Portal] Login|Records
+Juanlvl|2026-09-04 09:16:47|[Portal] Viewed: Screenshot 2026-08-19 093944.png|Records
+Juanlvl|2026-09-04 09:16:47|[Portal] Viewed: upload _1.png|Records
+Juanlvl|2026-09-04 09:17:06|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-04 09:17:10|Login to Administrator Portal|Administrator
+rose|2026-09-04 09:17:32|Logout from Administrator Portal|Administrator
+Doslvl|2026-09-04 09:17:40|Login to Administrator Portal|Administrator
+DOSlvl|2026-09-04 09:17:49|[Portal] Login|Records
+DOSlvl|2026-09-04 09:17:56|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:17:56|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: Annotation_2026-02-25_041139.png|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: baw.jpg|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: baw.jpg|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: Long_Outstanding_3.png|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: baw.jpg|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: dropdwon.jpg|Records
+DOSlvl|2026-09-04 09:17:57|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:17:58|[Portal] Viewed: 51rvbdEZHeL.jpg|Records
+DOSlvl|2026-09-04 09:18:07|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: baw.jpg|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: 51rvbdEZHeL.jpg|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: Annotation_2026-02-25_041139.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: baw.jpg|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: Long_Outstanding_2.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: ChatGPT_Image_Aug_24__2026__04_28_38_PM.png|Records
+DOSlvl|2026-09-04 09:18:08|[Portal] Viewed: Long_Outstanding_3.png|Records
+DOSlvl|2026-09-04 09:18:25|[Portal] Logout|Records
+rose|2026-09-04 09:18:43|Login to Administrator Portal|Administrator
+rose|2026-09-04 09:21:02|Logout from Administrator Portal|Administrator
+rmsAngelica|2026-09-04 10:20:17|Login to Administrator Portal|Administrator
+rose|2026-09-04 10:58:59|Login to Administrator Portal|Administrator
+rose|2026-09-04 11:46:07|Logout from Administrator Portal|Administrator
+DOSlvl|2026-09-04 11:46:24|[Portal] Login|Records
+DOSlvl|2026-09-04 11:46:27|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: laravel_dashboard.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: bms_login.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: laravel_dashboard.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: Long_Outstanding_3.png|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: dropdwon.jpg|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: 51rvbdEZHeL.jpg|Records
+DOSlvl|2026-09-04 11:46:28|[Portal] Viewed: laravel_dashboard.png|Records
+DOSlvl|2026-09-04 11:46:29|[Portal] Viewed: dropdwon.jpg|Records
+DOSlvl|2026-09-04 11:46:51|[Portal] Logout|Records
+rose|2026-09-04 11:47:12|Login to Administrator Portal|Administrator
+rose|2026-09-04 14:56:57|Login to Administrator Portal|Administrator
+rose|2026-09-04 15:24:14|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=1)|Administrator
+rose|2026-09-04 15:24:16|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=1)|Administrator
+rose|2026-09-04 15:26:37|Publish Data: 1|Administrator
+rose|2026-09-04 15:26:40|Unpublish Data: 1|Administrator
+rose|2026-09-04 15:39:11|Update Document Record: ACCOUNT RECEIVABLEd: 1|Administrator
+rose|2026-09-04 15:39:32|Upload Data: where.jpg, whereee.jpg, whrer.jpg, worsdt.jpg, aaaa.jpg, abnm_admin.png, abnm2.png, abnormal andnonmoving.png, what is this .jpg|Administrator
+rose|2026-09-04 15:39:32|Upload Data: Abnormal anfd nonmoving_supermarket.png, ABNORMAL.png, abnormal_supermarket.png, accesss.jpg, action at the view document.jpg, action button .jpg, action drop bart.jpg, action drop down .jpg, abnormal andnonmoving.png|Administrator
+rose|2026-09-04 15:39:32|Upload Data: action files.jpg, actionss na .jpg, activites.jpg, add a new filname.jpg, additional.jpg, Annotation 2026-02-25 040825.png, Annotation 2026-02-25 040923.png, Annotation 2026-02-25 041139.png, action drop down .jpg|Administrator
+rose|2026-09-04 15:39:32|Upload Data: bar graph.jpg, basin .jpg, baw.jpg, bolok.jpg, bread crumb bah.jpg, breadcrumb.jpg, bulk action .jpg, dashboard .jpg, Annotation 2026-02-25 041139.png|Administrator
+rose|2026-09-04 15:39:33|Upload Data: details.jpg, dina mul.jpg, direction problem.jpg, directory path .jpg, document.jpg, double toaster .jpg, dropdwon.jpg, edit access.jpg, dashboard .jpg|Administrator
+rose|2026-09-04 15:39:33|Upload Data: entries.jpg, error .jpg, filename modal resizing.jpg, fix this .jpg, fix ths .jpg, fix user ui .jpg, fix white.jpg, fixxx nao.jpg, edit access.jpg|Administrator
+rose|2026-09-04 15:39:33|Upload Data: gdrive.jpg, grid.jpg, hightlight.jpg, icon.jpg, improvement .jpg, inspiration .jpg, intergrate.jpg, it still looks the same .jpg, fixxx nao.jpg|Administrator
+rose|2026-09-04 15:39:33|Upload Data: just like drive .jpg, kina bolokan .jpg, line form.jpg, link.jpg, Long Outstanding 2.png, Long Outstanding 3.png, Long outstanding.png, long outstanding_fixrite.png, it still looks the same .jpg|Administrator
+rose|2026-09-04 15:39:33|Upload Data: Long Outstanding_Supermarket.png, long outstanding1.png, loo.jpg, make it like this .jpg, might mouse.jpg, modall.jpg, no datatabl;e.jpg, nonmoving.png, long outstanding_fixrite.png|Administrator
+rose|2026-09-04 15:39:34|Upload Data: on top .jpg, opin.jpg, PAGE.jpg, pagination on top .jpg, pagination.jpg, pinfolder.jpg, pinn modal.jpg, pinnne.jpg, nonmoving.png|Administrator
+rose|2026-09-04 15:39:34|Upload Data: pinnthis.jpg, pins.jpg, pinsearch.jpg, pinui.jpg, re designing the upload .jpg, reconnecting.jpg, redesigning .jpg, redirection .jpg, pinnne.jpg|Administrator
+rose|2026-09-04 15:39:34|Upload Data: refer .jpg, reference 2.jpg, reference 3.jpg, reference1 .jpg, remoiver .jpg, remove the boxes.jpg, rename.jpg, renameing modal .jpg, redirection .jpg|Administrator
+rose|2026-09-04 15:39:34|Upload Data: rud.jpg, same file.jpg, Screenshot 2026-08-25 174534.jpg, Screenshot 2026-08-26 085422.jpg, Screenshot 2026-08-26 085440.jpg, Screenshot 2026-08-26 092516.jpg, Screenshot 2026-08-26 092555.jpg, Screenshot 2026-08-26 095714.jpg, renameing modal .jpg|Administrator
+rose|2026-09-04 15:39:35|Upload Data: Screenshot 2026-08-26 145956.jpg, Screenshot 2026-08-26 173932.jpg, Screenshot 2026-08-26 175908.jpg, Screenshot 2026-08-27 083308.jpg, Screenshot 2026-08-27 102148.jpg, Screenshot 2026-08-27 110411.jpg, Screenshot 2026-08-27 111813.jpg, Screenshot 2026-08-27 114337.jpg, Screenshot 2026-08-26 095714.jpg|Administrator
+rose|2026-09-04 15:39:35|Upload Data: Screenshot 2026-08-28 085507.jpg, Screenshot 2026-08-28 085532.jpg, Screenshot 2026-08-28 090155.jpg, Screenshot 2026-08-28 091958.jpg, Screenshot 2026-08-28 095045.jpg, Screenshot 2026-08-28 101004.jpg, Screenshot 2026-08-28 110448.jpg, Screenshot 2026-08-28 111747.jpg, Screenshot 2026-08-27 114337.jpg|Administrator
+rose|2026-09-04 15:39:35|Upload Data: Screenshot 2026-08-28 114254.jpg, Screenshot 2026-08-28 143408.jpg, Screenshot 2026-08-28 145612.jpg, Screenshot 2026-08-28 150314.jpg, Screenshot 2026-08-28 153510.jpg, Screenshot 2026-08-28 155547.jpg, Screenshot 2026-08-28 182117.jpg, Screenshot 2026-08-28 182128.jpg, Screenshot 2026-08-28 111747.jpg|Administrator
+rose|2026-09-04 15:39:36|Upload Data: Screenshot 2026-08-28 182139.jpg, Screenshot 2026-08-28 182150.jpg, Screenshot 2026-09-01 170943.jpg, Screenshot 2026-09-02 095150.jpg, Screenshot 2026-09-02 100045.jpg, Screenshot 2026-09-03 092554.jpg, Screenshot 2026-09-04 084007.jpg, Screenshot 2026-09-04 091650.jpg, Screenshot 2026-08-28 182128.jpg|Administrator
+rose|2026-09-04 15:39:36|Upload Data: search button.jpg, sidebar.jpg, sss.jpg, st1.jpg, still .jpg, suggestions.jpg, swal conversion .jpg, system settings.jpg, Screenshot 2026-09-04 091650.jpg|Administrator
+rose|2026-09-04 15:39:36|Upload Data: the design reference .jpg, topbarr.jpg, ui fix.jpg, uiii.jpg, um.jpg, upload modal .jpg, upload preview.jpg, upload.jpg, system settings.jpg|Administrator
+rose|2026-09-04 15:39:37|Upload Data: uploading error.jpg, users.jpg, what is this .jpg, upload.jpg|Administrator
+rose|2026-09-04 15:40:24|Upload Data: what is this .jpg, where.jpg, whereee.jpg, whrer.jpg, worsdt.jpg, aaaa.jpg, abnm_admin.png, abnm2.png, abnormal andnonmoving.png|Administrator
+rose|2026-09-04 15:40:24|Upload Data: abnormal andnonmoving.png, Abnormal anfd nonmoving_supermarket.png, ABNORMAL.png, abnormal_supermarket.png, accesss.jpg, action at the view document.jpg, action button .jpg, action drop bart.jpg, action drop down .jpg|Administrator
+rose|2026-09-04 15:40:25|Upload Data: action drop down .jpg, action files.jpg, actionss na .jpg, activites.jpg, add a new filname.jpg, additional.jpg, Annotation 2026-02-25 040825.png, Annotation 2026-02-25 040923.png, Annotation 2026-02-25 041139.png|Administrator
+rose|2026-09-04 15:40:25|Upload Data: Annotation 2026-02-25 041139.png, bar graph.jpg, basin .jpg, baw.jpg, bolok.jpg, bread crumb bah.jpg, breadcrumb.jpg, bulk action .jpg, dashboard .jpg|Administrator
+rose|2026-09-04 15:40:26|Upload Data: dashboard .jpg, details.jpg, dina mul.jpg, direction problem.jpg, directory path .jpg, document.jpg, double toaster .jpg, dropdwon.jpg, edit access.jpg|Administrator
+rose|2026-09-04 15:40:26|Upload Data: edit access.jpg, entries.jpg, error .jpg, filename modal resizing.jpg, fix this .jpg, fix ths .jpg, fix user ui .jpg, fix white.jpg, fixxx nao.jpg|Administrator
+rose|2026-09-04 15:40:26|Upload Data: fixxx nao.jpg, gdrive.jpg, grid.jpg, hightlight.jpg, icon.jpg, improvement .jpg, inspiration .jpg, intergrate.jpg, it still looks the same .jpg|Administrator
+rose|2026-09-04 15:40:27|Upload Data: it still looks the same .jpg, just like drive .jpg, kina bolokan .jpg, line form.jpg, link.jpg, Long Outstanding 2.png, Long Outstanding 3.png, Long outstanding.png, long outstanding_fixrite.png|Administrator
+rose|2026-09-04 15:40:28|Upload Data: long outstanding_fixrite.png, Long Outstanding_Supermarket.png, long outstanding1.png, loo.jpg, make it like this .jpg, might mouse.jpg, modall.jpg, no datatabl;e.jpg, nonmoving.png|Administrator
+rose|2026-09-04 15:40:28|Upload Data: nonmoving.png, on top .jpg, opin.jpg, PAGE.jpg, pagination on top .jpg, pagination.jpg, pinfolder.jpg, pinn modal.jpg, pinnne.jpg|Administrator
+rose|2026-09-04 15:40:28|Upload Data: pinnne.jpg, pinnthis.jpg, pins.jpg, pinsearch.jpg, pinui.jpg, re designing the upload .jpg, reconnecting.jpg, redesigning .jpg, redirection .jpg|Administrator
+rose|2026-09-04 15:40:29|Upload Data: redirection .jpg, refer .jpg, reference 2.jpg, reference 3.jpg, reference1 .jpg, remoiver .jpg, remove the boxes.jpg, rename.jpg, renameing modal .jpg|Administrator
+rose|2026-09-04 15:40:30|Upload Data: renameing modal .jpg, rud.jpg, same file.jpg, Screenshot 2026-08-25 174534.jpg, Screenshot 2026-08-26 085422.jpg, Screenshot 2026-08-26 085440.jpg, Screenshot 2026-08-26 092516.jpg, Screenshot 2026-08-26 092555.jpg, Screenshot 2026-08-26 095714.jpg|Administrator
+rose|2026-09-04 15:40:30|Upload Data: Screenshot 2026-08-26 095714.jpg, Screenshot 2026-08-26 145956.jpg, Screenshot 2026-08-26 173932.jpg, Screenshot 2026-08-26 175908.jpg, Screenshot 2026-08-27 083308.jpg, Screenshot 2026-08-27 102148.jpg, Screenshot 2026-08-27 110411.jpg, Screenshot 2026-08-27 111813.jpg, Screenshot 2026-08-27 114337.jpg|Administrator
+rose|2026-09-04 15:40:31|Upload Data: Screenshot 2026-08-27 114337.jpg, Screenshot 2026-08-28 085507.jpg, Screenshot 2026-08-28 085532.jpg, Screenshot 2026-08-28 090155.jpg, Screenshot 2026-08-28 091958.jpg, Screenshot 2026-08-28 095045.jpg, Screenshot 2026-08-28 101004.jpg, Screenshot 2026-08-28 110448.jpg, Screenshot 2026-08-28 111747.jpg|Administrator
+rose|2026-09-04 15:40:31|Upload Data: Screenshot 2026-08-28 111747.jpg, Screenshot 2026-08-28 114254.jpg, Screenshot 2026-08-28 143408.jpg, Screenshot 2026-08-28 145612.jpg, Screenshot 2026-08-28 150314.jpg, Screenshot 2026-08-28 153510.jpg, Screenshot 2026-08-28 155547.jpg, Screenshot 2026-08-28 182117.jpg, Screenshot 2026-08-28 182128.jpg|Administrator
+rose|2026-09-04 15:40:32|Upload Data: Screenshot 2026-08-28 182128.jpg, Screenshot 2026-08-28 182139.jpg, Screenshot 2026-08-28 182150.jpg, Screenshot 2026-09-01 170943.jpg, Screenshot 2026-09-02 095150.jpg, Screenshot 2026-09-02 100045.jpg, Screenshot 2026-09-03 092554.jpg, Screenshot 2026-09-04 084007.jpg, Screenshot 2026-09-04 091650.jpg|Administrator
+rose|2026-09-04 15:40:33|Upload Data: Screenshot 2026-09-04 091650.jpg, search button.jpg, sidebar.jpg, sss.jpg, st1.jpg, still .jpg, suggestions.jpg, swal conversion .jpg, system settings.jpg|Administrator
+rose|2026-09-04 15:40:33|Upload Data: system settings.jpg, the design reference .jpg, topbarr.jpg, ui fix.jpg, uiii.jpg, um.jpg, upload modal .jpg, upload preview.jpg, upload.jpg|Administrator
+rose|2026-09-04 15:40:34|Upload Data: upload.jpg, uploading error.jpg, users.jpg, what is this .jpg|Administrator
+rose|2026-09-04 15:41:05|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=36425ed854bc04837e484825a20ded93fdb1131615fbc2ce25a9f6a21af0c0fe07d4870162ce4...)|Administrator
+rose|2026-09-04 15:41:09|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=322ae939756398d6095fe9f292ffdc575048df5091868d2a5da7b64e804e3f2cc242286a5d5bd...)|Administrator
+rose|2026-09-04 15:41:15|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=e718afd95335f7a48ce83a168d6f076edff87e00fe34db07066e7cada409fcec9f320bbb9fdb0...)|Administrator
+rose|2026-09-04 15:41:18|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=4c35266c9d8b9b97f12c09c278fb94fd722b6b8c0e0ee48a56ea21477e962192b14dd4b64da1b...)|Administrator
+rose|2026-09-04 15:41:26|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=11c892f9d8408a081c1e927fec5033399ca81c418a543351e0ed9950f10cec069dd015beb7844...)|Administrator
+rose|2026-09-04 15:41:31|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=86cd550c52229aac9e2aa22bac995404a3a3716d3c99fa99d6aa0660aee2dda2f2928392495a5...)|Administrator
+rose|2026-09-04 15:41:38|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=268530bc360d52c2fbce87a9b1dd30a83e57cc203f9fe125168b32fd32cb2d738afb6af8dda2e...)|Administrator
+rose|2026-09-04 17:25:22|Login to Administrator Portal|Administrator
+rose|2026-09-04 17:35:35|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=fd9488466454c76d20f8ace1520e4888b76a2f1a07aa96ec30167a7e1e2ff7bdd678a8dce88aa...)|Administrator

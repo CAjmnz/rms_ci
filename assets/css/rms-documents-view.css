@@ -1,0 +1,330 @@
+/* View Documents page and compact uploaded-file viewer. */
+.view-documents-page .documents-panel { padding-bottom: 18px; }
+.view-documents-crumb { padding: 4px 8px; color: var(--muted); font-weight: 700; }
+.view-documents-cancel { color: var(--ink); text-decoration: none; }
+.view-documents-page .dataTables_wrapper { width: 100%; }
+.view-documents-page .dataTables_wrapper::after { display: block; clear: both; content: ""; }
+.view-documents-page .dataTables_length,
+.view-documents-page .dataTables_filter { margin: 0; padding: 0 20px 14px !important; }
+.view-documents-page .dataTables_info,
+.view-documents-page .dataTables_paginate { margin: 0; padding: 14px 20px 0 !important; }
+.view-documents-page #view-documents-table tbody tr { cursor: pointer; }
+.view-documents-page #view-documents-table tbody tr:hover td { background: var(--green-50) !important; }
+.view-documents-page #view-documents-table tbody td:nth-child(3) { color: #275d4c !important; font-weight: 700; }
+
+/* The stage owns flexible height so viewer content cannot enlarge the modal. */
+#uploaded-file-viewer .uploaded-file-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(760px, calc(100vw - 40px));
+    height: min(600px, calc(100vh - 40px));
+    max-width: 760px;
+    max-height: 600px;
+    overflow: hidden;
+}
+#uploaded-file-viewer .uploaded-file-toolbar {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    background: #f8faf8;
+}
+#uploaded-file-viewer .uploaded-file-toolbar .document-action { padding: 7px 10px; font-size: 12px; }
+#uploaded-file-viewer #uploaded-file-zoom {
+    min-width: 50px;
+    color: var(--green-700);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+#uploaded-file-viewer .uploaded-file-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding: 10px;
+    background: #30363b;
+}
+#uploaded-file-viewer .uploaded-file-stage iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    border: 0;
+    background: #fff;
+}
+/* JavaScript anchors the image at center before scale and pan. */
+#uploaded-file-viewer #uploaded-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    max-width: none;
+    max-height: none;
+    transform-origin: center center;
+    cursor: default;
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform;
+}
+#uploaded-file-viewer #uploaded-image.is-dragging { cursor: grabbing; }
+#uploaded-file-viewer #uploaded-image[hidden],
+#uploaded-file-viewer #uploaded-file-frame[hidden] { display: none !important; }
+#uploaded-file-viewer .uploaded-file-navigation {
+    display: grid;
+    flex: 0 0 auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 12px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+}
+#uploaded-file-viewer .uploaded-file-navigation strong {
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .view-documents-page .dataTables_length,
+    .view-documents-page .dataTables_filter {
+        width: 100%;
+        padding-right: 18px !important;
+        padding-left: 18px !important;
+    }
+    #uploaded-file-viewer .uploaded-file-dialog {
+        width: calc(100vw - 20px);
+        height: min(520px, calc(100vh - 20px));
+        max-width: none;
+        max-height: none;
+    }
+    #uploaded-file-viewer .uploaded-file-toolbar { padding: 6px; }
+    #uploaded-file-viewer .uploaded-file-toolbar .document-action { flex: 1 1 auto; }
+    #uploaded-file-viewer .uploaded-file-stage { padding: 6px; }
+}
+.rms-modal-dialog-small {
+    width: min(520px, calc(100vw - 32px));
+}
+
+.rms-modal-body {
+    padding: 24px;
+}
+
+.rms-modal-body label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.rms-modal-body input,
+.rms-modal-body select {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #d8e4df;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.rms-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid #e6eeeb;
+}
+/* VIEWER FIX: keep only the document viewer inside the visible viewport. */
+#uploaded-file-viewer {
+    position: fixed;
+    inset: 0;
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    padding: 16px;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+/* VIEWER FIX: use a fixed flex shell so the stage cannot create a scrollbar. */
+#uploaded-file-viewer .uploaded-file-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(1120px, calc(100vw - 32px));
+    height: min(720px, calc(100vh - 32px));
+    height: min(720px, calc(100dvh - 32px));
+    max-width: none;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    overflow: hidden !important;
+}
+
+
+#uploaded-file-viewer .uploaded-viewer-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    flex: 0 0 auto;
+}
+
+/* CLOSE BUTTON MOVED TO RIGHT */
+#uploaded-file-viewer .uploaded-viewer-close {
+    position: static;
+    grid-column: 3;
+    width: 42px;
+    height: 42px;
+}
+
+#uploaded-file-viewer .uploaded-viewer-heading {
+    grid-column: 2;
+    min-width: 0;
+}
+
+#uploaded-file-viewer .uploaded-viewer-heading h2,
+#uploaded-file-viewer .uploaded-viewer-heading p {
+    margin: 0;
+}
+
+#uploaded-file-viewer .uploaded-viewer-actions {
+    grid-column: 1;
+    justify-self: start;
+}
+
+#uploaded-file-viewer .uploaded-file-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    overflow: hidden;
+}
+
+#uploaded-file-viewer .uploaded-viewer-help {
+    margin-left: auto;
+    color: #65736c;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+#uploaded-file-viewer .uploaded-file-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden !important;
+    touch-action: none;
+    user-select: none;
+}
+
+/* VIEWER FIX: right-button pan uses pointer events and a matching cursor. */
+#uploaded-file-viewer #uploaded-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: none;
+    max-height: none;
+    transform-origin: center center;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform;
+}
+
+#uploaded-file-viewer #uploaded-image.is-dragging {
+    cursor: grabbing;
+}
+
+#uploaded-file-viewer #uploaded-file-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+#uploaded-file-viewer .uploaded-stage-navigation {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    background: rgba(23, 34, 31, 0.68);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+#uploaded-file-viewer .uploaded-stage-navigation.previous {
+    left: 18px;
+}
+
+#uploaded-file-viewer .uploaded-stage-navigation.next {
+    right: 18px;
+}
+
+#uploaded-file-viewer .uploaded-stage-navigation:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+#uploaded-file-viewer .uploaded-file-navigation {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 9px 16px;
+    text-align: center;
+    overflow: hidden;
+}
+
+html.rms-viewer-locked,
+body.rms-viewer-locked {
+    width: 100%;
+    height: 100%;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+}
+
+/* VIEWER FIX: fix the background at its saved position while the viewer is open. */
+body.rms-viewer-locked {
+    position: fixed;
+    inset-inline: 0;
+}
+
+@media (max-width: 760px) {
+    #uploaded-file-viewer {
+        padding: 8px;
+    }
+
+    #uploaded-file-viewer .uploaded-file-dialog {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 16px);
+        height: calc(100dvh - 16px);
+        max-height: calc(100vh - 16px);
+        max-height: calc(100dvh - 16px);
+    }
+
+    #uploaded-file-viewer .uploaded-file-toolbar {
+        flex-wrap: wrap;
+    }
+
+    #uploaded-file-viewer .uploaded-viewer-help {
+        width: 100%;
+        margin-left: 0;
+        white-space: normal;
+    }
+
+    #uploaded-file-viewer .uploaded-stage-navigation {
+        width: 46px;
+        height: 46px;
+    }
+}
