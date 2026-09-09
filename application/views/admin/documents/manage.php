@@ -259,7 +259,7 @@ $build_path_label = function ($path) {
         rel="stylesheet"
         href="<?php echo base_url(
                     /* VIEWER FIX: new version forces the browser to load the updated viewer CSS. */
-                    'assets/css/rms-documents.css?v=20260909-pins-access-rename-v6'
+                    'assets/css/rms-documents.css?v=20260909-marquee-transfer-v9'
                 ); ?>">
     <link
         rel="stylesheet"
@@ -628,6 +628,7 @@ $build_path_label = function ($path) {
                         role="alert"></div>
 
                     <div class="documents-table-wrap">
+                        <div class="documents-marquee-selection" id="documents-marquee-selection" aria-hidden="true"></div>
                         <table
                             class="documents-table display"
                             id="documents-table">
@@ -648,7 +649,7 @@ $build_path_label = function ($path) {
                             </tbody>
                         </table>
                     </div>
-                    <p class="documents-workspace-note"><i class="bi bi-info-circle"></i> Double-click a folder to navigate deeper. Double-click a file to preview.</p>
+                    <p class="documents-workspace-note"><i class="bi bi-info-circle"></i> Drag across document rows to select multiple files, then drag the highlighted files onto an unpublished folder to transfer. Double-click a folder to navigate deeper. Double-click a file to preview.</p>
                 </section>
 
                 <!-- File / Folder Information Drawer -->
@@ -680,7 +681,6 @@ $build_path_label = function ($path) {
                         <section class="documents-info-panel is-active" data-info-panel="details">
                             <dl class="documents-info-list">
                                 <div class="documents-info-row"><dt>Type</dt><dd id="documents-info-type">—</dd></div>
-                                <div class="documents-info-row" id="documents-info-id-row"><dt>ID</dt><dd id="documents-info-id">—</dd></div>
                                 <div class="documents-info-row"><dt>Location</dt><dd id="documents-info-location">—</dd></div>
                                 <div class="documents-info-row" id="documents-info-subfolders-row"><dt>Total Subfolders</dt><dd id="documents-info-subfolders">—</dd></div>
                                 <div class="documents-info-row" id="documents-info-files-row"><dt>Total Files</dt><dd id="documents-info-files">—</dd></div>
@@ -739,13 +739,35 @@ $build_path_label = function ($path) {
                             <button type="button" class="rms-modal-close" id="documents-access-close" aria-label="Close">&times;</button>
                         </div>
                         <div class="rms-modal-body">
-                            <label class="documents-access-label" for="documents-access-select">People with access</label>
-                            <select id="documents-access-select" class="documents-access-select" multiple size="9"></select>
-                            <p class="documents-access-help">Use Ctrl/Command to select multiple users. This saves to the existing RMS file/folder tagging permissions.</p>
+                            <div class="documents-access-topline">
+                                <div class="documents-access-creator-card">
+                                    <span class="documents-info-access-avatar is-creator" id="documents-access-creator-avatar">A</span>
+                                    <span>
+                                        <small>Created by</small>
+                                        <strong id="documents-access-creator-name">Admin</strong>
+                                    </span>
+                                </div>
+                                <div class="documents-access-add-block">
+                                    <label class="documents-access-label" for="documents-access-select">Add user(s)</label>
+                                    <div class="documents-access-add-row">
+                                        <select id="documents-access-select" class="documents-access-select" multiple size="5"></select>
+                                        <button type="button" class="btn btn-success" id="documents-access-add">Add selected</button>
+                                    </div>
+                                    <p class="documents-access-help">Select one or multiple users. Adding users keeps everyone who is already tagged.</p>
+                                </div>
+                            </div>
+                            <div class="documents-access-current-head">
+                                <strong>Users with access</strong>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="documents-access-remove-selected" disabled>
+                                    <i class="bi bi-trash"></i> Remove selected
+                                </button>
+                            </div>
+                            <div class="documents-access-current-list" id="documents-access-current-list">
+                                <div class="documents-access-empty">Loading access...</div>
+                            </div>
                         </div>
                         <div class="rms-modal-footer">
-                            <button type="button" class="btn btn-light" id="documents-access-cancel">Cancel</button>
-                            <button type="button" class="btn btn-success" id="documents-access-save">Save access</button>
+                            <button type="button" class="btn btn-light" id="documents-access-cancel">Close</button>
                         </div>
                     </div>
                 </div>
@@ -1180,9 +1202,9 @@ $build_path_label = function ($path) {
                 <input type="hidden" name="level" id="document-edit-level" value="">
                 <input type="hidden" name="record_id" id="document-edit-id" value="">
                 <div class="rms-modal-header">
-                    <span class="rms-modal-eyebrow">Documents Module &bull; Rename Record</span>
-                    <h2 class="rms-modal-title" id="document-edit-title">Rename Folder</h2>
-                    <p class="rms-modal-subtitle">Rename this RMS filename or subfolder without leaving Manage Documents.</p>
+                    <span class="rms-modal-eyebrow">Documents Module &bull; Edit Record</span>
+                    <h2 class="rms-modal-title" id="document-edit-title">Edit Folder</h2>
+                    <p class="rms-modal-subtitle">Edit this RMS filename or subfolder without leaving Manage Documents.</p>
                     <button type="button" class="rms-modal-close" data-modal-close>&times;</button>
                 </div>
                 <div class="rms-modal-body">
@@ -1360,6 +1382,7 @@ $build_path_label = function ($path) {
                                     'renameUploadedUrl' => site_url('administrator/documents/rename_uploaded_file'),
                                     'transferUploadedUrl' => site_url('administrator/documents/transfer_uploaded_files'),
                                     'folderFilesUrl' => site_url('administrator/documents/view_documents') . '?datatable=1',
+                                    'fileUrl' => site_url('administrator/documents/file'),
                                     'uploadUrl' => site_url('administrator/documents/upload'),
                                     'createFilenameUrl' => site_url('administrator/documents/create-filename'),
                                     'createSubfolderUrl' => site_url('administrator/documents/create-subfolder'),
@@ -1410,7 +1433,7 @@ $build_path_label = function ($path) {
                          * Level 4 unrestricted unpublished-path behavior.
                          */
                         /* VIEWER FIX: new version forces the browser to load the right-drag and scroll-lock code. */
-                        'assets/js/rms-documents.js?v=20260909-pins-access-rename-v6'
+                        'assets/js/rms-documents.js?v=20260909-marquee-transfer-v9'
                     ); ?>"></script>
 </body>
 

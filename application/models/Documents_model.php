@@ -410,7 +410,8 @@ class Documents_model extends CI_Model
             ->from('data_f')
             ->where('file_id', (int) $row['file_id'])
             ->where('page_nof', (int) $row['page_no'])
-            /* WATERMARK PAIRING: original and protected copies share this upload timestamp. */
+            /* WATERMARK PAIRING: match the exact document, not only page/time. */
+            ->where('data_namef', (string) $row['data_name'])
             ->where('date_uploadedf', (string) $row['date_uploaded'])
             ->where('statf', 0);
 

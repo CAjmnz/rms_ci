@@ -1058,6 +1058,77 @@ class User_model extends CI_Model
     }
 
     /**
+     * Add or remove selected users for one exact RMS path without replacing
+     * the other users already tagged to that path.
+     *
+     * @param string $token
+     * @param array $user_ids
+     * @param bool $grant TRUE to add, FALSE to remove
+     * @return bool
+     */
+    public function change_path_access_users($token, $user_ids, $grant)
+    {
+        $tree = $this->get_access_tree(0);
+        $valid_paths = array();
+        $this->collect_access_paths($tree, $valid_paths);
+        $token = trim((string) $token);
+
+        if (!isset($valid_paths[$token])) {
+            return FALSE;
+        }
+
+        $selected = array();
+        foreach ((array) $user_ids as $user_id) {
+            $user_id = (int) $user_id;
+            if ($user_id > 0) {
+                $selected[$user_id] = TRUE;
+            }
+        }
+
+        if (empty($selected)) {
+            return TRUE;
+        }
+
+        $valid_users = $this->db
+            ->select('user_id')
+            ->from('users')
+            ->where('stat', 0)
+            ->where_in('user_id', array_keys($selected))
+            ->get()
+            ->result_array();
+
+        $path = $valid_paths[$token];
+
+        foreach ($valid_users as $user) {
+            $where = array(
+                'user_id' => (int) $user['user_id'],
+                'file_id' => (int) $path[0]
+            );
+
+            for ($level = 1; $level <= 10; $level++) {
+                $where['sub'.$level.'_id'] = isset($path[$level])
+                    ? (int) $path[$level]
+                    : 0;
+            }
+
+            $exists = $this->db
+                ->from('user_allowed_data')
+                ->where($where)
+                ->count_all_results() > 0;
+
+            if ($grant) {
+                if (!$exists && !$this->db->insert('user_allowed_data', $where)) {
+                    return FALSE;
+                }
+            } elseif ($exists && !$this->db->where($where)->delete('user_allowed_data')) {
+                return FALSE;
+            }
+        }
+
+        return TRUE;
+    }
+
+    /**
      * Flattens presentation nodes into token => numeric path validation data.
      */
     private function collect_access_paths($nodes, &$valid_paths)

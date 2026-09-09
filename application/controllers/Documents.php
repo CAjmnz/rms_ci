@@ -1026,7 +1026,7 @@ class Documents extends CI_Controller
                 'date_uploaded' => (string) $record['date_uploaded'],
                 'status' => (int) $record['stat'],
                 /* WATERMARK-ONLY PREVIEW: never expose the original as a viewer source. */
-                'view_url' => $preview['has_watermark']
+                'view_url' => $preview['has_preview']
                     ? site_url('administrator/documents/file') .
                     '?' . http_build_query(array('token' => $token))
                     : '',
@@ -1107,8 +1107,12 @@ class Documents extends CI_Controller
             }
         }
 
-        /* WATERMARK-ONLY PREVIEW: the original is available only as a download. */
-        if ($download) {
+        /*
+         * Preview the protected watermark copy first. If an older RMS record
+         * has no watermark file, fall back to its original so the document is
+         * still viewable instead of showing a blank/unavailable preview.
+         */
+        if ($download || (!$download && $path === FALSE)) {
             $served_name = $document['data_name'];
 
             $path = $this->document_storage_path(
@@ -1116,11 +1120,6 @@ class Documents extends CI_Controller
                 $document['data_name'],
                 TRUE
             );
-        }
-
-        if (!$download && $path === FALSE) {
-            show_error('A watermarked preview is not available for this document.', 404);
-            return;
         }
 
         if (
@@ -1136,9 +1135,31 @@ class Documents extends CI_Controller
             return;
         }
 
-        $mime = function_exists('mime_content_type')
+        $detected_mime = function_exists('mime_content_type')
             ? mime_content_type($path)
-            : 'application/octet-stream';
+            : FALSE;
+
+        $extension = strtolower(pathinfo($served_name, PATHINFO_EXTENSION));
+        $known_mimes = array(
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'bmp' => 'image/bmp',
+            'pdf' => 'application/pdf',
+            'txt' => 'text/plain'
+        );
+
+        $mime = (
+            $detected_mime !== FALSE &&
+            $detected_mime !== '' &&
+            $detected_mime !== 'application/octet-stream'
+        )
+            ? $detected_mime
+            : (isset($known_mimes[$extension])
+                ? $known_mimes[$extension]
+                : 'application/octet-stream');
 
         $this->output
             ->set_header('X-Content-Type-Options: nosniff')
@@ -1392,26 +1413,58 @@ class Documents extends CI_Controller
             $destination = array_merge($document, $target);
             foreach (array(array($document['data_name'], TRUE), array($document['viewer_name'], FALSE)) as $file) {
                 if ($file[0] === '') continue;
+
                 $old_path = $this->document_storage_path($document, $file[0], $file[1]);
-                $existing_target = $this->document_storage_path(
+
+                /*
+                 * A watermark/viewer copy is optional in legacy RMS data.
+                 * Some uploaded documents legitimately have no physical
+                 * viewer file (the UI shows "Preview unavailable"). That must
+                 * not block moving the original document. The original file,
+                 * however, is required and still fails safely when missing.
+                 */
+                if ($old_path === FALSE || !is_file($old_path)) {
+                    if ($file[1] === FALSE) {
+                        continue;
+                    }
+
+                    $this->rollback_file_moves($moves);
+                    return $this->json(FALSE, 'A selected original file could not be found for transfer.');
+                }
+
+                /*
+                 * Build the exact destination directory. Do not use the legacy
+                 * fuzzy resolver for a new transfer target because a similar
+                 * existing directory can be mistaken for the real destination.
+                 */
+                $target_directory = $this->document_storage_directory(
                     $destination,
-                    $file[0],
                     $file[1]
                 );
-                $new_path = $this->new_document_storage_path(
-                    $destination,
-                    $file[0],
-                    $file[1]
-                );
+                $existing_target = $target_directory !== FALSE
+                    ? $this->resolve_physical_document_path(
+                        $target_directory,
+                        $file[0]
+                    )
+                    : FALSE;
+                $new_path = $target_directory !== FALSE
+                    ? $this->new_encrypted_document_path(
+                        $target_directory,
+                        $file[0]
+                    )
+                    : FALSE;
+
                 if (
-                    $old_path === FALSE || $new_path === FALSE ||
-                    $existing_target !== FALSE || !is_file($old_path) ||
-                    !$this->ensure_directory(dirname($new_path)) || file_exists($new_path) ||
+                    $new_path === FALSE ||
+                    $existing_target !== FALSE ||
+                    !$this->ensure_directory(dirname($new_path)) ||
+                    file_exists($new_path) ||
                     !@rename($old_path, $new_path)
                 ) {
                     $this->rollback_file_moves($moves);
                     return $this->json(FALSE, 'A selected file could not be transferred safely.');
                 }
+
                 $moves[] = array('old' => $old_path, 'new' => $new_path);
             }
             $documents[] = $document;
@@ -1944,7 +1997,7 @@ class Documents extends CI_Controller
                     'created_by' => 'Admin',
                     'reviewed_by' => 'Admin',
                     /* WATERMARK-ONLY PREVIEW: files without a watermark cannot open the original inline. */
-                    'view_url' => $preview['has_watermark']
+                    'view_url' => $preview['has_preview']
                         ? site_url('administrator/documents/file') . '?' .
                         http_build_query(array('token' => $token))
                         : '',
@@ -3997,10 +4050,126 @@ class Documents extends CI_Controller
             implode(DIRECTORY_SEPARATOR, $legacy_parts);
     }
 
+    /**
+     * Resolve the real existing hierarchy for legacy folders whose database
+     * display name no longer exactly matches the physical directory name.
+     * Reads may use this compatibility resolver; new writes still use the
+     * normal document_storage_directory() path builder.
+     */
+    private function document_existing_storage_directory($document, $original)
+    {
+        $setting_id = $original ? 1 : 7;
+        $fallback = $original
+            ? FCPATH . 'administrator/agc_data/'
+            : FCPATH . 'data/';
+
+        $directory = $this->resolve_storage_root(
+            $this->Documents_model->get_system_setting($setting_id),
+            $fallback
+        );
+
+        if (!is_dir($directory)) {
+            return FALSE;
+        }
+
+        $parts = array(
+            isset($document['sub_name']) ? $document['sub_name'] : '',
+            isset($document['dept_name']) ? $document['dept_name'] : '',
+            isset($document['filename']) ? $document['filename'] : ''
+        );
+
+        for ($level = 1; $level <= $this->maximum_level; $level++) {
+            $name = isset($document['subfolder' . $level . '_name'])
+                ? $document['subfolder' . $level . '_name']
+                : '';
+
+            if ($name !== '') {
+                $parts[] = $name;
+            }
+        }
+
+        foreach ($parts as $part) {
+            $safe = $this->safe_folder_segment($part);
+            if ($safe === FALSE) {
+                return FALSE;
+            }
+
+            $server_name = $this->server_storage_name($safe);
+            $exact_names = array_values(array_unique(array(
+                $server_name,
+                $safe
+            )));
+            $matched = FALSE;
+
+            foreach ($exact_names as $candidate_name) {
+                $candidate = $this->join_storage_path(
+                    $directory,
+                    $candidate_name
+                );
+
+                if (is_dir($candidate)) {
+                    $matched = $candidate;
+                    break;
+                }
+            }
+
+            if ($matched === FALSE) {
+                $entries = @scandir($directory);
+                if (!is_array($entries)) {
+                    return FALSE;
+                }
+
+                $target = strtolower($server_name);
+                $best_path = FALSE;
+                $best_score = 4;
+                $best_count = 0;
+
+                foreach ($entries as $entry) {
+                    if ($entry === '.' || $entry === '..') {
+                        continue;
+                    }
+
+                    $candidate = $this->join_storage_path(
+                        $directory,
+                        $entry
+                    );
+
+                    if (!is_dir($candidate)) {
+                        continue;
+                    }
+
+                    $score = levenshtein(
+                        $target,
+                        strtolower($this->server_storage_name($entry))
+                    );
+
+                    if ($score < $best_score) {
+                        $best_score = $score;
+                        $best_path = $candidate;
+                        $best_count = 1;
+                    } elseif ($score === $best_score) {
+                        $best_count++;
+                    }
+                }
+
+                /* Only accept one clear near-match; never guess ambiguously. */
+                if ($best_path === FALSE || $best_score > 3 || $best_count !== 1) {
+                    return FALSE;
+                }
+
+                $matched = $best_path;
+            }
+
+            $directory = $matched;
+        }
+
+        return $directory;
+    }
+
     /** Resolve an existing encrypted or legacy physical document. */
     private function document_storage_path($document, $served_name, $original)
     {
-        $directory = $this->document_storage_directory(
+        $directory = $this->document_existing_storage_directory(
             $document,
             $original
         );
@@ -4043,6 +4212,7 @@ class Documents extends CI_Controller
         );
 
         $has_watermark = FALSE;
+        $has_original = FALSE;
 
         if (
             $document &&
@@ -4060,17 +4230,30 @@ class Documents extends CI_Controller
                 is_readable($watermark_path);
         }
 
+        if ($document && !empty($document['data_name'])) {
+            $original_path = $this->document_storage_path(
+                $document,
+                $document['data_name'],
+                TRUE
+            );
+            $has_original =
+                $original_path !== FALSE &&
+                is_file($original_path) &&
+                is_readable($original_path);
+        }
+
         return array(
             'has_watermark' => $has_watermark ? 1 : 0,
+            'has_preview' => ($has_watermark || $has_original) ? 1 : 0,
             'display_name' => $has_watermark
                 ? (string) $document['viewer_name']
                 : ($document ? (string) $document['data_name'] : ''),
             'preview_type' => $has_watermark
                 ? 'watermark'
-                : 'unavailable',
+                : ($has_original ? 'original' : 'unavailable'),
             'preview_label' => $has_watermark
                 ? 'Watermarked preview'
-                : 'Watermarked preview unavailable'
+                : ($has_original ? 'Original preview' : 'Preview unavailable')
         );
     }
     /** Confirm a selected data row belongs to the open View Documents page. */
@@ -4454,8 +4637,18 @@ class Documents extends CI_Controller
         if ($this->input->method(TRUE) === 'POST') {
             $user_ids = $this->input->post('user_ids');
             $user_ids = is_array($user_ids) ? $user_ids : array();
+            $action = strtolower(trim((string) $this->input->post('action', TRUE)));
 
-            if (!$this->User_model->set_path_access_users($token, $user_ids)) {
+            if ($action === 'add' || $action === 'remove') {
+                if (!$this->User_model->change_path_access_users(
+                    $token,
+                    $user_ids,
+                    $action === 'add'
+                )) {
+                    return $this->json(FALSE, 'Access could not be updated.');
+                }
+            } elseif (!$this->User_model->set_path_access_users($token, $user_ids)) {
+                /* Backward compatibility for callers that still save the full list. */
                 return $this->json(FALSE, 'Access could not be updated.');
             }
         }

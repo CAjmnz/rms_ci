@@ -1467,7 +1467,7 @@
             (Number(row.is_pinned) === 1 ? 'Unpin' : 'Pin') + '</button>';
 
         if (!published && ownedByCurrentUser) {
-            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="fa fa-edit"></i>Rename</button>';
+            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="fa fa-edit"></i>Edit</button>';
             items += '<button type="button" class="doc-action-item danger" data-action="delete" data-id="' + id + '"><i class="fa fa-trash"></i>Delete</button>';
         }
 
@@ -1663,8 +1663,8 @@ function loadRecord(recordId, done, requestedLevel) {
 
             $('#document-edit-title').text(
                 recordLevel === 0
-                    ? 'Rename Filename'
-                    : 'Rename Subfolder' + recordLevel
+                    ? 'Edit Filename'
+                    : 'Edit Subfolder' + recordLevel
             );
 
             $('#document-edit-section-title').text(
@@ -2030,7 +2030,6 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(documentsInfoFileSize(row));
         documentsInfoSetIcon('file', name);
         $('#documents-info-type').text(documentsInfoValue(row.preview_label || row.preview_type || 'Document'));
-        $('#documents-info-id').text(documentsInfoValue(row.data_id || row.record_id));
         $('#documents-info-location').text(documentsInfoPath());
         $('#documents-info-owner').text(documentsInfoValue(row.created_by));
         $('#documents-info-created').text(documentsInfoValue(row.date_created));
@@ -2038,7 +2037,7 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-status').text('File');
         $('#documents-info-size').text(documentsInfoFileSize(row));
         $('#documents-info-subfolders-row, #documents-info-files-row').hide();
-        $('#documents-info-size-row, #documents-info-id-row').show();
+        $('#documents-info-size-row').show();
         documentsInfoOpenDrawer();
         loadDocumentsInfoActivity('file', row.data_id || row.record_id || 0, name);
         loadDocumentsInfoAccess(row);
@@ -2053,7 +2052,6 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(status);
         documentsInfoSetIcon('folder', name);
         $('#documents-info-type').text('Folder');
-        $('#documents-info-id').text(documentsInfoValue(row.record_id));
         $('#documents-info-location').text(documentsInfoPath());
         $('#documents-info-subfolders').text(documentsInfoValue(row.child_count));
         $('#documents-info-files').text(documentsInfoValue(row.document_count));
@@ -2061,7 +2059,7 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-created').text(documentsInfoValue(row.date_created));
         $('#documents-info-modified').text(documentsInfoValue(row.date_modified));
         $('#documents-info-status').text(status);
-        $('#documents-info-subfolders-row, #documents-info-files-row, #documents-info-id-row').show();
+        $('#documents-info-subfolders-row, #documents-info-files-row').show();
         $('#documents-info-size-row').hide();
         documentsInfoOpenDrawer();
         loadDocumentsInfoActivity('folder', row.record_id || 0, name);
@@ -2086,30 +2084,176 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(status);
         documentsInfoSetIcon('folder', pathName);
         $('#documents-info-type').text('Folder');
-        $('#documents-info-id').text(documentsInfoValue($button.data('record-id')));
         $('#documents-info-location').text(documentsInfoPath());
         $('#documents-info-subfolders').text(documentsInfoValue($button.data('child-count')));
         $('#documents-info-files').text(documentsInfoValue($button.data('file-count')));
         $('#documents-info-owner, #documents-info-created, #documents-info-modified').text('—');
         $('#documents-info-status').text(status);
-        $('#documents-info-subfolders-row, #documents-info-files-row, #documents-info-id-row').show();
+        $('#documents-info-subfolders-row, #documents-info-files-row').show();
         $('#documents-info-size-row').hide();
         documentsInfoOpenDrawer();
         loadDocumentsInfoActivity('folder', $button.data('record-id') || 0, pathName);
         loadDocumentsInfoAccess(documentsInfoSelected);
     }
 
+    var lastHighlightedFileRow = null;
+
     $tableElement.on('click', 'tbody tr', function (event) {
         if ($(event.target).closest('input, button, a, select, label, .doc-actions-menu').length) return;
+        if (typeof marqueeSuppressClick !== 'undefined' && marqueeSuppressClick) {
+            marqueeSuppressClick = false;
+            return;
+        }
+
         var row = table.row(this).data();
         if (!row) return;
-        $tableElement.find('tbody tr').removeClass('documents-row--selected');
-        $(this).addClass('documents-row--selected');
+
+        var $row = $(this);
+
+        /*
+         * FILE HIGHLIGHT SELECTION:
+         * A highlighted document is the same document used by bulk actions
+         * and drag/drop transfer. Normal click selects one file, Ctrl/Cmd
+         * toggles files, and Shift selects a visible range of files.
+         * Folder rows remain normal navigation/transfer destinations.
+         */
+        if (row.item_type === 'file') {
+            var $check = $row.find('.document-check');
+            var additive = event.ctrlKey || event.metaKey;
+            var rangeSelect = event.shiftKey && lastHighlightedFileRow;
+
+            if (rangeSelect) {
+                var $fileRows = $tableElement.find('tbody tr[data-item-type="file"]');
+                var start = $fileRows.index(lastHighlightedFileRow);
+                var end = $fileRows.index(this);
+
+                if (start !== -1 && end !== -1) {
+                    if (!additive) currentChecks().prop('checked', false);
+                    $fileRows.slice(Math.min(start, end), Math.max(start, end) + 1)
+                        .find('.document-check')
+                        .prop('checked', true);
+                }
+            } else if (additive) {
+                $check.prop('checked', !$check.prop('checked'));
+            } else {
+                currentChecks().prop('checked', false);
+                $check.prop('checked', true);
+            }
+
+            lastHighlightedFileRow = this;
+            updateSelection();
+        } else {
+            $tableElement.find('tbody tr').removeClass('documents-row--selected');
+            $row.addClass('documents-row--selected');
+        }
+
         if ($('#documents-info-drawer').hasClass('is-open')) {
             if (row.item_type === 'file') showDocumentInformation(row);
             else showFolderInformation(row);
         }
     });
+
+    function renderDocumentsAccessModal(users) {
+        users = $.isArray(users) ? users : [];
+        var creator = documentsInfoSelected && documentsInfoSelected.created_by
+            ? documentsInfoSelected.created_by
+            : 'Admin';
+        var $select = $('#documents-access-select').empty();
+        var $list = $('#documents-access-current-list').empty();
+        var allowed = $.grep(users, function (user) { return Number(user.has_access) === 1; });
+        var available = $.grep(users, function (user) { return Number(user.has_access) !== 1; });
+
+        $('#documents-access-creator-name').text(documentsInfoValue(creator));
+        $('#documents-access-creator-avatar').text(documentsInfoActivityInitials(creator));
+
+        $.each(available, function (_, user) {
+            $('<option>')
+                .val(user.user_id)
+                .text((user.emp_name || user.username || 'User') + (user.username ? ' (' + user.username + ')' : ''))
+                .appendTo($select);
+        });
+
+        if (!available.length) {
+            $('<option disabled>No more users available to add</option>').appendTo($select);
+        }
+
+        if (!allowed.length) {
+            $list.html('<div class="documents-access-empty">No users are currently tagged to this folder path.</div>');
+        } else {
+            $.each(allowed, function (_, user) {
+                var displayName = user.emp_name || user.username || 'User';
+                var username = user.username || '';
+                var $row = $('<div class="documents-access-current-user"></div>');
+                $('<input type="checkbox" class="documents-access-remove-check" aria-label="Select user for removal">')
+                    .val(user.user_id)
+                    .appendTo($row);
+                $('<span class="documents-info-access-avatar"></span>')
+                    .text(documentsInfoActivityInitials(displayName))
+                    .appendTo($row);
+                $('<span class="documents-access-current-copy"><strong></strong><small></small></span>')
+                    .find('strong').text(displayName).end()
+                    .find('small').text(username).end()
+                    .appendTo($row);
+                $('<button type="button" class="documents-access-remove-one" title="Remove access" aria-label="Remove access"><i class="bi bi-trash"></i></button>')
+                    .attr('data-user-id', user.user_id)
+                    .appendTo($row);
+                $row.appendTo($list);
+            });
+        }
+
+        $('#documents-access-remove-selected').prop('disabled', true);
+    }
+
+    function loadDocumentsAccessModal() {
+        if (!documentsInfoSelected || !config.accessUrl) return;
+        var token = documentsInfoPathToken(documentsInfoSelected);
+        if (!token) return;
+        $('#documents-access-current-list').html('<div class="documents-access-empty">Loading access...</div>');
+        $('#documents-access-select').empty();
+        $.getJSON(config.accessUrl, { path_token: token }).done(function (response) {
+            if (!response || !response.success) {
+                $('#documents-access-current-list').html('<div class="documents-access-empty">Access information could not be loaded.</div>');
+                return;
+            }
+            renderDocumentsAccessModal(response.users || []);
+        }).fail(function () {
+            $('#documents-access-current-list').html('<div class="documents-access-empty">Access information could not be loaded.</div>');
+        });
+    }
+
+    function updateDocumentsAccess(action, userIds, $button) {
+        if (!documentsInfoSelected || !userIds.length) return;
+        var request = {
+            path_token: documentsInfoPathToken(documentsInfoSelected),
+            action: action,
+            user_ids: userIds
+        };
+        request[config.csrfName] = config.csrfHash;
+        if ($button && $button.length) $button.prop('disabled', true);
+
+        $.ajax({ url: config.accessUrl, type: 'POST', dataType: 'json', data: request }).done(function (response) {
+            if (response && response.csrfName && response.csrfHash) {
+                config.csrfName = response.csrfName;
+                config.csrfHash = response.csrfHash;
+            }
+            if (!response || !response.success) {
+                documentsAlert('Access not updated', response && response.message ? response.message : 'Access could not be updated.', 'error');
+                return;
+            }
+            renderDocumentsAccessModal(response.users || []);
+            renderDocumentsInfoAccess(
+                response.users || [],
+                documentsInfoSelected && documentsInfoSelected.created_by
+                    ? documentsInfoSelected.created_by
+                    : 'Admin'
+            );
+            showMessage('success', action === 'add' ? 'User access added successfully.' : 'User access removed successfully.');
+        }).fail(function () {
+            documentsAlert('Access not updated', 'The server could not update folder access.', 'error');
+        }).always(function () {
+            if ($button && $button.length) $button.prop('disabled', false);
+        });
+    }
 
     $(document).on('click', '#documents-info-close', documentsInfoCloseDrawer);
     $(document).on('click', '#documents-info-manage-access', function () {
@@ -2119,55 +2263,37 @@ function loadRecord(recordId, done, requestedLevel) {
             documentsAlert('Access unavailable', 'This item is not inside a taggable RMS folder path.', 'info');
             return;
         }
-        if (!token || !config.accessUrl) return;
-        var $modal = $('#documents-access-modal');
-        var $select = $('#documents-access-select').empty();
-        $('#documents-access-subtitle').text('Select who can access “' + documentsInfoSelected.record_name + '”.');
-        $modal.addClass('show');
-        $.getJSON(config.accessUrl, { path_token: token }).done(function (response) {
-            if (!response || !response.success) return;
-            $.each(response.users || [], function (_, user) {
-                $('<option>')
-                    .val(user.user_id)
-                    .text((user.emp_name || user.username) + (user.username ? ' (' + user.username + ')' : ''))
-                    .prop('selected', Number(user.has_access) === 1)
-                    .appendTo($select);
-            });
-        });
+        if (!config.accessUrl) return;
+        $('#documents-access-subtitle').text('Add or remove users who can access “' + documentsInfoSelected.record_name + '”.');
+        $('#documents-access-modal').addClass('show');
+        loadDocumentsAccessModal();
     });
 
     $(document).on('click', '#documents-access-close, #documents-access-cancel', function () {
         $('#documents-access-modal').removeClass('show');
     });
 
-    $(document).on('click', '#documents-access-save', function () {
-        if (!documentsInfoSelected) return;
-        var request = {
-            path_token: documentsInfoPathToken(documentsInfoSelected),
-            user_ids: $('#documents-access-select').val() || []
-        };
-        request[config.csrfName] = config.csrfHash;
-        var $button = $(this).prop('disabled', true);
-        $.ajax({ url: config.accessUrl, type: 'POST', dataType: 'json', data: request }).done(function (response) {
-            if (response && response.csrfName && response.csrfHash) {
-                config.csrfName = response.csrfName;
-                config.csrfHash = response.csrfHash;
-            }
-            if (response && response.success) {
-                $('#documents-access-modal').removeClass('show');
-                renderDocumentsInfoAccess(
-                    response.users || [],
-                    documentsInfoSelected && documentsInfoSelected.created_by
-                        ? documentsInfoSelected.created_by
-                        : 'Admin'
-                );
-                showMessage('success', 'Folder access updated successfully.');
-            } else {
-                documentsAlert('Access not saved', response && response.message ? response.message : 'Access could not be updated.', 'error');
-            }
-        }).fail(function () {
-            documentsAlert('Access not saved', 'The server could not update folder access.', 'error');
-        }).always(function () { $button.prop('disabled', false); });
+    $(document).on('click', '#documents-access-add', function () {
+        var ids = $('#documents-access-select').val() || [];
+        if (!ids.length) {
+            documentsAlert('Select users', 'Select one or more users to add.', 'info');
+            return;
+        }
+        updateDocumentsAccess('add', ids, $(this));
+    });
+
+    $(document).on('change', '.documents-access-remove-check', function () {
+        $('#documents-access-remove-selected').prop('disabled', $('.documents-access-remove-check:checked').length === 0);
+    });
+
+    $(document).on('click', '.documents-access-remove-one', function () {
+        updateDocumentsAccess('remove', [$(this).attr('data-user-id')], $(this));
+    });
+
+    $(document).on('click', '#documents-access-remove-selected', function () {
+        var ids = $.map($('.documents-access-remove-check:checked'), function (checkbox) { return $(checkbox).val(); });
+        if (!ids.length) return;
+        updateDocumentsAccess('remove', ids, $(this));
     });
 
     $(document).on('click', '.documents-info-tab', function () {
@@ -2513,7 +2639,9 @@ function loadRecord(recordId, done, requestedLevel) {
 
             createdRow: function (row, data) {
                 var openUrl = data.item_type === 'file'
-                    ? data.view_url
+                    ? (data.view_url || (config.fileUrl && data.data_id
+                        ? config.fileUrl + '?token=' + encodeURIComponent(data.data_id)
+                        : ''))
                     : data.next_url;
                 $(row).attr('data-item-type', data.item_type || 'folder')
                     .attr('draggable', data.item_type === 'file' ? 'true' : 'false')
@@ -3012,17 +3140,23 @@ showCurrentFolderRenameModal();
      * secure watermark-first preview.
      */
     function normalizedViewerFile(file) {
+        var fallbackViewUrl = '';
+
+        if (file && file.data_id && config.fileUrl) {
+            fallbackViewUrl = config.fileUrl + '?token=' + encodeURIComponent(file.data_id);
+        }
+
         return {
             data_id: file.data_id || '',
             record_name:
                 file.record_name ||
                 file.data_name ||
                 'Document',
-            view_url: file.view_url || '',
+            view_url: file.view_url || fallbackViewUrl,
             download_url:
                 file.download_url ||
                 file.view_url ||
-                '',
+                fallbackViewUrl,
             has_watermark:
                 Number(file.has_watermark) === 1 ? 1 : 0,
             preview_type:
@@ -3114,8 +3248,16 @@ showCurrentFolderRenameModal();
     }
 
     function openUnifiedFileViewer(file) {
-        if (!file || !file.view_url) return;
+        if (!file) return;
         var initial = normalizedViewerFile(file);
+        if (!initial.view_url) {
+            documentsAlert(
+                'Preview unavailable',
+                'The document preview URL could not be created.',
+                'error'
+            );
+            return;
+        }
         unifiedFiles = [initial];
         $('#unified-file-viewer').addClass('show').attr('aria-hidden', 'false');
         /* VIEWER FIX: lock the background as soon as the viewer opens. */
@@ -3481,11 +3623,174 @@ showCurrentFolderRenameModal();
     $('#documents-transfer-search').on('input', function () { var term = $.trim(String(this.value || '')).toLowerCase(), shown = 0; $('.transfer-destination').each(function () { var visible = !term || String($(this).attr('data-search-text')).indexOf(term) !== -1; $(this).toggle(visible); if (visible) shown += 1; }); $('#documents-transfer-empty').prop('hidden', shown > 0); });
     $('#documents-transfer-submit').on('click', function () { if (transferTarget) transferToTarget(transferFiles, transferTarget.level, transferTarget.id, transferCloseViewer); });
 
-    $tableElement.on('dragstart', 'tbody tr[data-item-type="file"]', function (event) { var $check = $(this).find('.document-check'); if (!$check.prop('checked')) { currentChecks().prop('checked', false); $check.prop('checked', true); updateSelection(); } $(this).addClass('is-dragging-files'); event.originalEvent.dataTransfer.effectAllowed = 'move'; event.originalEvent.dataTransfer.setData('text/rms-files', 'selected'); })
-        .on('dragend', 'tbody tr', function () { $tableElement.find('tr').removeClass('is-dragging-files is-transfer-target'); })
-        .on('dragover', 'tbody tr[data-item-type="folder"]', function (event) { var row = table.row(this).data(); if (!row || Number(row.publish_status) !== 0 || Number(row.owned_by_current_user) !== 1) return; event.preventDefault(); $(this).addClass('is-transfer-target'); })
-        .on('dragleave', 'tbody tr[data-item-type="folder"]', function () { $(this).removeClass('is-transfer-target'); })
-        .on('drop', 'tbody tr[data-item-type="folder"]', function (event) { event.preventDefault(); $(this).removeClass('is-transfer-target'); var row = table.row(this).data(); if (row) transferToTarget(selectedFileRows(), row.record_level !== undefined ? row.record_level : Number(config.level || 0), row.record_id, false); });
+    /* Google Drive-style marquee selection for document rows.
+     * Hold the left mouse button in the table workspace and drag across file rows.
+     * Every file row touched by the selection rectangle becomes part of the same
+     * selection and can then be dragged as one group to an unpublished folder. */
+    var marqueeSelecting = false;
+    var marqueeMoved = false;
+    var marqueeSuppressClick = false;
+    var marqueeStartX = 0;
+    var marqueeStartY = 0;
+    var marqueeAdditive = false;
+    var $marquee = $('#documents-marquee-selection');
+
+    function marqueePoint(event) {
+        var original = event.originalEvent || event;
+        return {
+            x: Number(original.pageX || 0),
+            y: Number(original.pageY || 0)
+        };
+    }
+
+    function marqueeRect(current) {
+        return {
+            left: Math.min(marqueeStartX, current.x),
+            top: Math.min(marqueeStartY, current.y),
+            right: Math.max(marqueeStartX, current.x),
+            bottom: Math.max(marqueeStartY, current.y)
+        };
+    }
+
+    function rowIntersectsMarquee(row, rect) {
+        var box = row.getBoundingClientRect();
+        var left = box.left + window.pageXOffset;
+        var top = box.top + window.pageYOffset;
+        var right = left + box.width;
+        var bottom = top + box.height;
+        return !(right < rect.left || left > rect.right || bottom < rect.top || top > rect.bottom);
+    }
+
+    $tableElement.on('mousedown.documentsMarquee', 'tbody', function (event) {
+        if (event.which !== 1) return;
+        if ($(event.target).closest('input, button, a, select, label, .doc-actions-menu').length) return;
+
+        var $row = $(event.target).closest('tr');
+        if ($row.length && $row.attr('data-item-type') !== 'file') return;
+
+        /* A second drag on any already-selected file must remain a native
+         * HTML5 drag so the entire highlighted group can be dropped into a folder. */
+        if ($row.length && $row.find('.document-check').prop('checked')) return;
+
+        var point = marqueePoint(event);
+        marqueeSelecting = true;
+        marqueeMoved = false;
+        marqueeStartX = point.x;
+        marqueeStartY = point.y;
+        marqueeAdditive = event.ctrlKey || event.metaKey;
+
+        if (!marqueeAdditive) currentChecks().prop('checked', false);
+
+        $marquee.css({
+            left: point.x - $('.documents-table-wrap').offset().left,
+            top: point.y - $('.documents-table-wrap').offset().top,
+            width: 0,
+            height: 0
+        }).addClass('is-active');
+
+        event.preventDefault();
+    });
+
+    $(document).on('mousemove.documentsMarquee', function (event) {
+        if (!marqueeSelecting) return;
+        var point = marqueePoint(event);
+        var rect = marqueeRect(point);
+        if (Math.abs(point.x - marqueeStartX) > 4 || Math.abs(point.y - marqueeStartY) > 4) marqueeMoved = true;
+
+        var wrapOffset = $('.documents-table-wrap').offset();
+        $marquee.css({
+            left: rect.left - wrapOffset.left,
+            top: rect.top - wrapOffset.top,
+            width: rect.right - rect.left,
+            height: rect.bottom - rect.top
+        });
+
+        $tableElement.find('tbody tr[data-item-type="file"]').each(function () {
+            var $check = $(this).find('.document-check');
+            var intersects = rowIntersectsMarquee(this, rect);
+            if (marqueeAdditive) {
+                if (intersects) $check.prop('checked', true);
+            } else {
+                $check.prop('checked', intersects);
+            }
+        });
+        updateSelection();
+        event.preventDefault();
+    }).on('mouseup.documentsMarquee', function (event) {
+        if (!marqueeSelecting) return;
+        marqueeSelecting = false;
+        $marquee.removeClass('is-active').css({ width: 0, height: 0 });
+        updateSelection();
+        if (marqueeMoved) {
+            marqueeSuppressClick = true;
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
+
+    $tableElement.on('dragstart', 'tbody tr[data-item-type="file"]', function (event) {
+        var $row = $(this);
+        var $check = $row.find('.document-check');
+
+        /* Dragging an unselected file makes it the only highlighted file. */
+        if (!$check.prop('checked')) {
+            currentChecks().prop('checked', false);
+            $check.prop('checked', true);
+            lastHighlightedFileRow = this;
+            updateSelection();
+        }
+
+        var files = selectedFileRows();
+        currentChecks().filter(':checked[data-item-type="file"]').each(function () {
+            $(this).closest('tr').addClass('is-dragging-files');
+        });
+
+        if (event.originalEvent && event.originalEvent.dataTransfer) {
+            event.originalEvent.dataTransfer.effectAllowed = 'move';
+            event.originalEvent.dataTransfer.setData('text/rms-files', 'selected');
+            event.originalEvent.dataTransfer.setData('text/plain', files.length + ' document' + (files.length === 1 ? '' : 's'));
+
+            var $ghost = $('<div class="documents-drag-ghost" id="documents-drag-ghost"></div>')
+                .append('<i class="bi bi-files"></i>')
+                .append($('<span></span>').text(files.length + ' document' + (files.length === 1 ? '' : 's')))
+                .appendTo('body');
+            if (event.originalEvent.dataTransfer.setDragImage && $ghost[0]) {
+                event.originalEvent.dataTransfer.setDragImage($ghost[0], 24, 18);
+            }
+        }
+    })
+        .on('dragend', 'tbody tr', function () {
+            $('#documents-drag-ghost').remove();
+            $tableElement.find('tr').removeClass('is-dragging-files is-transfer-target');
+        })
+        .on('dragover', 'tbody tr[data-item-type="folder"]', function (event) {
+            var row = table.row(this).data();
+            if (!row || Number(row.publish_status) !== 0 || Number(row.owned_by_current_user) !== 1) return;
+            event.preventDefault();
+            if (event.originalEvent && event.originalEvent.dataTransfer) {
+                event.originalEvent.dataTransfer.dropEffect = 'move';
+            }
+            $tableElement.find('tbody tr[data-item-type="folder"]').removeClass('is-transfer-target');
+            $(this).addClass('is-transfer-target');
+        })
+        .on('dragleave', 'tbody tr[data-item-type="folder"]', function () {
+            $(this).removeClass('is-transfer-target');
+        })
+        .on('drop', 'tbody tr[data-item-type="folder"]', function (event) {
+            event.preventDefault();
+            var $target = $(this);
+            $target.removeClass('is-transfer-target');
+            var row = table.row(this).data();
+            var files = selectedFileRows();
+            if (!row || !files.length) return;
+
+            transferToTarget(
+                files,
+                row.record_level !== undefined ? row.record_level : Number(config.level || 0),
+                row.record_id,
+                false
+            );
+        });
     $downloadSelected.on('click', function () {
         var files = selectedFileRows();
         if (files.length === 1) window.location.href = files[0].download_url;
