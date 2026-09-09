@@ -150,9 +150,13 @@ if ($active_level > 0 && !empty($current_folder)) {
 
 /* Current hierarchy labels let SweetAlert identify every blocked record. */
 $current_path_labels = array();
+$current_path_ids = array();
 foreach ($breadcrumbs as $breadcrumb_index => $breadcrumb) {
     if ($breadcrumb_index > 0 && isset($breadcrumb['label'])) {
         $current_path_labels[] = (string) $breadcrumb['label'];
+        if (isset($breadcrumb['record_id'])) {
+            $current_path_ids[] = (int) $breadcrumb['record_id'];
+        }
     }
 }
 
@@ -255,7 +259,7 @@ $build_path_label = function ($path) {
         rel="stylesheet"
         href="<?php echo base_url(
                     /* VIEWER FIX: new version forces the browser to load the updated viewer CSS. */
-                    'assets/css/rms-documents.css?v=20260907-upload-toaster-v3'
+                    'assets/css/rms-documents.css?v=20260909-pins-access-rename-v6'
                 ); ?>">
     <link
         rel="stylesheet"
@@ -439,7 +443,7 @@ $build_path_label = function ($path) {
                                                 <i class="bi bi-pencil" aria-hidden="true"></i>
                                                 Rename
                                             </button>
-                                            <!-- File information -->
+                                            <!-- Folder information -->
                                             <button type="button"
                                                 class="doc-action-item"
                                                 id="documents-context-info"
@@ -450,7 +454,7 @@ $build_path_label = function ($path) {
                                                 data-file-count="<?php echo $current_document_count; ?>"
                                                 data-name="<?php echo html_escape($context_path); ?>">
                                                 <i class="bi bi-info-circle" aria-hidden="true"></i>
-                                                <span>File information</span>
+                                                <span>Folder information</span>
                                             </button>
                                         </div>
                                     </div>
@@ -646,6 +650,105 @@ $build_path_label = function ($path) {
                     </div>
                     <p class="documents-workspace-note"><i class="bi bi-info-circle"></i> Double-click a folder to navigate deeper. Double-click a file to preview.</p>
                 </section>
+
+                <!-- File / Folder Information Drawer -->
+                <aside
+                    class="documents-info-drawer"
+                    id="documents-info-drawer"
+                    aria-hidden="true">
+                    <div class="documents-info-drawer-header">
+                        <div class="documents-info-drawer-title-wrap">
+                            <div class="documents-info-drawer-icon" id="documents-info-icon">
+                                <i class="bi bi-file-earmark"></i>
+                            </div>
+                            <div class="documents-info-drawer-heading">
+                                <strong id="documents-info-name">—</strong>
+                                <span class="documents-info-drawer-subtitle" id="documents-info-subtitle">—</span>
+                            </div>
+                        </div>
+                        <button type="button" class="documents-info-drawer-close" id="documents-info-close" aria-label="Close information panel">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="documents-info-tabs">
+                        <button type="button" class="documents-info-tab is-active" data-info-tab="details">Details</button>
+                        <button type="button" class="documents-info-tab" data-info-tab="activity">Activity</button>
+                    </div>
+
+                    <div class="documents-info-drawer-body">
+                        <section class="documents-info-panel is-active" data-info-panel="details">
+                            <dl class="documents-info-list">
+                                <div class="documents-info-row"><dt>Type</dt><dd id="documents-info-type">—</dd></div>
+                                <div class="documents-info-row" id="documents-info-id-row"><dt>ID</dt><dd id="documents-info-id">—</dd></div>
+                                <div class="documents-info-row"><dt>Location</dt><dd id="documents-info-location">—</dd></div>
+                                <div class="documents-info-row" id="documents-info-subfolders-row"><dt>Total Subfolders</dt><dd id="documents-info-subfolders">—</dd></div>
+                                <div class="documents-info-row" id="documents-info-files-row"><dt>Total Files</dt><dd id="documents-info-files">—</dd></div>
+                                <div class="documents-info-row"><dt>Created By</dt><dd id="documents-info-owner">—</dd></div>
+                                <div class="documents-info-row"><dt>Date Created</dt><dd id="documents-info-created">—</dd></div>
+                                <div class="documents-info-row"><dt>Last Modified</dt><dd id="documents-info-modified">—</dd></div>
+                                <div class="documents-info-row"><dt>Status</dt><dd id="documents-info-status">—</dd></div>
+                                <div class="documents-info-row" id="documents-info-size-row"><dt>Size</dt><dd id="documents-info-size">—</dd></div>
+                            </dl>
+
+                            <div class="documents-info-section documents-info-access-section">
+                                <div class="documents-info-access-heading">
+                                    <h4><i class="bi bi-people"></i> Who has access</h4>
+                                </div>
+                                <div class="documents-info-access-overview">
+                                    <div class="documents-info-access-creator">
+                                        <span class="documents-info-access-avatar is-creator" id="documents-info-creator-avatar">A</span>
+                                        <span class="documents-info-access-person-copy">
+                                            <strong id="documents-info-creator-name">Admin</strong>
+                                            <small>Creator</small>
+                                        </span>
+                                    </div>
+                                    <div class="documents-info-access-people" id="documents-info-access-people" aria-label="People with access"></div>
+                                </div>
+                                <div class="documents-info-access-list" id="documents-info-access-list">
+                                    <div class="documents-info-access-empty">Loading access...</div>
+                                </div>
+                                <button type="button" class="documents-info-manage-access" id="documents-info-manage-access">Manage access</button>
+                            </div>
+                            <div class="documents-info-section">
+                                <h4><i class="bi bi-shield-check"></i> Security limitations</h4>
+                                <div class="documents-info-security-box">
+                                    <strong>No limitations applied</strong>
+                                    <span>Existing RMS restrictions will continue to apply.</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="documents-info-panel" data-info-panel="activity">
+                            <div class="documents-info-activity" id="documents-info-activity" aria-live="polite">
+                                <div class="documents-info-activity-empty">
+                                    <i class="bi bi-clock-history"></i>
+                                    <strong>Select an item to load activity.</strong>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </aside>
+
+                <div class="rms-modal" id="documents-access-modal" role="dialog" aria-modal="true" aria-labelledby="documents-access-title">
+                    <div class="rms-modal-dialog documents-access-dialog">
+                        <div class="rms-modal-header">
+                            <span class="rms-modal-eyebrow">Documents · Access</span>
+                            <h2 class="rms-modal-title" id="documents-access-title">Manage access</h2>
+                            <p class="rms-modal-subtitle" id="documents-access-subtitle">Select the RMS users who can access this folder.</p>
+                            <button type="button" class="rms-modal-close" id="documents-access-close" aria-label="Close">&times;</button>
+                        </div>
+                        <div class="rms-modal-body">
+                            <label class="documents-access-label" for="documents-access-select">People with access</label>
+                            <select id="documents-access-select" class="documents-access-select" multiple size="9"></select>
+                            <p class="documents-access-help">Use Ctrl/Command to select multiple users. This saves to the existing RMS file/folder tagging permissions.</p>
+                        </div>
+                        <div class="rms-modal-footer">
+                            <button type="button" class="btn btn-light" id="documents-access-cancel">Cancel</button>
+                            <button type="button" class="btn btn-success" id="documents-access-save">Save access</button>
+                        </div>
+                    </div>
+                </div>
 
                 <?php
                 $this->load->view(
@@ -1077,9 +1180,9 @@ $build_path_label = function ($path) {
                 <input type="hidden" name="level" id="document-edit-level" value="">
                 <input type="hidden" name="record_id" id="document-edit-id" value="">
                 <div class="rms-modal-header">
-                    <span class="rms-modal-eyebrow">Documents Module &bull; Edit Record</span>
-                    <h2 class="rms-modal-title" id="document-edit-title">Edit Folder Details</h2>
-                    <p class="rms-modal-subtitle">Update this RMS directory without leaving Manage Documents.</p>
+                    <span class="rms-modal-eyebrow">Documents Module &bull; Rename Record</span>
+                    <h2 class="rms-modal-title" id="document-edit-title">Rename Folder</h2>
+                    <p class="rms-modal-subtitle">Rename this RMS filename or subfolder without leaving Manage Documents.</p>
                     <button type="button" class="rms-modal-close" data-modal-close>&times;</button>
                 </div>
                 <div class="rms-modal-body">
@@ -1099,6 +1202,7 @@ $build_path_label = function ($path) {
                             required
                             autocomplete="off"
                             data-windows-name
+                            data-no-special-characters
                             data-validation-button="#document-edit-submit">
                         <div
                             class="windows-name-error"
@@ -1131,7 +1235,7 @@ $build_path_label = function ($path) {
                 </div>
                 <div class="rms-modal-footer">
                     <button type="button" class="modal-cancel" data-modal-close>Cancel</button>
-                    <button type="submit" class="modal-submit" id="document-edit-submit">Update Record</button>
+                    <button type="submit" class="modal-submit" id="document-edit-submit">Save Rename</button>
                 </div>
             </form>
         </div>
@@ -1249,6 +1353,8 @@ $build_path_label = function ($path) {
                                     'updateRecordUrl' => site_url('administrator/documents/save'),
                                     'deleteRecordUrl' => site_url('administrator/documents/delete'),
                                     'togglePinUrl' => site_url('administrator/documents/toggle-pin'),
+                                    'activityUrl' => site_url('administrator/documents/item_activity'),
+                                    'accessUrl' => site_url('administrator/documents/item_access'),
                                     'pinnedItemsUrl' => site_url('administrator/documents/pinned_items'),
                                     'deleteUploadedUrl' => site_url('administrator/documents/delete_uploaded_files'),
                                     'renameUploadedUrl' => site_url('administrator/documents/rename_uploaded_file'),
@@ -1276,6 +1382,7 @@ $build_path_label = function ($path) {
                                     'currentCanChangeStatus' => !empty($current_can_change_status) ? 1 : 0,
                                     'openUpload' => $dashboard_upload_mode ? 1 : 0,
                                     'currentPath' => $current_path_labels,
+                                    'currentPathIds' => $current_path_ids,
                                     'csrfName' => $this->security->get_csrf_token_name(),
                                     'csrfHash' => $this->security->get_csrf_hash()
                                 )); ?>;
@@ -1303,7 +1410,7 @@ $build_path_label = function ($path) {
                          * Level 4 unrestricted unpublished-path behavior.
                          */
                         /* VIEWER FIX: new version forces the browser to load the right-drag and scroll-lock code. */
-                        'assets/js/rms-documents.js?v=20260907-upload-toaster-v3'
+                        'assets/js/rms-documents.js?v=20260909-pins-access-rename-v6'
                     ); ?>"></script>
 </body>
 

@@ -1,0 +1,24 @@
+rose|2026-09-09 08:29:09|Login to Administrator Portal|Administrator
+rose|2026-09-09 08:50:31|Update Document Record: 08 AUG: 2|Administrator
+rose|2026-09-09 09:01:13|Create User: test local|Administrator
+rose|2026-09-09 10:11:38|RMS Action: Documents / item_access (user_ids=53)|Administrator
+rose|2026-09-09 10:13:59|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=34)|Administrator
+rose|2026-09-09 10:19:14|Unpublish Data: 9|Administrator
+rose|2026-09-09 10:20:30|RMS Action: Documents / toggle_pin (item_type=folder, record_level=0, parent_id=0, record_id=9)|Administrator
+rose|2026-09-09 10:22:07|Publish Data: 6|Administrator
+rose|2026-09-09 10:22:13|Publish Data: 33|Administrator
+rose|2026-09-09 10:32:56|RMS Action: Documents / item_access (user_ids=247)|Administrator
+rose|2026-09-09 10:33:13|RMS Action: Documents / item_access (user_ids=247)|Administrator
+rose|2026-09-09 10:35:33|RMS Action: Documents / item_access (user_ids=184)|Administrator
+rose|2026-09-09 10:45:26|Logout from Administrator Portal|Administrator
+Treslvl|2026-09-09 10:45:37|Login to Administrator Portal|Administrator
+Treslvl|2026-09-09 10:47:02|Logout from Administrator Portal|Administrator
+rose|2026-09-09 10:47:09|Login to Administrator Portal|Administrator
+rose|2026-09-09 10:50:07|Update Document Record: INTERNAL AUDIT REPORTvv: 1|Administrator
+rose|2026-09-09 10:50:12|Update Document Record: INTERNAL AUDIT REPORTv: 1|Administrator
+rose|2026-09-09 10:50:22|Update Document Record: INTERNAL AUDIT REPORT_dd: 1|Administrator
+rose|2026-09-09 11:14:33|Update Document Record: INTERNAL AUDIT REPORT_dd: 1|Administrator
+rose|2026-09-09 11:15:59|RMS Action: Documents / toggle_pin (item_type=folder, record_level=1, parent_id=1, record_id=1)|Administrator
+rose|2026-09-09 11:16:05|RMS Action: Documents / toggle_pin (item_type=folder, record_level=1, parent_id=1, record_id=1)|Administrator
+rose|2026-09-09 11:43:45|RMS Action: Documents / item_access (user_ids=184)|Administrator
+rose|2026-09-09 11:43:58|RMS Action: Documents / item_access (user_ids=274)|Administrator

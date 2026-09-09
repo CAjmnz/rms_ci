@@ -444,6 +444,13 @@
 
     function validateWindowsNameField(field) {
         var message = windowsNameError(field.value);
+
+        if (!message && field.hasAttribute('data-no-special-characters')) {
+            var strictName = String(field.value || '');
+            if (/[^A-Za-z0-9 _-]/.test(strictName)) {
+                message = 'Special characters are not allowed. Use letters, numbers, spaces, hyphens, or underscores only.';
+            }
+        }
         var errorElement = document.querySelector(
             '[data-error-for="' + field.id + '"]'
         );
@@ -1427,6 +1434,8 @@
                 (Number(row.is_pinned) === 1 ? 'Unpin' : 'Pin') + '</button>' +
                 '<a class="doc-action-item" href="' + escapeHtml(row.download_url) + '">' +
                 '<i class="bi bi-download"></i>Download original</a>' +
+                '<button type="button" class="doc-action-item" data-action="file-information" data-id="' +
+                escapeHtml(row.data_id) + '"><i class="bi bi-info-circle"></i>File information</button>' +
                 '<button type="button" class="doc-action-item" data-action="rename-file" data-id="' +
                 escapeHtml(row.data_id) + '"><i class="bi bi-pencil"></i>Rename</button>' +
                 '<button type="button" class="doc-action-item" data-action="transfer-file" data-id="' +
@@ -1458,11 +1467,12 @@
             (Number(row.is_pinned) === 1 ? 'Unpin' : 'Pin') + '</button>';
 
         if (!published && ownedByCurrentUser) {
-            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="fa fa-edit"></i>Edit</button>';
+            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="fa fa-edit"></i>Rename</button>';
             items += '<button type="button" class="doc-action-item danger" data-action="delete" data-id="' + id + '"><i class="fa fa-trash"></i>Delete</button>';
         }
 
         items += '<button type="button" class="doc-action-item" data-action="view" data-id="' + id + '"><i class="fa fa-search"></i>View</button>';
+        items += '<button type="button" class="doc-action-item" data-action="folder-information" data-id="' + id + '"><i class="bi bi-info-circle"></i>Folder information</button>';
         items += '<span class="doc-action-heading">PERMISSIONS</span>';
 
         /*
@@ -1651,12 +1661,16 @@ function loadRecord(recordId, done, requestedLevel) {
                 record.record_name || ''
             );
 
+            $('#document-edit-title').text(
+                recordLevel === 0
+                    ? 'Rename Filename'
+                    : 'Rename Subfolder' + recordLevel
+            );
+
             $('#document-edit-section-title').text(
                 recordLevel === 0
-                    ? 'Filename Details'
-                    : 'Subfolder' +
-                        recordLevel +
-                        ' Details'
+                    ? 'Filename Name'
+                    : 'Subfolder' + recordLevel + ' Name'
             );
 
             $('#document-edit-message')
@@ -1766,6 +1780,403 @@ function loadRecord(recordId, done, requestedLevel) {
         });
     }
 
+    /* File / Folder information drawer. Opens only from explicit action commands. */
+    function documentsInfoValue(value) {
+        return (value === null || value === undefined || value === '') ? '—' : String(value);
+    }
+
+    function documentsInfoFileSize(row) {
+        if (!row) return '—';
+        return documentsInfoValue(row.file_size_formatted || row.file_size_label || row.file_size || row.size || '');
+    }
+
+    var documentsInfoSelected = null;
+
+    function documentsInfoPathToken(row) {
+        if (!row) return '';
+        if (row.access_token) return String(row.access_token);
+
+        var ids = [];
+        if (config.currentPathIds && $.isArray(config.currentPathIds)) {
+            ids = config.currentPathIds.slice(0);
+        }
+
+        /* Uploaded files inherit access from the exact folder path they live in. */
+        if (row.item_type !== 'file') {
+            ids.push(Number(row.record_id || 0));
+        }
+
+        ids = $.grep(ids, function (id) { return Number(id) > 0; });
+        return ids.length ? (ids.length - 1) + ':' + ids.join('/') : '';
+    }
+
+    function documentsInfoPath() {
+        if (config.currentPath && $.isArray(config.currentPath) && config.currentPath.length) {
+            return config.currentPath.join(' / ');
+        }
+        return 'Manage Documents';
+    }
+
+    function documentsInfoOpenDrawer() {
+        $('#documents-info-drawer').addClass('is-open').attr('aria-hidden', 'false');
+        $('.documents-content').addClass('is-info-drawer-open');
+        $('.documents-info-tab').removeClass('is-active').filter('[data-info-tab="details"]').addClass('is-active');
+        $('.documents-info-panel').removeClass('is-active').filter('[data-info-panel="details"]').addClass('is-active');
+    }
+
+    function documentsInfoCloseDrawer() {
+        $('#documents-info-drawer').removeClass('is-open').attr('aria-hidden', 'true');
+        $('.documents-content').removeClass('is-info-drawer-open');
+    }
+
+    function documentsInfoSetIcon(type, name) {
+        var $icon = $('#documents-info-icon');
+        var extension = '';
+        if (name && String(name).indexOf('.') !== -1) extension = String(name).split('.').pop().toLowerCase();
+        if (type === 'folder') $icon.html('<i class="bi bi-folder-fill documents-info-folder-icon"></i>');
+        else if (extension === 'pdf') $icon.html('<i class="bi bi-file-earmark-pdf-fill documents-info-pdf-icon"></i>');
+        else if (extension === 'doc' || extension === 'docx') $icon.html('<i class="bi bi-file-earmark-word-fill documents-info-word-icon"></i>');
+        else if (extension === 'xls' || extension === 'xlsx') $icon.html('<i class="bi bi-file-earmark-excel-fill documents-info-excel-icon"></i>');
+        else if ($.inArray(extension, ['png', 'jpg', 'jpeg', 'gif', 'webp']) !== -1) $icon.html('<i class="bi bi-file-earmark-image-fill documents-info-image-icon"></i>');
+        else $icon.html('<i class="bi bi-file-earmark-fill documents-info-file-icon"></i>');
+    }
+
+    var documentsInfoActivityRequest = null;
+    var documentsInfoAccessRequest = null;
+
+    function renderDocumentsInfoAccess(users, creator) {
+        users = $.isArray(users) ? users : [];
+        creator = documentsInfoValue(creator || 'Admin');
+
+        $('#documents-info-creator-name').text(creator);
+        $('#documents-info-creator-avatar').text(documentsInfoActivityInitials(creator));
+
+        var allowed = $.grep(users, function (user) {
+            return Number(user.has_access) === 1;
+        });
+        var $people = $('#documents-info-access-people').empty();
+        var $list = $('#documents-info-access-list').empty();
+
+        $.each(allowed.slice(0, 5), function (_, user) {
+            var displayName = user.emp_name || user.username || 'User';
+            $('<span class="documents-info-access-avatar"></span>')
+                .text(documentsInfoActivityInitials(displayName))
+                .attr('title', displayName)
+                .appendTo($people);
+        });
+
+        if (allowed.length > 5) {
+            $('<span class="documents-info-access-avatar is-more"></span>')
+                .text('+' + (allowed.length - 5))
+                .attr('title', (allowed.length - 5) + ' more users')
+                .appendTo($people);
+        }
+
+        if (!allowed.length) {
+            $people.append('<span class="documents-info-access-none">No tagged users</span>');
+            $list.append('<div class="documents-info-access-empty">No RMS users are currently tagged to this folder path.</div>');
+            return;
+        }
+
+        $('<div class="documents-info-access-list-title"></div>')
+            .text('People who can access this item')
+            .appendTo($list);
+
+        $.each(allowed, function (_, user) {
+            var displayName = user.emp_name || user.username || 'User';
+            var username = user.username || '';
+            $('<div class="documents-info-access-user"></div>')
+                .append('<span class="documents-info-access-avatar">' + escapeHtml(documentsInfoActivityInitials(displayName)) + '</span>')
+                .append(
+                    '<span class="documents-info-access-user-copy"><strong>' + escapeHtml(displayName) + '</strong>' +
+                    (username ? '<small>' + escapeHtml(username) + '</small>' : '') + '</span>'
+                )
+                .appendTo($list);
+        });
+    }
+
+    function loadDocumentsInfoAccess(row) {
+        var token = documentsInfoPathToken(row);
+        var creator = row && row.created_by ? row.created_by : 'Admin';
+
+        $('#documents-info-creator-name').text(documentsInfoValue(creator));
+        $('#documents-info-creator-avatar').text(documentsInfoActivityInitials(creator));
+        $('#documents-info-access-people').html('<span class="documents-info-access-none">Loading...</span>');
+        $('#documents-info-access-list').html('<div class="documents-info-access-empty">Loading access...</div>');
+
+        if (!token || !config.accessUrl) {
+            renderDocumentsInfoAccess([], creator);
+            return;
+        }
+
+        if (documentsInfoAccessRequest && documentsInfoAccessRequest.readyState !== 4) {
+            documentsInfoAccessRequest.abort();
+        }
+
+        documentsInfoAccessRequest = $.ajax({
+            url: config.accessUrl,
+            type: 'GET',
+            dataType: 'json',
+            data: { path_token: token }
+        }).done(function (response) {
+            if (response && response.success) {
+                renderDocumentsInfoAccess(response.users || [], creator);
+                return;
+            }
+            renderDocumentsInfoAccess([], creator);
+        }).fail(function (xhr, status) {
+            if (status === 'abort') return;
+            $('#documents-info-access-people').html('<span class="documents-info-access-none">Unavailable</span>');
+            $('#documents-info-access-list').html('<div class="documents-info-access-empty">Access information could not be loaded.</div>');
+        });
+    }
+
+    function documentsInfoActivityInitials(identity) {
+        var words = $.trim(identity || 'Unknown').split(/\s+/);
+        var initials = '';
+        $.each(words, function (index, word) {
+            if (word && initials.length < 2) initials += word.charAt(0).toUpperCase();
+        });
+        return initials || '?';
+    }
+
+    function documentsInfoActivityYear(dateText) {
+        var match = String(dateText || '').match(/(20\d{2})/);
+        return match ? match[1] : 'Activity';
+    }
+
+    function documentsInfoActivityAction(activity) {
+        var text = $.trim(activity || 'Activity');
+        var colon = text.indexOf(':');
+        if (colon !== -1) text = text.substring(0, colon);
+        return text || 'Activity';
+    }
+
+    function renderDocumentsInfoActivity(rows, itemName, itemType) {
+        var $target = $('#documents-info-activity');
+        rows = $.isArray(rows) ? rows : [];
+
+        if (!rows.length) {
+            $target.html(
+                '<div class="documents-info-activity-empty">' +
+                    '<i class="bi bi-clock-history"></i>' +
+                    '<strong>No recorded activity for this item yet.</strong>' +
+                    '<span>New RMS actions for this item will appear here automatically.</span>' +
+                '</div>'
+            );
+            return;
+        }
+
+        var html = '';
+        var lastYear = '';
+        $.each(rows, function (_, row) {
+            var year = documentsInfoActivityYear(row.date);
+            if (year !== lastYear) {
+                html += '<div class="documents-info-activity-year">' + escapeHtml(year === String(new Date().getFullYear()) ? 'This year' : year) + '</div>';
+                lastYear = year;
+            }
+
+            var identity = documentsInfoValue(row.identity);
+            var action = documentsInfoActivityAction(row.activity);
+            var iconClass = itemType === 'file' ? 'bi-file-earmark-fill' : 'bi-folder-fill';
+
+            html += '<article class="documents-info-activity-item">' +
+                '<div class="documents-info-activity-avatar" aria-hidden="true">' + escapeHtml(documentsInfoActivityInitials(identity)) + '</div>' +
+                '<div class="documents-info-activity-copy">' +
+                    '<div class="documents-info-activity-sentence"><strong>' + escapeHtml(identity) + '</strong> ' + escapeHtml(action.toLowerCase()) + '</div>' +
+                    '<time>' + escapeHtml(documentsInfoValue(row.date)) + '</time>' +
+                    '<div class="documents-info-activity-target"><i class="bi ' + iconClass + '"></i><span>' + escapeHtml(documentsInfoValue(itemName)) + '</span></div>' +
+                '</div>' +
+            '</article>';
+        });
+        $target.html(html);
+    }
+
+    function loadDocumentsInfoActivity(type, id, name) {
+        var $target = $('#documents-info-activity');
+        $target.html('<div class="documents-info-activity-loading"><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading activity...</div>');
+
+        if (!config.activityUrl) {
+            renderDocumentsInfoActivity([], name, type);
+            return;
+        }
+
+        if (documentsInfoActivityRequest && documentsInfoActivityRequest.readyState !== 4) {
+            documentsInfoActivityRequest.abort();
+        }
+
+        documentsInfoActivityRequest = $.ajax({
+            url: config.activityUrl,
+            type: 'GET',
+            dataType: 'json',
+            data: { type: type, id: id || 0, name: name || '' }
+        }).done(function (response) {
+            if (response && response.success) {
+                renderDocumentsInfoActivity(response.activities || [], name, type);
+                return;
+            }
+            renderDocumentsInfoActivity([], name, type);
+        }).fail(function (xhr, status) {
+            if (status === 'abort') return;
+            $target.html('<div class="documents-info-activity-empty"><i class="bi bi-exclamation-circle"></i><strong>Activity could not be loaded.</strong><span>Please try opening the information card again.</span></div>');
+        });
+    }
+
+    function showDocumentInformation(row) {
+        if (!row) return;
+        documentsInfoSelected = row;
+        var name = documentsInfoValue(row.record_name);
+        $('#documents-info-name').text(name);
+        $('#documents-info-subtitle').text(documentsInfoFileSize(row));
+        documentsInfoSetIcon('file', name);
+        $('#documents-info-type').text(documentsInfoValue(row.preview_label || row.preview_type || 'Document'));
+        $('#documents-info-id').text(documentsInfoValue(row.data_id || row.record_id));
+        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-owner').text(documentsInfoValue(row.created_by));
+        $('#documents-info-created').text(documentsInfoValue(row.date_created));
+        $('#documents-info-modified').text(documentsInfoValue(row.date_modified));
+        $('#documents-info-status').text('File');
+        $('#documents-info-size').text(documentsInfoFileSize(row));
+        $('#documents-info-subfolders-row, #documents-info-files-row').hide();
+        $('#documents-info-size-row, #documents-info-id-row').show();
+        documentsInfoOpenDrawer();
+        loadDocumentsInfoActivity('file', row.data_id || row.record_id || 0, name);
+        loadDocumentsInfoAccess(row);
+    }
+
+    function showFolderInformation(row) {
+        if (!row) return;
+        documentsInfoSelected = row;
+        var name = documentsInfoValue(row.record_name);
+        var status = Number(row.publish_status) === 1 ? 'Published' : 'Unpublished';
+        $('#documents-info-name').text(name);
+        $('#documents-info-subtitle').text(status);
+        documentsInfoSetIcon('folder', name);
+        $('#documents-info-type').text('Folder');
+        $('#documents-info-id').text(documentsInfoValue(row.record_id));
+        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-subfolders').text(documentsInfoValue(row.child_count));
+        $('#documents-info-files').text(documentsInfoValue(row.document_count));
+        $('#documents-info-owner').text(documentsInfoValue(row.created_by));
+        $('#documents-info-created').text(documentsInfoValue(row.date_created));
+        $('#documents-info-modified').text(documentsInfoValue(row.date_modified));
+        $('#documents-info-status').text(status);
+        $('#documents-info-subfolders-row, #documents-info-files-row, #documents-info-id-row').show();
+        $('#documents-info-size-row').hide();
+        documentsInfoOpenDrawer();
+        loadDocumentsInfoActivity('folder', row.record_id || 0, name);
+        loadDocumentsInfoAccess(row);
+    }
+
+    function showCurrentFolderInformation($button) {
+        var pathName = documentsInfoValue($button.data('name'));
+        var currentIds = (config.currentPathIds && $.isArray(config.currentPathIds))
+            ? config.currentPathIds.slice(0)
+            : [];
+        currentIds = $.grep(currentIds, function (id) { return Number(id) > 0; });
+        documentsInfoSelected = {
+            item_type: 'folder',
+            record_id: Number($button.data('record-id') || 0),
+            record_name: pathName,
+            created_by: 'Admin',
+            access_token: currentIds.length ? (currentIds.length - 1) + ':' + currentIds.join('/') : ''
+        };
+        var status = Number($button.data('status')) === 1 ? 'Published' : 'Unpublished';
+        $('#documents-info-name').text(pathName);
+        $('#documents-info-subtitle').text(status);
+        documentsInfoSetIcon('folder', pathName);
+        $('#documents-info-type').text('Folder');
+        $('#documents-info-id').text(documentsInfoValue($button.data('record-id')));
+        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-subfolders').text(documentsInfoValue($button.data('child-count')));
+        $('#documents-info-files').text(documentsInfoValue($button.data('file-count')));
+        $('#documents-info-owner, #documents-info-created, #documents-info-modified').text('—');
+        $('#documents-info-status').text(status);
+        $('#documents-info-subfolders-row, #documents-info-files-row, #documents-info-id-row').show();
+        $('#documents-info-size-row').hide();
+        documentsInfoOpenDrawer();
+        loadDocumentsInfoActivity('folder', $button.data('record-id') || 0, pathName);
+        loadDocumentsInfoAccess(documentsInfoSelected);
+    }
+
+    $tableElement.on('click', 'tbody tr', function (event) {
+        if ($(event.target).closest('input, button, a, select, label, .doc-actions-menu').length) return;
+        var row = table.row(this).data();
+        if (!row) return;
+        $tableElement.find('tbody tr').removeClass('documents-row--selected');
+        $(this).addClass('documents-row--selected');
+        if ($('#documents-info-drawer').hasClass('is-open')) {
+            if (row.item_type === 'file') showDocumentInformation(row);
+            else showFolderInformation(row);
+        }
+    });
+
+    $(document).on('click', '#documents-info-close', documentsInfoCloseDrawer);
+    $(document).on('click', '#documents-info-manage-access', function () {
+        if (!documentsInfoSelected) return;
+        var token = documentsInfoPathToken(documentsInfoSelected);
+        if (!token) {
+            documentsAlert('Access unavailable', 'This item is not inside a taggable RMS folder path.', 'info');
+            return;
+        }
+        if (!token || !config.accessUrl) return;
+        var $modal = $('#documents-access-modal');
+        var $select = $('#documents-access-select').empty();
+        $('#documents-access-subtitle').text('Select who can access “' + documentsInfoSelected.record_name + '”.');
+        $modal.addClass('show');
+        $.getJSON(config.accessUrl, { path_token: token }).done(function (response) {
+            if (!response || !response.success) return;
+            $.each(response.users || [], function (_, user) {
+                $('<option>')
+                    .val(user.user_id)
+                    .text((user.emp_name || user.username) + (user.username ? ' (' + user.username + ')' : ''))
+                    .prop('selected', Number(user.has_access) === 1)
+                    .appendTo($select);
+            });
+        });
+    });
+
+    $(document).on('click', '#documents-access-close, #documents-access-cancel', function () {
+        $('#documents-access-modal').removeClass('show');
+    });
+
+    $(document).on('click', '#documents-access-save', function () {
+        if (!documentsInfoSelected) return;
+        var request = {
+            path_token: documentsInfoPathToken(documentsInfoSelected),
+            user_ids: $('#documents-access-select').val() || []
+        };
+        request[config.csrfName] = config.csrfHash;
+        var $button = $(this).prop('disabled', true);
+        $.ajax({ url: config.accessUrl, type: 'POST', dataType: 'json', data: request }).done(function (response) {
+            if (response && response.csrfName && response.csrfHash) {
+                config.csrfName = response.csrfName;
+                config.csrfHash = response.csrfHash;
+            }
+            if (response && response.success) {
+                $('#documents-access-modal').removeClass('show');
+                renderDocumentsInfoAccess(
+                    response.users || [],
+                    documentsInfoSelected && documentsInfoSelected.created_by
+                        ? documentsInfoSelected.created_by
+                        : 'Admin'
+                );
+                showMessage('success', 'Folder access updated successfully.');
+            } else {
+                documentsAlert('Access not saved', response && response.message ? response.message : 'Access could not be updated.', 'error');
+            }
+        }).fail(function () {
+            documentsAlert('Access not saved', 'The server could not update folder access.', 'error');
+        }).always(function () { $button.prop('disabled', false); });
+    });
+
+    $(document).on('click', '.documents-info-tab', function () {
+        var tab = $(this).data('info-tab');
+        $('.documents-info-tab').removeClass('is-active');
+        $(this).addClass('is-active');
+        $('.documents-info-panel').removeClass('is-active').filter('[data-info-panel="' + tab + '"]').addClass('is-active');
+    });
+
     $(document).on(
         'click',
         '.doc-action-item',
@@ -1784,6 +2195,10 @@ function loadRecord(recordId, done, requestedLevel) {
 
             if (action === 'toggle-pin') {
                 togglePinnedItem($(this));
+            } else if (action === 'file-information') {
+                showDocumentInformation(table.row($(this).closest('tr')).data());
+            } else if (action === 'folder-information') {
+                showFolderInformation(table.row($(this).closest('tr')).data());
             } else if (action === 'preview-file') {
                 var row = table.row($(this).closest('tr')).data();
                 openUnifiedFileViewer(row);
@@ -2407,26 +2822,11 @@ $('#documents-context-rename').on('click', function (event) {
 
 showCurrentFolderRenameModal();
         });
-        // File information
+        // Current-folder information
         $('#documents-context-info').on('click', function (e) {
+            e.preventDefault();
             e.stopPropagation();
-            var $btn = $(this);
-            var name   = $btn.data('name') || '—';
-            var id     = $btn.data('record-id') || '—';
-            var status = Number($btn.data('status')) === 1 ? 'Published' : 'Unpublished';
-            var kids   = $btn.data('child-count') || 0;
-            var files  = $btn.data('file-count') || 0;
-
-            documentsAlert(
-                'Folder information',
-                'Name: ' + name + '\n' +
-                'ID: #' + id + '\n' +
-                'Status: ' + status + '\n' +
-                'Subfolders: ' + kids + '\n' +
-                'Files: ' + files,
-                'info'
-            );
-
+            showCurrentFolderInformation($(this));
             $menu.prop('hidden', true);
             $toggle.attr('aria-expanded', 'false');
         });
@@ -2760,6 +3160,18 @@ showCurrentFolderRenameModal();
         }).done(function (result) {
             var name = result.value;
             if (!result.confirmed || name === file.record_name) return;
+
+            var cleanName = $.trim(String(name || ''));
+            var baseName = cleanName.replace(/\.[^.]+$/, '');
+            if (!baseName || /[^A-Za-z0-9 _-]/.test(baseName)) {
+                documentsAlert(
+                    'Invalid file name',
+                    'Special characters are not allowed. Use letters, numbers, spaces, hyphens, or underscores only.',
+                    'error'
+                );
+                return;
+            }
+
             var request = {
                 level: Math.max(0, Number(config.level || 0) - 1),
                 record_id: Number(config.parentId || 0),

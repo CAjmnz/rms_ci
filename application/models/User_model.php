@@ -945,6 +945,119 @@ class User_model extends CI_Model
     }
 
     /**
+     * Return active RMS users together with whether they are tagged to one
+     * exact existing filename/subfolder path.
+     *
+     * @param string $token Existing access token, e.g. 2:4/8/15.
+     * @return array
+     */
+    public function get_path_access_users($token)
+    {
+        $tree = $this->get_access_tree(0);
+        $valid_paths = array();
+        $this->collect_access_paths($tree, $valid_paths);
+        $token = trim((string) $token);
+
+        if (!isset($valid_paths[$token])) {
+            return array();
+        }
+
+        $path = $valid_paths[$token];
+        $users = $this->db
+            ->select('user_id, username, emp_name, role_id, stat')
+            ->from('users')
+            ->where('stat', 0)
+            ->order_by('emp_name', 'ASC')
+            ->order_by('username', 'ASC')
+            ->get()
+            ->result_array();
+
+        foreach ($users as &$user) {
+            $query = $this->db->from('user_allowed_data')
+                ->where('user_id', (int) $user['user_id'])
+                ->where('file_id', (int) $path[0]);
+
+            for ($level = 1; $level <= 10; $level++) {
+                $query->where(
+                    'sub'.$level.'_id',
+                    isset($path[$level]) ? (int) $path[$level] : 0
+                );
+            }
+
+            $user['has_access'] = $query->count_all_results() > 0 ? 1 : 0;
+        }
+        unset($user);
+
+        return $users;
+    }
+
+    /**
+     * Replace only the selected-user assignments for one exact path while
+     * preserving every other existing user_allowed_data permission row.
+     *
+     * @param string $token
+     * @param array $selected_user_ids
+     * @return bool
+     */
+    public function set_path_access_users($token, $selected_user_ids)
+    {
+        $tree = $this->get_access_tree(0);
+        $valid_paths = array();
+        $this->collect_access_paths($tree, $valid_paths);
+        $token = trim((string) $token);
+
+        if (!isset($valid_paths[$token])) {
+            return FALSE;
+        }
+
+        $path = $valid_paths[$token];
+        $selected = array();
+        foreach ((array) $selected_user_ids as $user_id) {
+            $user_id = (int) $user_id;
+            if ($user_id > 0) {
+                $selected[$user_id] = TRUE;
+            }
+        }
+
+        $users = $this->db
+            ->select('user_id')
+            ->from('users')
+            ->where('stat', 0)
+            ->get()
+            ->result_array();
+
+        foreach ($users as $user) {
+            $user_id = (int) $user['user_id'];
+            $where = array(
+                'user_id' => $user_id,
+                'file_id' => (int) $path[0]
+            );
+            for ($level = 1; $level <= 10; $level++) {
+                $where['sub'.$level.'_id'] = isset($path[$level])
+                    ? (int) $path[$level]
+                    : 0;
+            }
+
+            $exists = $this->db
+                ->from('user_allowed_data')
+                ->where($where)
+                ->count_all_results() > 0;
+
+            if (isset($selected[$user_id])) {
+                if (!$exists && !$this->db->insert('user_allowed_data', $where)) {
+                    return FALSE;
+                }
+            } elseif ($exists) {
+                if (!$this->db->where($where)->delete('user_allowed_data')) {
+                    return FALSE;
+                }
+            }
+        }
+
+        return TRUE;
+    }
+
+    /**
      * Flattens presentation nodes into token => numeric path validation data.
      */
     private function collect_access_paths($nodes, &$valid_paths)

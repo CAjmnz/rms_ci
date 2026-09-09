@@ -1,0 +1,5 @@
+rose|2026-09-08 08:12:45|Login to Administrator Portal|Administrator
+rose|2026-09-08 11:19:02|Upload Data: abnormal andnonmoving.png, Abnormal anfd nonmoving_supermarket.png, accesss.jpg, action at the view document.jpg, action button .jpg, action drop bart.jpg, action drop down .jpg, action files.jpg|Administrator
+rose|2026-09-08 11:19:02|Upload Data: actionss na .jpg|Administrator
+rose|2026-09-08 15:25:49|Login to Administrator Portal|Administrator
+rose|2026-09-08 17:32:55|Update Document Record: ACCOUNT RECEIVABLE: 1|Administrator

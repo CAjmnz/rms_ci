@@ -1302,6 +1302,12 @@ class Documents extends CI_Controller
             return $this->json(FALSE, $name_error);
         }
         $base = trim(pathinfo(basename(str_replace('\\', '/', $requested)), PATHINFO_FILENAME));
+        if ($base === '' || preg_match('/[^A-Za-z0-9 _-]/', $base)) {
+            return $this->json(
+                FALSE,
+                'Special characters are not allowed. Use letters, numbers, spaces, hyphens, or underscores only.'
+            );
+        }
         $original_extension = pathinfo($document['data_name'], PATHINFO_EXTENSION);
         $viewer_extension = pathinfo($document['viewer_name'], PATHINFO_EXTENSION);
         $original_name = $base . ($original_extension !== '' ? '.' . $original_extension : '');
@@ -1436,7 +1442,7 @@ class Documents extends CI_Controller
             return $this->json(FALSE, 'Your RMS account could not be identified. Please sign in again.');
         }
 
-        if (!in_array($filter, array('all', 'filename', 'subfolder', 'document'), TRUE)) {
+        if (!in_array($filter, array('all', 'folder', 'filename', 'subfolder', 'document'), TRUE)) {
             $filter = 'all';
         }
 
@@ -1490,7 +1496,11 @@ class Documents extends CI_Controller
                 continue;
             }
 
-            if ($filter !== 'all' && $filter !== $group_type) {
+            if (
+                $filter !== 'all' &&
+                !($filter === 'folder' && $item_type === 'folder') &&
+                $filter !== $group_type
+            ) {
                 continue;
             }
 
@@ -1518,12 +1528,39 @@ class Documents extends CI_Controller
                 'extension' => $extension,
                 'parent' => $parent,
                 'path' => $path,
-                'url' => $url
+                'url' => $url,
+                '_pin_order' => count($items)
             );
+        }
 
-            if (!$show_all && count($items) >= 8) {
-                break;
+        /*
+         * PINNED ITEMS ORDER:
+         * Documents first, then the deepest existing Subfolder down through
+         * Subfolder1, and Filename last. Dashboard and Manage Documents share
+         * this endpoint, so both lists stay in the same hierarchy order.
+         */
+        usort($items, function ($left, $right) {
+            $left_depth = $left['item_type'] === 'document'
+                ? 100 + (int) $left['record_level']
+                : (int) $left['record_level'];
+            $right_depth = $right['item_type'] === 'document'
+                ? 100 + (int) $right['record_level']
+                : (int) $right['record_level'];
+
+            if ($left_depth !== $right_depth) {
+                return $left_depth > $right_depth ? -1 : 1;
             }
+
+            return (int) $left['_pin_order'] < (int) $right['_pin_order'] ? -1 : 1;
+        });
+
+        foreach ($items as &$pinned_item) {
+            unset($pinned_item['_pin_order']);
+        }
+        unset($pinned_item);
+
+        if (!$show_all && count($items) > 8) {
+            $items = array_slice($items, 0, 8);
         }
 
         return $this->json(TRUE, '', array(
@@ -2140,6 +2177,13 @@ class Documents extends CI_Controller
         $name_error = $this->windows_name_error($name_input);
         if ($name_error !== '') {
             return $this->json(FALSE, $name_error);
+        }
+
+        if (preg_match('/[^A-Za-z0-9 _-]/', $name)) {
+            return $this->json(
+                FALSE,
+                'Special characters are not allowed. Use letters, numbers, spaces, hyphens, or underscores only.'
+            );
         }
 
         if (!$this->valid_directory_name($name)) {
@@ -4308,6 +4352,117 @@ class Documents extends CI_Controller
         }
 
         return $level;
+    }
+
+    /**
+     * Return real RMS activity-log events for one file/folder in the
+     * information card. No database schema changes are required: this reads
+     * the existing Access_log_model daily text logs already used by RMS.
+     */
+    public function item_activity()
+    {
+        if (!$this->require_manager()) {
+            return;
+        }
+
+        $name = trim((string) $this->input->get('name', TRUE));
+        $record_id = (int) $this->input->get('id', TRUE);
+        $type = strtolower(trim((string) $this->input->get('type', TRUE)));
+
+        if ($name === '' && $record_id <= 0) {
+            return $this->json(FALSE, 'No document or folder was selected.', array(
+                'activities' => array()
+            ));
+        }
+
+        $this->load->model('Access_log_model');
+
+        $matches = array();
+        $needle_name = strtolower($name);
+        $needle_id = (string) $record_id;
+
+        foreach ($this->Access_log_model->get_all() as $record) {
+            $activity = isset($record['activity']) ? trim((string) $record['activity']) : '';
+            if ($activity === '') {
+                continue;
+            }
+
+            $activity_lc = strtolower($activity);
+            $name_match = $needle_name !== '' && strpos($activity_lc, $needle_name) !== FALSE;
+            $id_match = FALSE;
+
+            if ($record_id > 0) {
+                $id_match = preg_match(
+                    '/(^|[^0-9])' . preg_quote($needle_id, '/') . '([^0-9]|$)/',
+                    $activity
+                ) === 1;
+            }
+
+            if (!$name_match && !$id_match) {
+                continue;
+            }
+
+            /* Keep the card focused on Documents-module events. */
+            $document_event = preg_match(
+                '/(document|filename|subfolder|folder|upload|publish|unpublish|rename|transfer|delete|data)/i',
+                $activity
+            ) === 1;
+
+            if (!$document_event) {
+                continue;
+            }
+
+            $matches[] = array(
+                'identity' => isset($record['identity']) && trim((string) $record['identity']) !== ''
+                    ? trim((string) $record['identity'])
+                    : 'Unknown',
+                'date' => isset($record['date']) ? trim((string) $record['date']) : '',
+                'activity' => $activity,
+                'source' => isset($record['source']) ? trim((string) $record['source']) : 'RMS CI',
+                'item_name' => $name,
+                'item_type' => $type === 'file' ? 'file' : 'folder'
+            );
+
+            if (count($matches) >= 60) {
+                break;
+            }
+        }
+
+        return $this->json(TRUE, '', array(
+            'activities' => $matches
+        ));
+    }
+
+    /**
+     * Read/update the existing RMS user_allowed_data tags for one exact folder.
+     * This is the Documents-side "Manage access" UI; it does not introduce a
+     * new permission table or change the existing Users-module access model.
+     */
+    public function item_access()
+    {
+        if (!$this->require_manager()) {
+            return;
+        }
+
+        $token = trim((string) $this->input->get_post('path_token', TRUE));
+        if ($token === '') {
+            return $this->json(FALSE, 'No folder was selected.', array('users' => array()));
+        }
+
+        $this->load->model('User_model');
+
+        if ($this->input->method(TRUE) === 'POST') {
+            $user_ids = $this->input->post('user_ids');
+            $user_ids = is_array($user_ids) ? $user_ids : array();
+
+            if (!$this->User_model->set_path_access_users($token, $user_ids)) {
+                return $this->json(FALSE, 'Access could not be updated.');
+            }
+        }
+
+        return $this->json(TRUE, '', array(
+            'users' => $this->User_model->get_path_access_users($token)
+        ));
     }
 
     /**
