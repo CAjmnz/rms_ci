@@ -4056,7 +4056,7 @@ class Documents extends CI_Controller
      * Reads may use this compatibility resolver; new writes still use the
      * normal document_storage_directory() path builder.
      */
-    private function document_existing_storage_directory($document, $original)
+    private function document_existing_storage_directories($document, $original)
     {
         $setting_id = $original ? 1 : 7;
         $fallback = $original
@@ -4069,7 +4069,7 @@ class Documents extends CI_Controller
         );
 
         if (!is_dir($directory)) {
-            return FALSE;
+            return array();
         }
 
         $parts = array(
@@ -4088,10 +4088,16 @@ class Documents extends CI_Controller
             }
         }
 
+        /*
+         * Legacy RMS can contain parallel display-name and underscore paths.
+         * Keep every viable branch until the complete hierarchy is resolved.
+         */
+        $directories = array($directory);
+
         foreach ($parts as $part) {
             $safe = $this->safe_folder_segment($part);
             if ($safe === FALSE) {
-                return FALSE;
+                return array();
             }
 
             $server_name = $this->server_storage_name($safe);
@@ -4099,30 +4105,37 @@ class Documents extends CI_Controller
                 $server_name,
                 $safe
             )));
-            $matched = FALSE;
+            $next_directories = array();
 
-            foreach ($exact_names as $candidate_name) {
-                $candidate = $this->join_storage_path(
-                    $directory,
-                    $candidate_name
-                );
+            foreach ($directories as $current_directory) {
+                $exact_matches = array();
 
-                if (is_dir($candidate)) {
-                    $matched = $candidate;
-                    break;
+                foreach ($exact_names as $candidate_name) {
+                    $candidate = $this->join_storage_path(
+                        $current_directory,
+                        $candidate_name
+                    );
+
+                    if (is_dir($candidate)) {
+                        $exact_matches[$candidate] = $candidate;
+                    }
                 }
-            }
 
-            if ($matched === FALSE) {
-                $entries = @scandir($directory);
+                if (!empty($exact_matches)) {
+                    foreach ($exact_matches as $candidate) {
+                        $next_directories[$candidate] = $candidate;
+                    }
+                    continue;
+                }
+
+                $entries = @scandir($current_directory);
                 if (!is_array($entries)) {
-                    return FALSE;
+                    continue;
                 }
 
                 $target = strtolower($server_name);
-                $best_path = FALSE;
                 $best_score = 4;
-                $best_count = 0;
+                $best_paths = array();
 
                 foreach ($entries as $entry) {
                     if ($entry === '.' || $entry === '..') {
@@ -4130,7 +4143,7 @@ class Documents extends CI_Controller
                     }
 
                     $candidate = $this->join_storage_path(
-                        $directory,
+                        $current_directory,
                         $entry
                     );
 
@@ -4145,43 +4158,58 @@ class Documents extends CI_Controller
 
                     if ($score < $best_score) {
                         $best_score = $score;
-                        $best_path = $candidate;
-                        $best_count = 1;
+                        $best_paths = array($candidate);
                     } elseif ($score === $best_score) {
-                        $best_count++;
+                        $best_paths[] = $candidate;
                     }
                 }
 
-                /* Only accept one clear near-match; never guess ambiguously. */
-                if ($best_path === FALSE || $best_score > 3 || $best_count !== 1) {
-                    return FALSE;
+                /* Only accept one clear near-match per branch. */
+                if ($best_score <= 3 && count($best_paths) === 1) {
+                    $next_directories[$best_paths[0]] = $best_paths[0];
                 }
-
-                $matched = $best_path;
             }
 
-            $directory = $matched;
+            if (empty($next_directories)) {
+                return array();
+            }
+
+            $directories = array_values($next_directories);
         }
 
-        return $directory;
+        return $directories;
+    }
+
+    private function document_existing_storage_directory($document, $original)
+    {
+        $directories = $this->document_existing_storage_directories(
+            $document,
+            $original
+        );
+
+        return !empty($directories) ? $directories[0] : FALSE;
     }
 
     /** Resolve an existing encrypted or legacy physical document. */
     private function document_storage_path($document, $served_name, $original)
     {
-        $directory = $this->document_existing_storage_directory(
+        $directories = $this->document_existing_storage_directories(
             $document,
             $original
         );
 
-        if ($directory === FALSE) {
-            return FALSE;
+        foreach ($directories as $directory) {
+            $path = $this->resolve_physical_document_path(
+                $directory,
+                $served_name
+            );
+
+            if ($path !== FALSE) {
+                return $path;
+            }
         }
 
-        return $this->resolve_physical_document_path(
-            $directory,
-            $served_name
-        );
+        return FALSE;
     }
 
     /** Build a new encrypted destination used during Rename and Transfer. */
