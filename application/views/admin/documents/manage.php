@@ -1375,17 +1375,39 @@ $build_subfolder_parent_label = function ($path) {
                 <button type="button" id="unified-fit-file">Fit to Screen</button>
                 <button type="button" id="unified-actual-file">Actual Size</button>
                 <span class="documents-toolbar-spacer"></span>
-                <!-- VIEWER FIX: replace the old Ctrl-drag instruction with left-drag + Ctrl-wheel-zoom text. -->
-                <small>Hold left mouse button and drag to move &middot; Hold Ctrl + mouse wheel to zoom &middot; &larr; &rarr; Previous / next file</small>
+                <div class="unified-view-mode">
+                    <button type="button" id="unified-view-mode-toggle" aria-expanded="false">
+                        <i class="bi bi-display"></i>
+                        <span id="unified-view-mode-label">Page Navigation</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
+                        <button type="button" class="is-active" data-view-mode="page">
+                            <i class="bi bi-display"></i>
+                            <span><strong>Page Navigation (&larr; &rarr;)</strong><small>Click left/right or use arrow keys</small></span>
+                        </button>
+                        <button type="button" data-view-mode="vertical">
+                            <i class="bi bi-arrows-expand-vertical"></i>
+                            <span><strong>Vertical Scroll (&uarr; &darr;)</strong><small>Scroll smoothly through every page</small></span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="unified-viewer-body">
                 <button type="button" class="unified-canvas-nav previous" id="unified-previous-file" aria-label="Previous file"><i class="bi bi-chevron-left"></i></button>
-                <img id="unified-file-image" alt="Document preview" hidden>
+                <img id="unified-file-image" alt="Document preview" draggable="false" hidden>
                 <iframe id="unified-file-frame" title="Document preview" hidden></iframe>
+                <div class="unified-vertical-scroll" id="unified-vertical-scroll" hidden></div>
                 <button type="button" class="unified-canvas-nav next" id="unified-next-file" aria-label="Next file"><i class="bi bi-chevron-right"></i></button>
                 <?php if ($current_can_upload): ?>
 
                 <?php endif; ?>
+            </div>
+            <div class="unified-viewer-help">
+                <div><i class="bi bi-mouse2"></i><span><strong>Drag to move</strong><small>Hold the left mouse button and drag to pan the document.</small></span></div>
+                <div><i class="bi bi-arrow-down-up"></i><span><strong>Scroll to navigate</strong><small>In Vertical Scroll mode, use the wheel or &uarr; &darr; keys to move smoothly.</small></span></div>
+                <div><i class="bi bi-zoom-in"></i><span><strong>Zoom in / Zoom out</strong><small>Hold Ctrl + mouse wheel or use the zoom buttons.</small></span></div>
+                <div><i class="bi bi-display"></i><span><strong>View options</strong><small>Switch between Page Navigation and Vertical Scroll anytime.</small></span></div>
             </div>
         </div>
     </div>

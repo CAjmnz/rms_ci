@@ -2111,37 +2111,15 @@ function loadRecord(recordId, done, requestedLevel) {
         var $row = $(this);
 
         /*
-         * FILE HIGHLIGHT SELECTION:
-         * A highlighted document is the same document used by bulk actions
-         * and drag/drop transfer. Normal click selects one file, Ctrl/Cmd
-         * toggles files, and Shift selects a visible range of files.
-         * Folder rows remain normal navigation/transfer destinations.
+         * A normal row click is for opening/highlighting the individual row;
+         * it must not check its bulk-action checkbox. Checkboxes are changed
+         * only by an explicit checkbox click or the drag/marquee selection
+         * workflow used for multi-file transfer.
          */
         if (row.item_type === 'file') {
-            var $check = $row.find('.document-check');
-            var additive = event.ctrlKey || event.metaKey;
-            var rangeSelect = event.shiftKey && lastHighlightedFileRow;
-
-            if (rangeSelect) {
-                var $fileRows = $tableElement.find('tbody tr[data-item-type="file"]');
-                var start = $fileRows.index(lastHighlightedFileRow);
-                var end = $fileRows.index(this);
-
-                if (start !== -1 && end !== -1) {
-                    if (!additive) currentChecks().prop('checked', false);
-                    $fileRows.slice(Math.min(start, end), Math.max(start, end) + 1)
-                        .find('.document-check')
-                        .prop('checked', true);
-                }
-            } else if (additive) {
-                $check.prop('checked', !$check.prop('checked'));
-            } else {
-                currentChecks().prop('checked', false);
-                $check.prop('checked', true);
-            }
-
+            $tableElement.find('tbody tr').removeClass('documents-row--selected');
+            $row.addClass('documents-row--selected');
             lastHighlightedFileRow = this;
-            updateSelection();
         } else {
             $tableElement.find('tbody tr').removeClass('documents-row--selected');
             $row.addClass('documents-row--selected');
@@ -3109,7 +3087,7 @@ showCurrentFolderRenameModal();
         }
     );
 
-    /* Full in-folder viewer: navigation, fit/zoom and right-button image pan. */
+    /* Full in-folder viewer: navigation, fit/zoom and left-button image pan. */
     var unifiedFiles = [];
     var unifiedFileIndex = 0;
     var unifiedScale = 1;
@@ -3122,6 +3100,12 @@ showCurrentFolderRenameModal();
     /* VIEWER FIX: remember the page scroll position while the viewer locks the background. */
     var unifiedViewerScrollY = 0;
     var unifiedViewerBodyTop = '';
+    var unifiedViewMode = 'page';
+    var unifiedVerticalDragging = false;
+    var unifiedVerticalDragX = 0;
+    var unifiedVerticalDragY = 0;
+    var unifiedVerticalScrollLeft = 0;
+    var unifiedVerticalScrollTop = 0;
 
     function markUnifiedInspecting(active) {
         window.clearTimeout(unifiedInspectTimer);
@@ -3148,6 +3132,7 @@ showCurrentFolderRenameModal();
 
         return {
             data_id: file.data_id || '',
+            page_no: Number(file.page_no || 0),
             record_name:
                 file.record_name ||
                 file.data_name ||
@@ -3171,10 +3156,75 @@ showCurrentFolderRenameModal();
         };
     }
 
+    function applyUnifiedVerticalZoom() {
+        $('#unified-vertical-scroll .unified-vertical-page img').each(function () {
+            if (!this.naturalWidth || !this.naturalHeight) return;
+            $(this).css({
+                width: Math.max(1, Math.round(this.naturalWidth * unifiedScale)) + 'px',
+                height: Math.max(1, Math.round(this.naturalHeight * unifiedScale)) + 'px',
+                transform: 'none'
+            });
+        });
+    }
+
     function renderUnifiedTransform() {
         $('#unified-file-image').css('transform',
             'translate(' + unifiedOffsetX + 'px,' + unifiedOffsetY + 'px) scale(' + unifiedScale + ')');
+        applyUnifiedVerticalZoom();
         $('#unified-file-zoom').text(Math.round(unifiedScale * 100) + '%');
+    }
+
+    function renderUnifiedVerticalPages() {
+        var $scroll = $('#unified-vertical-scroll');
+        $scroll.empty();
+
+        $.each(unifiedFiles, function (index, file) {
+            var extension = String(file.record_name || '').split('.').pop().toLowerCase();
+            var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
+            var $page = $('<div class="unified-vertical-page"></div>')
+                .attr('data-file-index', index);
+
+            $('<div class="unified-vertical-page-label"></div>')
+                .text('Page ' + (index + 1) + ' of ' + unifiedFiles.length)
+                .appendTo($page);
+
+            if (isImage && file.view_url) {
+                $('<img alt="Document page" draggable="false">')
+                    .attr('src', file.view_url)
+                    .on('load', function () {
+                        applyUnifiedVerticalZoom();
+                    })
+                    .appendTo($page);
+            } else {
+                $('<div class="unified-vertical-page-label"></div>')
+                    .text(file.record_name + ' cannot be displayed in vertical image mode.')
+                    .appendTo($page);
+            }
+
+            $scroll.append($page);
+        });
+    }
+
+    function setUnifiedViewMode(mode) {
+        unifiedViewMode = mode === 'vertical' ? 'vertical' : 'page';
+        var vertical = unifiedViewMode === 'vertical';
+
+        $('#unified-file-viewer').toggleClass('is-vertical', vertical);
+        $('#unified-view-mode-label').text(vertical ? 'Vertical Scroll' : 'Page Navigation');
+        $('#unified-view-mode-menu [data-view-mode]')
+            .removeClass('is-active')
+            .filter('[data-view-mode="' + unifiedViewMode + '"]')
+            .addClass('is-active');
+        $('#unified-view-mode-menu').prop('hidden', true);
+        $('#unified-view-mode-toggle').attr('aria-expanded', 'false');
+
+        if (vertical) {
+            $('#unified-vertical-scroll').prop('hidden', false);
+            renderUnifiedVerticalPages();
+        } else {
+            $('#unified-vertical-scroll').prop('hidden', true).empty();
+            displayUnifiedFile(unifiedFileIndex);
+        }
     }
 
     function fitUnifiedImage() {
@@ -3201,7 +3251,9 @@ showCurrentFolderRenameModal();
     /* VIEWER FIX: safely end right-button dragging and clear the drag state. */
     function stopUnifiedDrag() {
         unifiedDragging = false;
-        $('#unified-file-image').removeClass('is-dragging');
+        unifiedVerticalDragging = false;
+        $('#unified-file-image, #unified-vertical-scroll .unified-vertical-page img')
+            .removeClass('is-dragging');
         markUnifiedInspecting(false);
     }
 
@@ -3265,18 +3317,45 @@ showCurrentFolderRenameModal();
         displayUnifiedFile(0);
 
         /* Load every direct file so Next/Previous is independent of paging. */
+        /* Load files from the exact folder currently open in Manage Documents.
+         * Using the browse level/parent here can load a sibling/previous folder
+         * after deep navigation or transfers, replacing the clicked file with
+         * the wrong document in the viewer. */
+        var viewerFolderLevel = Number(config.currentFolderLevel);
+        var viewerFolderId = Number(config.currentFolderId || 0);
+        if (viewerFolderLevel < 0 || !viewerFolderId) {
+            viewerFolderLevel = Math.max(0, Number(config.level || 0) - 1);
+            viewerFolderId = Number(config.parentId || 0);
+        }
         $.getJSON(config.folderFilesUrl, {
-            level: Math.max(0, Number(config.level || 0) - 1),
-            record_id: Number(config.parentId || 0),
+            level: viewerFolderLevel,
+            record_id: viewerFolderId,
             draw: 1, start: 0, length: 100, search: { value: '' }
         }).done(function (response) {
             if (!response || !$.isArray(response.data) || !response.data.length) return;
             unifiedFiles = $.map(response.data, normalizedViewerFile);
-            var found = 0;
+            var found = -1;
             $.each(unifiedFiles, function (index, candidate) {
-                if (candidate.data_id === initial.data_id) { found = index; return false; }
+                /* Document tokens are encrypted with a random IV, so the same
+                 * data_id receives a different token on each AJAX response.
+                 * Match the clicked document by its stable visible identity
+                 * within the current folder instead of comparing token text. */
+                if (
+                    candidate.record_name === initial.record_name &&
+                    Number(candidate.page_no || 0) === Number(initial.page_no || 0)
+                ) {
+                    found = index;
+                    return false;
+                }
             });
-            displayUnifiedFile(found);
+            if (found >= 0) {
+                unifiedFileIndex = found;
+                if (unifiedViewMode === 'vertical') {
+                    renderUnifiedVerticalPages();
+                } else {
+                    displayUnifiedFile(found);
+                }
+            }
         });
     }
 
@@ -3352,8 +3431,46 @@ showCurrentFolderRenameModal();
         });
     });
     $('#unified-file-actions-toggle').on('click', function (event) { event.stopPropagation(); var $menu = $('#unified-file-actions-dropdown'), open = $menu.prop('hidden'); $menu.prop('hidden', !open); $(this).attr('aria-expanded', open ? 'true' : 'false'); });
-    $(document).on('click', function (event) { if (!$(event.target).closest('.unified-file-actions-menu').length) { $('#unified-file-actions-dropdown').prop('hidden', true); $('#unified-file-actions-toggle').attr('aria-expanded', 'false'); } });
+    $('#unified-view-mode-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $menu = $('#unified-view-mode-menu');
+        var open = $menu.prop('hidden');
+        $menu.prop('hidden', !open);
+        $(this).attr('aria-expanded', open ? 'true' : 'false');
+    });
+    $('#unified-view-mode-menu').on('click', '[data-view-mode]', function (event) {
+        event.stopPropagation();
+        setUnifiedViewMode($(this).attr('data-view-mode'));
+    });
+    $(document).on('click', function (event) {
+        if (!$(event.target).closest('.unified-file-actions-menu').length) {
+            $('#unified-file-actions-dropdown').prop('hidden', true);
+            $('#unified-file-actions-toggle').attr('aria-expanded', 'false');
+        }
+        if (!$(event.target).closest('.unified-view-mode').length) {
+            $('#unified-view-mode-menu').prop('hidden', true);
+            $('#unified-view-mode-toggle').attr('aria-expanded', 'false');
+        }
+    });
     $(document).on('click', '[data-close-unified-viewer]', closeUnifiedViewer);
+
+    /*
+     * Never allow native HTML drag/drop to escape from the preview modal.
+     * Without this guard, dragging a preview image can bubble a browser file
+     * drop into the page-level uploader and open the Upload Documents modal.
+     */
+    $('#unified-file-viewer').on(
+        'dragstart.unifiedViewer dragenter.unifiedViewer dragover.unifiedViewer dragleave.unifiedViewer drop.unifiedViewer',
+        function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            }
+            return false;
+        }
+    );
+
     $('#unified-file-rename').on('click', function () { renameUnifiedFile(); });
     $('#unified-previous-file').on('click', function () { displayUnifiedFile(unifiedFileIndex - 1); });
     $('#unified-next-file').on('click', function () { displayUnifiedFile(unifiedFileIndex + 1); });
@@ -3361,11 +3478,14 @@ showCurrentFolderRenameModal();
     $('#unified-zoom-out').on('click', function () { changeUnifiedZoom(-.1); });
     $('#unified-fit-file').on('click', fitUnifiedImage);
     $('#unified-actual-file').on('click', function () { markUnifiedInspecting(true); unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0; renderUnifiedTransform(); });
-    /* VIEWER FIX: hold the left mouse button and drag.
-       Uses mousedown on the image plus document-level mousemove/mouseup (rather than
-       Pointer Events + setPointerCapture) so dragging keeps working even if the pointer
-       moves outside the image bounds mid-drag. */
-    $('#unified-file-image').on('mousedown.unifiedViewer', function (event) {
+    /* Hold the left mouse button and drag to pan the current document. */
+    $('#unified-file-image')
+    .on('dragstart.unifiedViewer', function (event) {
+        event.preventDefault();
+    })
+    .on('contextmenu.unifiedViewer', function (event) {
+        event.preventDefault();
+    }).on('mousedown.unifiedViewer', function (event) {
         var originalEvent = event.originalEvent || event;
         if (originalEvent.button !== 0) {
             return;
@@ -3396,7 +3516,7 @@ showCurrentFolderRenameModal();
     });
     /* VIEWER FIX: also stop dragging if the window loses focus mid-drag (e.g. alt-tab). */
     $(window).on('blur.unifiedViewer', function () {
-        if (unifiedDragging) {
+        if (unifiedDragging || unifiedVerticalDragging) {
             stopUnifiedDrag();
         }
     });
@@ -3408,18 +3528,100 @@ showCurrentFolderRenameModal();
     });
     /* VIEWER FIX: Ctrl + wheel zoom only. */
     $('.unified-viewer-body').on('wheel.unifiedViewer', function (event) {
-        if (!event.ctrlKey || $('#unified-file-image').prop('hidden')) return;
+        if (!event.ctrlKey) return;
         event.preventDefault();
         event.stopPropagation();
-        changeUnifiedZoom(event.originalEvent.deltaY < 0 ? .1 : -.1);
+
+        var originalEvent = event.originalEvent || event;
+        var verticalScroll = $('#unified-vertical-scroll').get(0);
+        var oldScale = unifiedScale;
+        var oldScrollWidth = verticalScroll ? verticalScroll.scrollWidth : 0;
+        var oldScrollHeight = verticalScroll ? verticalScroll.scrollHeight : 0;
+        var oldScrollLeft = verticalScroll ? verticalScroll.scrollLeft : 0;
+        var oldScrollTop = verticalScroll ? verticalScroll.scrollTop : 0;
+
+        changeUnifiedZoom(originalEvent.deltaY < 0 ? .1 : -.1);
+
+        if (
+            unifiedViewMode === 'vertical' &&
+            verticalScroll &&
+            oldScale !== unifiedScale
+        ) {
+            var xRatio = oldScrollWidth > 0
+                ? (oldScrollLeft + originalEvent.offsetX) / oldScrollWidth
+                : 0;
+            var yRatio = oldScrollHeight > 0
+                ? (oldScrollTop + originalEvent.offsetY) / oldScrollHeight
+                : 0;
+
+            window.requestAnimationFrame(function () {
+                verticalScroll.scrollLeft = Math.max(
+                    0,
+                    (verticalScroll.scrollWidth * xRatio) - originalEvent.offsetX
+                );
+                verticalScroll.scrollTop = Math.max(
+                    0,
+                    (verticalScroll.scrollHeight * yRatio) - originalEvent.offsetY
+                );
+            });
+        }
+    });
+
+    $('#unified-vertical-scroll')
+        .on('dragstart.unifiedViewer', 'img', function (event) {
+            event.preventDefault();
+        })
+        .on('contextmenu.unifiedViewer', function (event) {
+            event.preventDefault();
+        })
+        .on('mousedown.unifiedViewer', 'img', function (event) {
+            var originalEvent = event.originalEvent || event;
+            var scroll = $('#unified-vertical-scroll').get(0);
+            if (unifiedViewMode !== 'vertical' || originalEvent.button !== 0 || !scroll) return;
+            event.preventDefault();
+            event.stopPropagation();
+            unifiedVerticalDragging = true;
+            unifiedVerticalDragX = originalEvent.clientX;
+            unifiedVerticalDragY = originalEvent.clientY;
+            unifiedVerticalScrollLeft = scroll.scrollLeft;
+            unifiedVerticalScrollTop = scroll.scrollTop;
+            $(this).addClass('is-dragging');
+            markUnifiedInspecting(true);
+        });
+
+    $(document).on('mousemove.unifiedVerticalViewer', function (event) {
+        if (!unifiedVerticalDragging) return;
+        var scroll = $('#unified-vertical-scroll').get(0);
+        if (!scroll) return;
+        var originalEvent = event.originalEvent || event;
+        event.preventDefault();
+        scroll.scrollLeft = unifiedVerticalScrollLeft - (originalEvent.clientX - unifiedVerticalDragX);
+        scroll.scrollTop = unifiedVerticalScrollTop - (originalEvent.clientY - unifiedVerticalDragY);
+    }).on('mouseup.unifiedVerticalViewer', function (event) {
+        if (!unifiedVerticalDragging) return;
+        event.preventDefault();
+        unifiedVerticalDragging = false;
+        $('#unified-vertical-scroll .unified-vertical-page img').removeClass('is-dragging');
+        markUnifiedInspecting(false);
     });
 
     /* Arrow keys navigate only while the viewer is open and no form is active. */
     $(document).on('keydown.unifiedNavigation', function (event) {
         if (!$('#unified-file-viewer').hasClass('show') || event.ctrlKey || event.altKey || event.metaKey) return;
         if ($(event.target).is('input, textarea, select')) return;
-        if (event.key === 'ArrowLeft') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex - 1); }
-        if (event.key === 'ArrowRight') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex + 1); }
+        if (unifiedViewMode === 'vertical') {
+            var scroll = $('#unified-vertical-scroll').get(0);
+            if (scroll && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+                event.preventDefault();
+                scroll.scrollBy({
+                    top: event.key === 'ArrowDown' ? 180 : -180,
+                    behavior: 'smooth'
+                });
+            }
+        } else {
+            if (event.key === 'ArrowLeft') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex - 1); }
+            if (event.key === 'ArrowRight') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex + 1); }
+        }
         if (event.key === 'Escape') { event.preventDefault(); closeUnifiedViewer(); }
     });
 
@@ -3886,19 +4088,32 @@ showCurrentFolderRenameModal();
     });
 
     function openModal(id) {
-        $('#' + id).addClass('show');
+        var $modal = $('#' + id);
+        $modal.addClass('show');
         $('html, body').addClass('modal-open rms-modal-locked');
 
-        /* Autofocus the primary name field in the create modals. */
-        if (id === 'filename-modal') {
-            window.setTimeout(function () {
-                $('#new-filename').trigger('focus');
-            }, 0);
-        } else if (id === 'subfolder-modal') {
-            window.setTimeout(function () {
-                $('#new-subfolder-name').trigger('focus');
-            }, 0);
-        }
+        /* Autofocus every RMS modal. Prefer an explicit [autofocus] target,
+         * otherwise focus the first usable form control or action button. */
+        window.setTimeout(function () {
+            var $focusTarget = $modal.find('[autofocus]:visible:enabled').first();
+
+            if (!$focusTarget.length) {
+                $focusTarget = $modal.find(
+                    'input:visible:enabled:not([type="hidden"]), ' +
+                    'textarea:visible:enabled, select:visible:enabled, ' +
+                    'button:visible:enabled, a[href]:visible'
+                ).filter(function () {
+                    return $(this).attr('tabindex') !== '-1';
+                }).first();
+            }
+
+            if ($focusTarget.length) {
+                $focusTarget.trigger('focus');
+                if ($focusTarget.is('input[type="text"], input[type="search"], textarea')) {
+                    $focusTarget.trigger('select');
+                }
+            }
+        }, 0);
     }
 
     function closeModal($modal) {
@@ -4490,6 +4705,13 @@ showCurrentFolderRenameModal();
             : [];
     }
     $(document).on('dragenter.documentsUpload dragover.documentsUpload', function (event) {
+        /* Dragging/panning a document preview must stay inside the viewer and
+         * must never be interpreted as a file upload drag by the page below. */
+        if ($('#unified-file-viewer').hasClass('show')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+        }
         /* Internal row transfers must not open the upload-file overlay. */
         if (isSelectedFileTransferDrag(event)) return;
         if (!Number(config.currentCanUpload)) return;
@@ -4504,6 +4726,11 @@ showCurrentFolderRenameModal();
         documentDragDepth = Math.max(0, documentDragDepth - 1);
         if (documentDragDepth === 0) $('#documents-drop-overlay').removeClass('show');
     }).on('drop.documentsUpload', function (event) {
+        if ($('#unified-file-viewer').hasClass('show')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+        }
         if (!Number(config.currentCanUpload)) return;
         event.preventDefault();
         documentDragDepth = 0;

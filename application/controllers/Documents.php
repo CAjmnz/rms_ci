@@ -1161,26 +1161,44 @@ class Documents extends CI_Controller
                 ? $known_mimes[$extension]
                 : 'application/octet-stream');
 
-        $this->output
-            ->set_header('X-Content-Type-Options: nosniff')
-            ->set_header('Content-Type: ' . $mime)
-            ->set_header('Content-Length: ' . filesize($path))
-            ->set_header(
-                'Content-Disposition: ' .
-                    ($download ? 'attachment' : 'inline') .
-                    /*
- * WATERMARK-FIRST DISPLAY:
- * Never expose the internal watermark filename to the browser.
- */
-                    '; filename="' .
-                    str_replace(
-                        '"',
-                        '',
-                        basename($document['data_name'])
-                    ) .
-                    '"'
-            )
-            ->set_output(file_get_contents($path));
+        /*
+         * Binary viewer response: stream the resolved file directly.
+         * Clearing any active output buffers prevents PHP notices, whitespace
+         * or layout output from being prepended to PNG/JPG/PDF bytes, which
+         * makes browsers show a broken-image icon even when the file itself is
+         * valid on disk.
+         */
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+
+        if (function_exists('header_remove')) {
+            @header_remove('Content-Type');
+            @header_remove('Content-Length');
+        }
+
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($path));
+        header(
+            'Content-Disposition: ' .
+                ($download ? 'attachment' : 'inline') .
+                '; filename="' .
+                str_replace('"', '', basename($document['data_name'])) .
+                '"'
+        );
+        header('Cache-Control: private, no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        $handle = @fopen($path, 'rb');
+        if ($handle === FALSE) {
+            show_error('The document file could not be opened from storage.', 500);
+            return;
+        }
+
+        fpassthru($handle);
+        fclose($handle);
+        exit;
     }
 
     /**
