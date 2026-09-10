@@ -3597,7 +3597,17 @@ showCurrentFolderRenameModal();
     }
     function transferToTarget(files, level, id, closeViewerAfter) {
         if (!files.length || !id) return;
-        var request = { level: Math.max(0, Number(config.level || 0) - 1), record_id: Number(config.parentId || 0), target_level: Number(level), target_id: Number(id), data_ids: $.map(files, function (file) { return file.data_id; }) };
+        /* Use the exact opened-folder identity as the transfer source. After a
+         * successful move the document belongs to its new folder, so deriving
+         * the source from the browse level/parent can point at the previous
+         * hierarchy and prevents the same document from being moved again. */
+        var sourceLevel = Number(config.currentFolderLevel);
+        var sourceId = Number(config.currentFolderId || 0);
+        if (sourceLevel < 0 || !sourceId) {
+            sourceLevel = Math.max(0, Number(config.level || 0) - 1);
+            sourceId = Number(config.parentId || 0);
+        }
+        var request = { level: sourceLevel, record_id: sourceId, target_level: Number(level), target_id: Number(id), data_ids: $.map(files, function (file) { return file.data_id; }) };
         request[config.csrfName] = config.csrfHash;
         $.post(config.transferUploadedUrl, request, function (response) {
             updateCsrf(response);

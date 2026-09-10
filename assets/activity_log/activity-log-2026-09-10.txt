@@ -1,0 +1,18 @@
+rose|2026-09-10 08:17:21|Login to Administrator Portal|Administrator
+rose|2026-09-10 08:21:40|Create Subfolder: subfolder1|Administrator
+rose|2026-09-10 08:21:48|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=6246d5c651ddd9024d0d7c5bf583b19b4a612eb6913058d37ae32cbd9147436850b3438b66be3...)|Administrator
+rose|2026-09-10 08:21:54|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=6246d5c651ddd9024d0d7c5bf583b19b4a612eb6913058d37ae32cbd9147436850b3438b66be3...)|Administrator
+rose|2026-09-10 08:22:43|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=0df743da8407d7d3ffb7451647d33bb0d54b999ad086363ecfc81dab003e7ddd13bf89b67c87b...)|Administrator
+rose|2026-09-10 08:22:45|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=0df743da8407d7d3ffb7451647d33bb0d54b999ad086363ecfc81dab003e7ddd13bf89b67c87b...)|Administrator
+rose|2026-09-10 08:22:47|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=0df743da8407d7d3ffb7451647d33bb0d54b999ad086363ecfc81dab003e7ddd13bf89b67c87b...)|Administrator
+rose|2026-09-10 08:24:03|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=0df743da8407d7d3ffb7451647d33bb0d54b999ad086363ecfc81dab003e7ddd13bf89b67c87b...)|Administrator
+rose|2026-09-10 08:24:29|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=1, target_id=21, data_ids=0df743da8407d7d3ffb7451647d33bb0d54b999ad086363ecfc81dab003e7ddd13bf89b67c87b...)|Administrator
+rose|2026-09-10 08:36:50|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-10 08:40:33|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=f612062ea1232aa577eb06d94241c6b45c07978f1c0e717bf81104cfd3bdd2e9d85258893c1c1...)|Administrator
+rose|2026-09-10 08:43:19|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=d2052f3cc7e2a0c47551190b981b1153cbfb9a140a56ea1a307c421664fa1b836babdf8005acb...)|Administrator
+rose|2026-09-10 08:45:07|RMS Action: Documents / transfer_uploaded_files (level=1, record_id=46, target_level=2, target_id=22, data_ids=969331b4aab8b13dab4657774557f5f2c03dd83d596b39833fea97ec782feff2c7e1c95b606fa...)|Administrator
+rose|2026-09-10 08:53:04|Create Subfolder: test2|Administrator
+rose|2026-09-10 09:46:25|Upload Data: gene.png, indetail.png, Monthly Report Final.png, testng.png, Encryption Te st 001.png, Encryption_Test_002.png|Administrator
+rose|2026-09-10 09:46:39|Create Subfolder: test 3|Administrator
+rose|2026-09-10 09:46:47|RMS Action: Documents / transfer_uploaded_files (level=2, record_id=23, target_level=3, target_id=14, data_ids=56fc08dad74a66a4c3ada29de79be1c186d0f04b3928d559e0ba0cee7607b4d6e668875ee35df...)|Administrator
+rose|2026-09-10 10:24:33|Update Document Record: test 3: 14|Administrator

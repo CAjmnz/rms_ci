@@ -4209,7 +4209,106 @@ class Documents extends CI_Controller
             }
         }
 
-        return FALSE;
+        /*
+         * Some legacy records point at a parent folder while the physical file
+         * still lives in one of that folder's descendants. Search beneath the
+         * already-resolved hierarchy first. This keeps duplicate friendly names
+         * in other filenames/folders from making the lookup ambiguous.
+         */
+        foreach ($directories as $directory) {
+            $matched_path = FALSE;
+
+            try {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator(
+                        $directory,
+                        FilesystemIterator::SKIP_DOTS
+                    )
+                );
+
+                foreach ($iterator as $file_info) {
+                    if (!$file_info->isFile()) {
+                        continue;
+                    }
+
+                    if (!$this->encrypted_filename_matches(
+                        $file_info->getFilename(),
+                        $served_name
+                    )) {
+                        continue;
+                    }
+
+                    $candidate = $file_info->getPathname();
+                    if ($matched_path !== FALSE && $matched_path !== $candidate) {
+                        $matched_path = FALSE;
+                        break;
+                    }
+
+                    $matched_path = $candidate;
+                }
+            } catch (UnexpectedValueException $exception) {
+                $matched_path = FALSE;
+            }
+
+            if ($matched_path !== FALSE) {
+                return $matched_path;
+            }
+        }
+
+        /*
+         * Last compatibility fallback: search the configured storage root.
+         * Only one exact encrypted fingerprint match is accepted globally.
+         */
+        $setting_id = $original ? 1 : 7;
+        $fallback = $original
+            ? FCPATH . 'administrator/agc_data/'
+            : FCPATH . 'data/';
+        $root = $this->resolve_storage_root(
+            $this->Documents_model->get_system_setting($setting_id),
+            $fallback
+        );
+
+        if (!is_dir($root) || !is_readable($root)) {
+            return FALSE;
+        }
+
+        $matched_path = FALSE;
+
+        try {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $root,
+                    FilesystemIterator::SKIP_DOTS
+                )
+            );
+
+            foreach ($iterator as $file_info) {
+                if (!$file_info->isFile()) {
+                    continue;
+                }
+
+                $physical_name = $file_info->getFilename();
+                if (!$this->encrypted_filename_matches(
+                    $physical_name,
+                    $served_name
+                )) {
+                    continue;
+                }
+
+                $candidate = $file_info->getPathname();
+
+                /* More than one exact encrypted match is ambiguous. */
+                if ($matched_path !== FALSE && $matched_path !== $candidate) {
+                    return FALSE;
+                }
+
+                $matched_path = $candidate;
+            }
+        } catch (UnexpectedValueException $exception) {
+            return FALSE;
+        }
+
+        return $matched_path;
     }
 
     /** Build a new encrypted destination used during Rename and Transfer. */

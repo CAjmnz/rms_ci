@@ -226,6 +226,30 @@ $build_path_label = function ($path) {
 
     return '/' . implode('/', $parts);
 };
+
+/* Add New Subfolder only: hide Subsidiary and Department from the parent path label. */
+$build_subfolder_parent_label = function ($path) {
+    $parts = array();
+
+    if (!empty($path['filename'])) {
+        $parts[] = $path['filename'];
+    } elseif (!empty($path['record_name'])) {
+        $parts[] = $path['record_name'];
+    }
+
+    for ($level = 1; $level <= 10; $level++) {
+        $name_field = 'subfolder' . $level . '_name';
+        $legacy_field = 'subfolder' . $level;
+
+        if (!empty($path[$name_field])) {
+            $parts[] = $path[$name_field];
+        } elseif (!empty($path[$legacy_field])) {
+            $parts[] = $path[$legacy_field];
+        }
+    }
+
+    return '/' . implode('/', $parts);
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1121,7 +1145,7 @@ $build_path_label = function ($path) {
                                 $parent_level = isset($path['record_level'])
                                     ? (int) $path['record_level']
                                     : 0;
-                                $path_label = $build_path_label($path);
+                                $path_label = $build_subfolder_parent_label($path);
                                 $is_current_path = $active_level > 0 &&
                                     $parent_level === $current_parent_level &&
                                     $parent_id === $active_parent_id;

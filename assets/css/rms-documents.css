@@ -4758,10 +4758,11 @@ body.rms-viewer-locked {
     line-height:1.45;
 }
 
-/* Keep every current-folder label, count, legend and action inside the card. */
+/* Keep every current-folder label, count, legend and action inside the card.
+   Match the current-folder card to the same usable width as the table below. */
 .documents-folder-context {
-    width:auto;
-    max-width:100%;
+    width:calc(100% - 36px);
+    max-width:none;
     min-width:0;
     height:auto;
     min-height:100px;
