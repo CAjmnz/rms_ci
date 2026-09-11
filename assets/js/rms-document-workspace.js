@@ -101,7 +101,7 @@
 
     /* Apply zoom and drag position to whichever secure preview is visible. */
     function applyViewerTransform() {
-        var transform = 'translate(' + currentPanX + 'px,' + currentPanY + 'px) scale(' + currentZoom + ')';
+        var transform = 'translate3d(' + currentPanX + 'px,' + currentPanY + 'px,0) scale(' + currentZoom + ')';
 
         if (viewerImage && !viewerImage.hidden) {
             viewerImage.style.transform = transform;
@@ -273,14 +273,27 @@
             event.preventDefault();
         });
 
+        var panFrame = null;
+        var pendingPanX = 0;
+        var pendingPanY = 0;
+
         document.addEventListener('mousemove', function (event) {
             if (!isPanning) {
                 return;
             }
 
-            currentPanX = event.clientX - panStartX;
-            currentPanY = event.clientY - panStartY;
-            applyViewerTransform();
+            pendingPanX = event.clientX - panStartX;
+            pendingPanY = event.clientY - panStartY;
+
+            if (panFrame === null) {
+                panFrame = window.requestAnimationFrame(function () {
+                    currentPanX = pendingPanX;
+                    currentPanY = pendingPanY;
+                    applyViewerTransform();
+                    panFrame = null;
+                });
+            }
+
             event.preventDefault();
         });
 

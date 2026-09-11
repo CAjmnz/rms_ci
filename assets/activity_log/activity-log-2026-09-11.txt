@@ -58,3 +58,56 @@ Juanlvl|2026-09-11 14:16:54|Login to Administrator Portal|Administrator
 Juanlvl|2026-09-11 14:17:06|[Portal] Login|Records
 Juanlvl|2026-09-11 14:46:40|[Portal] Logout|Records
 rose|2026-09-11 14:46:53|Login to Administrator Portal|Administrator
+rose|2026-09-11 15:07:52|Logout from Administrator Portal|Administrator
+rose|2026-09-11 15:08:34|Login to Administrator Portal|Administrator
+iadsumaylo|2026-09-11 15:08:48|[Portal] Login|Records
+iadsumaylo|2026-09-11 15:09:25|[Portal] Logout|Records
+Juanlvl|2026-09-11 15:11:31|[Portal] Login|Records
+Juanlvl|2026-09-11 15:11:52|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-11 16:46:49|[Portal] Logout|Records
+rose|2026-09-11 16:47:02|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-11 16:47:59|[Portal] Login|Records
+Juanlvl|2026-09-11 16:48:01|[Portal] Viewed: deadma.png|Records
+Juanlvl|2026-09-11 16:48:01|[Portal] Viewed: finn.png|Records
+Juanlvl|2026-09-11 16:48:01|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:48:02|[Portal] Viewed: deadma.png|Records
+rose|2026-09-11 16:49:27|Update User Access|Administrator
+rose|2026-09-11 16:50:12|Update User Access|Administrator
+Juanlvl|2026-09-11 16:50:20|[Portal] Viewed: finn.png|Records
+Juanlvl|2026-09-11 16:50:20|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:50:20|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:50:21|[Portal] Viewed: deadma.png|Records
+Juanlvl|2026-09-11 16:50:21|[Portal] Viewed: deadma.png|Records
+rose|2026-09-11 16:51:27|Upload Data: aaaa.jpg, accesss.jpg|Administrator
+rose|2026-09-11 16:51:46|RMS Action: Documents / delete_uploaded_files (level=2, record_id=19, data_ids=381ec0f8a3eac5dfaf5c2c1cf11f8e4af78c631e37ab802ea7e206b2070806469e95143f9bc38...)|Administrator
+rose|2026-09-11 16:52:03|Upload Data: accesss.jpg, aaaa.jpg|Administrator
+Juanlvl|2026-09-11 16:52:11|[Portal] Viewed: aaaa.jpg|Records
+Juanlvl|2026-09-11 16:52:45|[Portal] Viewed: deadma.png|Records
+Juanlvl|2026-09-11 16:52:45|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:52:45|[Portal] Viewed: finn.png|Records
+Juanlvl|2026-09-11 16:53:02|[Portal] Viewed: aaaa.jpg|Records
+rose|2026-09-11 16:54:07|Upload Data: add upload folder.jpg, additional.jpg|Administrator
+Juanlvl|2026-09-11 16:54:15|[Portal] Viewed: additional.jpg|Records
+Juanlvl|2026-09-11 16:54:15|[Portal] Viewed: aaaa.jpg|Records
+rose|2026-09-11 16:55:16|RMS Action: Documents / delete_uploaded_files (level=2, record_id=19, data_ids=99e0133290c71d3c39ef4f099d5a8c3ad9bd5db0336136546885d7f9852dbcd38236f33579186...)|Administrator
+rose|2026-09-11 16:55:32|Upload Data: bar graph.jpg, aaaa.jpg|Administrator
+Juanlvl|2026-09-11 16:55:38|[Portal] Viewed: aaaa.jpg|Records
+rose|2026-09-11 16:56:10|RMS Action: Documents / delete_uploaded_files (level=2, record_id=19, data_ids=221c4365e4c39039a3e8bcc65b96ee34ba687112de3ad8924c508b3b669461154a99c95455653...)|Administrator
+Juanlvl|2026-09-11 16:56:31|[Portal] Viewed: deadma.png|Records
+Juanlvl|2026-09-11 16:56:31|[Portal] Viewed: finn.png|Records
+Juanlvl|2026-09-11 16:56:31|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:56:32|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:56:44|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:57:10|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 16:57:11|[Portal] Viewed: deadma.png|Records
+Juanlvl|2026-09-11 16:57:11|[Portal] Viewed: finn.png|Records
+Juanlvl|2026-09-11 16:57:19|[Portal] Viewed: deadma__1.png|Records
+rose|2026-09-11 16:58:01|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=4d1265e23894939c7ecdbc6b5c9667a6a597b2ff04db16190ec7c55619f525e635f40acaac1d0...)|Administrator
+rose|2026-09-11 16:58:10|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=ee18892a79bf7fb4c24715063b8a9a062cd324955b8eaf9297efa5c24cff70497cec12c97443b...)|Administrator
+rose|2026-09-11 16:58:15|RMS Action: Documents / delete_uploaded_files (level=3, record_id=1, data_ids=68a889ff0d5b11bdf33cdc332dfffcb30ccc53c9e1cc89ca0f90e0794c5dc990811a4c9735b72...)|Administrator
+rose|2026-09-11 16:58:28|Upload Data: additional.jpg, add upload folder.jpg|Administrator
+Juanlvl|2026-09-11 16:58:36|[Portal] Viewed: add_upload_folder.jpg|Records
+Juanlvl|2026-09-11 17:02:40|[Portal] Viewed: add_upload_folder.jpg|Records
+Juanlvl|2026-09-11 17:04:15|[Portal] Viewed: add_upload_folder.jpg|Records
+Juanlvl|2026-09-11 17:12:54|[Portal] Viewed: deadma__1.png|Records
+Juanlvl|2026-09-11 17:32:29|[Portal] Viewed: deadma__1.png|Records

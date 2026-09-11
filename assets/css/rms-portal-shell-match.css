@@ -715,6 +715,17 @@ body.portal-sidebar-collapsed .portal-sidebar-support {
     cursor: grabbing;
 }
 
+.document-viewer-stage img,
+.document-viewer-stage iframe {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.document-viewer-stage.is-panning img,
+.document-viewer-stage.is-panning iframe {
+    transition: none !important;
+}
+
 .document-viewer-stage iframe {
     pointer-events: none;
 }

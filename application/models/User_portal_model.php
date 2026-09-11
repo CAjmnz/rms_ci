@@ -9,7 +9,31 @@ class User_portal_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
-        $this->load->library('encryption');
+
+        /* Use the exact same Documents filename-encryption key as the
+         * administrator upload/viewer module. The global CI encryption_key is
+         * intentionally empty in this project, so loading the library without
+         * this Documents-specific key makes every rmsenc_* lookup fail. */
+        $this->config->load('documents_encryption');
+        $documents_encryption_key = (string) $this->config->item(
+            'documents_filename_encryption_key'
+        );
+
+        if (
+            $documents_encryption_key === '' ||
+            $documents_encryption_key ===
+            'PASTE_YOUR_GENERATED_64_CHARACTER_KEY_HERE'
+        ) {
+            show_error(
+                'The Documents filename encryption key is not configured.',
+                500
+            );
+        }
+
+        $this->load->library(
+            'encryption',
+            array('key' => $documents_encryption_key)
+        );
     }
     /**
      * Authenticate an existing RMS account without changing its password.
