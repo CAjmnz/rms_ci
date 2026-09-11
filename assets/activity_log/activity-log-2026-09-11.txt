@@ -1,0 +1,60 @@
+rose|2026-09-11 08:19:14|Login to Administrator Portal|Administrator
+rose|2026-09-11 08:23:11|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 08:24:07|RMS Action: Documents / item_access (action=add, user_ids=276)|Administrator
+rose|2026-09-11 08:24:13|RMS Action: Documents / item_access (action=add, user_ids=278)|Administrator
+rose|2026-09-11 08:24:44|RMS Action: Documents / item_access (action=add, user_ids=278)|Administrator
+rose|2026-09-11 08:24:48|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 08:25:06|RMS Action: Documents / item_access (action=add, user_ids=276)|Administrator
+rose|2026-09-11 08:25:40|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 08:26:16|RMS Action: Documents / item_access (action=add, user_ids=276)|Administrator
+rose|2026-09-11 08:26:19|RMS Action: Documents / item_access (action=add, user_ids=278)|Administrator
+rose|2026-09-11 08:26:38|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 08:26:46|RMS Action: Documents / item_access (action=add, user_ids=278)|Administrator
+rose|2026-09-11 08:26:47|RMS Action: Documents / item_access (action=add, user_ids=276)|Administrator
+rose|2026-09-11 08:27:02|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 08:27:08|RMS Action: Documents / item_access (action=add, user_ids=276,278)|Administrator
+rose|2026-09-11 08:31:10|Logout from Administrator Portal|Administrator
+Juanlvl|2026-09-11 08:31:20|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-11 08:31:24|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-11 08:31:45|[Portal] Login|Records
+Juanlvl|2026-09-11 08:32:01|[Portal] Logout|Records
+Treslvl|2026-09-11 08:32:21|Login to Administrator Portal|Administrator
+Treslvl|2026-09-11 08:32:25|Login to Administrator Portal|Administrator
+Treslvl|2026-09-11 08:32:54|Logout from Administrator Portal|Administrator
+Doslvl|2026-09-11 08:33:06|Login to Administrator Portal|Administrator
+DOSlvl|2026-09-11 08:33:19|[Portal] Login|Records
+DOSlvl|2026-09-11 08:35:54|[Portal] Logout|Records
+rose|2026-09-11 08:36:13|Login to Administrator Portal|Administrator
+rose|2026-09-11 08:52:39|Logout from Administrator Portal|Administrator
+rose|2026-09-11 08:52:44|Login to Administrator Portal|Administrator
+rose|2026-09-11 09:49:42|Upload Data: deadma (1).png, deadma.png|Administrator
+rose|2026-09-11 09:56:32|Update Document Record: 08 AUGsds: 2|Administrator
+rose|2026-09-11 09:57:24|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 09:57:30|RMS Action: Documents / item_access (action=remove, user_ids=274)|Administrator
+rose|2026-09-11 09:58:35|RMS Action: Documents / item_access (action=add, user_ids=236)|Administrator
+rose|2026-09-11 10:05:30|Create Subfolder: yuui|Administrator
+rose|2026-09-11 10:05:53|Upload Data: deadma (1).png, deadma.png|Administrator
+rose|2026-09-11 10:08:37|Create Subfolder: fdgfdgfdgfdgfdgfdg|Administrator
+rose|2026-09-11 10:08:59|Update Document Record: fdgfdgfdgfdgfdgfdg: 16|Administrator
+rose|2026-09-11 10:09:05|Delete Document Record: 16|Administrator
+rose|2026-09-11 10:09:25|Upload Data: SEPT 4.docx, deadma.png|Administrator
+rose|2026-09-11 10:10:03|RMS Action: Documents / delete_uploaded_files (level=3, record_id=15, data_ids=349ef19695faeaee2f4a79de776efe5860daea9585686b5355f6422f84bbf01f0df8b852203a6...)|Administrator
+rose|2026-09-11 10:10:21|Upload Data: SEPT 4.docx, deadma.png|Administrator
+rose|2026-09-11 10:12:31|Upload Data: SEPT 4.docx, deadma (1).png|Administrator
+rose|2026-09-11 10:12:47|RMS Action: Documents / delete_uploaded_files (level=3, record_id=15, data_ids=cfc99b545f07d5403007669b94eaf4c57c75ce2edf7a623e537f66088878b7eb62e1ba5ebf0b4...)|Administrator
+rose|2026-09-11 10:12:51|RMS Action: Documents / delete_uploaded_files (level=3, record_id=15, data_ids=7f46f1f77cbd5ef33fc523df777be5c0420985b7968e0d4e28255fba189f0616de7f997ac7859...)|Administrator
+rose|2026-09-11 10:37:52|RMS Action: Documents / transfer_uploaded_files (level=3, record_id=12, target_level=4, target_id=6, data_ids=765c5d04efa474979ad82baaf55835f9a7099aa393b76274552a4182ed186fe7ba980048f7c27...)|Administrator
+rose|2026-09-11 10:38:09|Upload Data: finn.png, deadma (1).png|Administrator
+rose|2026-09-11 13:07:08|Login to Administrator Portal|Administrator
+rose|2026-09-11 13:07:12|Login to Administrator Portal|Administrator
+rose|2026-09-11 13:07:16|Login to Administrator Portal|Administrator
+rose|2026-09-11 13:24:13|Upload Data: deadma.png, finn.png|Administrator
+rose|2026-09-11 13:24:49|RMS Action: Documents / delete_uploaded_files (level=3, record_id=10, data_ids=0e04ded83aa4d0f125716d87bc617fee08c978da892753d70e78dd6cec6ea5b28ed3a421605ad...)|Administrator
+rose|2026-09-11 13:25:53|Upload Data: finn.png, deadma (1).png|Administrator
+rose|2026-09-11 13:28:06|Upload Data: image.jpg, deadma.png|Administrator
+rose|2026-09-11 14:07:48|RMS Action: Documents / item_access (action=add, user_ids=274)|Administrator
+rose|2026-09-11 14:16:41|Logout from Administrator Portal|Administrator
+Juanlvl|2026-09-11 14:16:54|Login to Administrator Portal|Administrator
+Juanlvl|2026-09-11 14:17:06|[Portal] Login|Records
+Juanlvl|2026-09-11 14:46:40|[Portal] Logout|Records
+rose|2026-09-11 14:46:53|Login to Administrator Portal|Administrator

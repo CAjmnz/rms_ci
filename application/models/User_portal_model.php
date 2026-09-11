@@ -5,6 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class User_portal_model extends CI_Model
 {
     private $maximum_level = 10;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->library('encryption');
+    }
     /**
      * Authenticate an existing RMS account without changing its password.
      * Roles 1 and 2 remain administrator-only; stat 2 is a blocked account.
@@ -488,21 +494,91 @@ class User_portal_model extends CI_Model
         $fallback = $original ? FCPATH . 'administrator/agc_data/' : FCPATH . 'data/';
         $root = isset($setting['value']) && trim($setting['value']) !== '' ? trim($setting['value']) : $fallback;
         if (!preg_match('/^(?:[A-Za-z]:[\\\\\/]|\/)/', $root)) {
-            $root = FCPATH . ltrim($root, '/\\');
+            /* Preserve legacy ../rms/... traversal so the portal uses the same
+             * physical storage root as the Documents uploader. */
+            $relative = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $root);
+            $root = rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR . $relative;
+            $resolved = realpath($root);
+            if ($resolved !== FALSE) {
+                $root = $resolved;
+            }
         }
+
         $parts = array($row['sub_name'], $row['dept_name'], $row['filename']);
         for ($level = 1; $level <= $this->maximum_level; $level++) {
             if (!empty($row['subfolder' . $level . '_name'])) {
                 $parts[] = $row['subfolder' . $level . '_name'];
             }
         }
-        $parts[] = $row['served_name'];
         foreach ($parts as $part) {
             if ($part === '' || $part === '.' || $part === '..' || basename(str_replace('\\', '/', $part)) !== $part) {
                 return FALSE;
             }
         }
-        return rtrim($root, '/\\') . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $parts);
+
+        $directory = rtrim($root, '/\\');
+        foreach ($parts as $part) {
+            $raw = $directory . DIRECTORY_SEPARATOR . $part;
+            $normalized = $directory . DIRECTORY_SEPARATOR . preg_replace('/\s+/', '_', trim((string) $part));
+            if (is_dir($raw)) {
+                $directory = $raw;
+            } elseif (is_dir($normalized)) {
+                $directory = $normalized;
+            } else {
+                return FALSE;
+            }
+        }
+
+        return $this->resolve_portal_physical_file($directory, $row['served_name']);
+    }
+
+    /** Resolve legacy plaintext files and newer encrypted physical filenames. */
+    private function resolve_portal_physical_file($directory, $friendly_name)
+    {
+        $directory = rtrim((string) $directory, '/\\');
+        $friendly_name = basename(str_replace('\\', '/', (string) $friendly_name));
+        if ($directory === '' || $friendly_name === '') {
+            return FALSE;
+        }
+
+        $legacy = $directory . DIRECTORY_SEPARATOR . $friendly_name;
+        if (is_file($legacy)) {
+            return $legacy;
+        }
+        if (!is_dir($directory) || !is_readable($directory)) {
+            return FALSE;
+        }
+
+        $entries = @scandir($directory);
+        if (!is_array($entries)) {
+            return FALSE;
+        }
+        foreach ($entries as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+            if (strtolower(pathinfo($entry, PATHINFO_EXTENSION)) !== strtolower(pathinfo($friendly_name, PATHINFO_EXTENSION))) {
+                continue;
+            }
+            $base = pathinfo($entry, PATHINFO_FILENAME);
+            if (strpos($base, 'rmsenc_') !== 0) {
+                continue;
+            }
+            $encoded = substr($base, strlen('rmsenc_'));
+            $encoded = strtr($encoded, '-_', '+/');
+            $padding = strlen($encoded) % 4;
+            if ($padding !== 0) {
+                $encoded .= str_repeat('=', 4 - $padding);
+            }
+            $decrypted = $this->encryption->decrypt($encoded);
+            if ($decrypted === hash('sha256', $friendly_name, TRUE)) {
+                $path = $directory . DIRECTORY_SEPARATOR . $entry;
+                if (is_file($path)) {
+                    return $path;
+                }
+            }
+        }
+        return FALSE;
     }
 
     /** Assemble the shared list/count query with an exact hierarchy match. */
@@ -556,7 +632,9 @@ class User_portal_model extends CI_Model
     private function find_viewer_copy($row)
     {
         $this->db->from('data_f')->where('file_id', (int) $row['file_id'])
-            ->where('page_nof', (int) $row['page_no'])->where('statf', 0);
+            ->where('page_nof', (int) $row['page_no'])
+            ->where('date_uploadedf', (string) $row['date_uploaded'])
+            ->where('statf', 0);
         for ($level = 1; $level <= $this->maximum_level; $level++) {
             $this->db->where('subfolder' . $level . '_idf', (int) $row['subfolder' . $level . '_id']);
         }

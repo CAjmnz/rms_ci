@@ -437,12 +437,38 @@ class User_portal extends CI_Controller
             $name
         );
 
-        $this->output
-            ->set_header('X-Content-Type-Options: nosniff')
-            ->set_header('Content-Type: ' . $mime)
-            ->set_header('Content-Length: ' . filesize($path))
-            ->set_header('Content-Disposition: ' . ($download ? 'attachment' : 'inline') . '; filename="' . str_replace('"', '', $name) . '"')
-            ->set_output(file_get_contents($path));
+        /* Stream the binary directly. The CI output pipeline can prepend
+         * buffered warnings/notices and corrupt otherwise valid images/PDFs,
+         * which makes the Level 1/2 document viewer show a broken preview. */
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+
+        if (function_exists('header_remove')) {
+            @header_remove('Content-Type');
+            @header_remove('Content-Length');
+        }
+
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($path));
+        header(
+            'Content-Disposition: ' .
+                ($download ? 'attachment' : 'inline') .
+                '; filename="' . str_replace('"', '', $name) . '"'
+        );
+        header('Cache-Control: private, no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        $handle = @fopen($path, 'rb');
+        if ($handle === FALSE) {
+            show_error('The document file could not be opened from storage.', 500);
+            return;
+        }
+
+        fpassthru($handle);
+        fclose($handle);
+        exit;
     }
 
     /* End the portal session and return the legacy account to offline. */

@@ -4903,22 +4903,6 @@ body.rms-viewer-locked {
     font-size:12px;
     font-weight:800;
 }
-.documents-access-select {
-    width:100%;
-    min-height:230px;
-    border:1px solid #d7e5df;
-    border-radius:10px;
-    background:#fff;
-    color:#233f36;
-    padding:8px;
-    font-size:12px;
-    outline:0;
-}
-.documents-access-select:focus {
-    border-color:#0a865e;
-    box-shadow:0 0 0 3px rgba(10,134,94,.10);
-}
-.documents-access-select option { padding:7px 8px; }
 .documents-access-help {
     margin:8px 0 0;
     color:#71847d;
@@ -4963,14 +4947,37 @@ body.rms-viewer-locked {
     max-width:100%;
 }
 
-/* Manage Access: creator on the left, add-many on the right, removable list below. */
+/* Manage Access: compact dialog with Facebook-style people search. */
+#documents-access-modal {
+    overflow:hidden !important;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+html:has(#documents-access-modal.show),
+body:has(#documents-access-modal.show) {
+    overflow:hidden !important;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+html:has(#documents-access-modal.show)::-webkit-scrollbar,
+body:has(#documents-access-modal.show)::-webkit-scrollbar {
+    display:none;
+    width:0;
+    height:0;
+}
+#documents-access-modal::-webkit-scrollbar {
+    display:none;
+    width:0;
+    height:0;
+}
 .documents-access-dialog {
-    max-width:760px;
+    max-width:540px;
+    margin:12px auto;
 }
 .documents-access-topline {
     display:grid;
-    grid-template-columns:minmax(170px,.72fr) minmax(0,1.6fr);
-    gap:22px;
+    grid-template-columns:minmax(145px,.68fr) minmax(0,1.6fr);
+    gap:16px;
     align-items:start;
 }
 .documents-access-creator-card {
@@ -5002,14 +5009,81 @@ body.rms-viewer-locked {
 .documents-access-add-block {
     min-width:0;
 }
-.documents-access-add-row {
-    display:grid;
-    grid-template-columns:minmax(0,1fr) auto;
-    gap:10px;
-    align-items:start;
+.documents-access-search-wrap {
+    position:relative;
 }
-.documents-access-add-row .documents-access-select {
-    min-height:132px;
+.documents-access-search-icon {
+    color:#70827c;
+    left:13px;
+    pointer-events:none;
+    position:absolute;
+    top:12px;
+    z-index:2;
+}
+.documents-access-search {
+    background:#f5f8f7;
+    border:1px solid #d8e4df;
+    border-radius:20px;
+    color:#233f36;
+    font-size:12px;
+    height:38px;
+    outline:0;
+    padding:0 14px 0 36px;
+    width:100%;
+}
+.documents-access-search:focus {
+    background:#fff;
+    border-color:#0a865e;
+    box-shadow:0 0 0 3px rgba(10,134,94,.10);
+}
+.documents-access-search-results {
+    background:#fff;
+    border:1px solid #dce7e2;
+    border-radius:10px;
+    box-shadow:0 12px 30px rgba(20,55,43,.16);
+    left:0;
+    max-height:230px;
+    overflow:auto;
+    position:absolute;
+    right:0;
+    top:44px;
+    z-index:20;
+}
+.documents-access-search-result {
+    align-items:center;
+    background:#fff;
+    border:0;
+    border-bottom:1px solid #eef3f0;
+    cursor:pointer;
+    display:flex;
+    gap:10px;
+    padding:9px 11px;
+    text-align:left;
+    width:100%;
+}
+.documents-access-search-result:last-child { border-bottom:0; }
+.documents-access-search-result:hover,
+.documents-access-search-result:focus {
+    background:#f0f8f4;
+    outline:0;
+}
+.documents-access-search-copy {
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+.documents-access-search-copy strong {
+    color:#24463b;
+    font-size:12px;
+}
+.documents-access-search-copy small {
+    color:#7a8c85;
+    font-size:10px;
+}
+.documents-access-search-empty {
+    color:#7a8c85;
+    font-size:11px;
+    padding:14px;
 }
 .documents-access-current-head {
     display:flex;
@@ -5025,8 +5099,16 @@ body.rms-viewer-locked {
     font-size:13px;
 }
 .documents-access-current-list {
-    max-height:280px;
-    overflow:auto;
+    max-height:180px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+.documents-access-current-list::-webkit-scrollbar {
+    display:none;
+    width:0;
+    height:0;
 }
 .documents-access-current-user {
     display:grid;
@@ -5074,9 +5156,6 @@ body.rms-viewer-locked {
 }
 @media (max-width:700px) {
     .documents-access-topline {
-        grid-template-columns:1fr;
-    }
-    .documents-access-add-row {
         grid-template-columns:1fr;
     }
 }

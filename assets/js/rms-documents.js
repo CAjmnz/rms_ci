@@ -2136,24 +2136,15 @@ function loadRecord(recordId, done, requestedLevel) {
         var creator = documentsInfoSelected && documentsInfoSelected.created_by
             ? documentsInfoSelected.created_by
             : 'Admin';
-        var $select = $('#documents-access-select').empty();
         var $list = $('#documents-access-current-list').empty();
         var allowed = $.grep(users, function (user) { return Number(user.has_access) === 1; });
         var available = $.grep(users, function (user) { return Number(user.has_access) !== 1; });
+        $('#documents-access-modal').data('available-users', available);
+        $('#documents-access-search').val('');
+        $('#documents-access-search-results').empty().prop('hidden', true);
 
         $('#documents-access-creator-name').text(documentsInfoValue(creator));
         $('#documents-access-creator-avatar').text(documentsInfoActivityInitials(creator));
-
-        $.each(available, function (_, user) {
-            $('<option>')
-                .val(user.user_id)
-                .text((user.emp_name || user.username || 'User') + (user.username ? ' (' + user.username + ')' : ''))
-                .appendTo($select);
-        });
-
-        if (!available.length) {
-            $('<option disabled>No more users available to add</option>').appendTo($select);
-        }
 
         if (!allowed.length) {
             $list.html('<div class="documents-access-empty">No users are currently tagged to this folder path.</div>');
@@ -2187,7 +2178,8 @@ function loadRecord(recordId, done, requestedLevel) {
         var token = documentsInfoPathToken(documentsInfoSelected);
         if (!token) return;
         $('#documents-access-current-list').html('<div class="documents-access-empty">Loading access...</div>');
-        $('#documents-access-select').empty();
+        $('#documents-access-search').val('');
+        $('#documents-access-search-results').empty().prop('hidden', true);
         $.getJSON(config.accessUrl, { path_token: token }).done(function (response) {
             if (!response || !response.success) {
                 $('#documents-access-current-list').html('<div class="documents-access-empty">Access information could not be loaded.</div>');
@@ -2251,13 +2243,46 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-access-modal').removeClass('show');
     });
 
-    $(document).on('click', '#documents-access-add', function () {
-        var ids = $('#documents-access-select').val() || [];
-        if (!ids.length) {
-            documentsAlert('Select users', 'Select one or more users to add.', 'info');
+    function renderDocumentsAccessSearch(query) {
+        var $results = $('#documents-access-search-results').empty();
+        var search = $.trim(String(query || '')).toLowerCase();
+        var available = $('#documents-access-modal').data('available-users') || [];
+
+        if (!search) {
+            $results.prop('hidden', true);
             return;
         }
-        updateDocumentsAccess('add', ids, $(this));
+
+        var matches = $.grep(available, function (user) {
+            var haystack = ((user.emp_name || '') + ' ' + (user.username || '')).toLowerCase();
+            return haystack.indexOf(search) !== -1;
+        }).slice(0, 8);
+
+        if (!matches.length) {
+            $('<div class="documents-access-search-empty">No matching users found</div>').appendTo($results);
+        } else {
+            $.each(matches, function (_, user) {
+                var displayName = user.emp_name || user.username || 'User';
+                var $result = $('<button type="button" class="documents-access-search-result"></button>')
+                    .attr('data-user-id', user.user_id);
+                $('<span class="documents-info-access-avatar"></span>')
+                    .text(documentsInfoActivityInitials(displayName)).appendTo($result);
+                $('<span class="documents-access-search-copy"><strong></strong><small></small></span>')
+                    .find('strong').text(displayName).end()
+                    .find('small').text(user.username || '').end()
+                    .appendTo($result);
+                $result.appendTo($results);
+            });
+        }
+        $results.prop('hidden', false);
+    }
+
+    $(document).on('input', '#documents-access-search', function () {
+        renderDocumentsAccessSearch(this.value);
+    });
+
+    $(document).on('click', '.documents-access-search-result', function () {
+        updateDocumentsAccess('add', [$(this).attr('data-user-id')], $(this));
     });
 
     $(document).on('change', '.documents-access-remove-check', function () {
@@ -4087,21 +4112,38 @@ showCurrentFolderRenameModal();
         });
     });
 
-    function openModal(id) {
-        var $modal = $('#' + id);
-        $modal.addClass('show');
-        $('html, body').addClass('modal-open rms-modal-locked');
+    function focusDocumentModalInput($modal) {
+        if (!$modal || !$modal.length || !$modal.hasClass('show')) return;
 
-        /* Autofocus every RMS modal. Prefer an explicit [autofocus] target,
-         * otherwise focus the first usable form control or action button. */
         window.setTimeout(function () {
+            if (!$modal.hasClass('show')) return;
+
+            /* Prefer an explicitly marked field, then a typing field, then
+             * any remaining visible form control. Buttons are intentionally
+             * excluded because modals with inputs should put the cursor in
+             * the form instead of on Cancel/Close. */
             var $focusTarget = $modal.find('[autofocus]:visible:enabled').first();
 
             if (!$focusTarget.length) {
                 $focusTarget = $modal.find(
+                    'input[type="text"]:visible:enabled, ' +
+                    'input[type="search"]:visible:enabled, ' +
+                    'input[type="email"]:visible:enabled, ' +
+                    'input[type="number"]:visible:enabled, ' +
+                    'input[type="tel"]:visible:enabled, ' +
+                    'input[type="url"]:visible:enabled, ' +
+                    'input[type="password"]:visible:enabled, ' +
+                    'textarea:visible:enabled'
+                ).filter(function () {
+                    return $(this).attr('tabindex') !== '-1';
+                }).first();
+            }
+
+            if (!$focusTarget.length) {
+                $focusTarget = $modal.find(
+                    'select:visible:enabled, ' +
                     'input:visible:enabled:not([type="hidden"]), ' +
-                    'textarea:visible:enabled, select:visible:enabled, ' +
-                    'button:visible:enabled, a[href]:visible'
+                    'textarea:visible:enabled'
                 ).filter(function () {
                     return $(this).attr('tabindex') !== '-1';
                 }).first();
@@ -4115,6 +4157,30 @@ showCurrentFolderRenameModal();
             }
         }, 0);
     }
+
+    function openModal(id) {
+        var $modal = $('#' + id);
+        $modal.addClass('show');
+        $('html, body').addClass('modal-open rms-modal-locked');
+        focusDocumentModalInput($modal);
+    }
+
+    /* Some Document Module modals are opened directly with addClass('show')
+     * instead of openModal(). Watch every RMS modal so those dialogs receive
+     * the same autofocus behavior as soon as they become visible. */
+    $('.rms-modal').each(function () {
+        var modal = this;
+        if (typeof MutationObserver === 'undefined') return;
+
+        new MutationObserver(function (mutations) {
+            $.each(mutations, function (_, mutation) {
+                if (mutation.attributeName === 'class' && $(modal).hasClass('show')) {
+                    focusDocumentModalInput($(modal));
+                    return false;
+                }
+            });
+        }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
 
     function closeModal($modal) {
         $modal.removeClass('show');

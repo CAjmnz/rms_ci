@@ -772,12 +772,13 @@ $build_subfolder_parent_label = function ($path) {
                                     </span>
                                 </div>
                                 <div class="documents-access-add-block">
-                                    <label class="documents-access-label" for="documents-access-select">Add user(s)</label>
-                                    <div class="documents-access-add-row">
-                                        <select id="documents-access-select" class="documents-access-select" multiple size="5"></select>
-                                        <button type="button" class="btn btn-success" id="documents-access-add">Add selected</button>
+                                    <label class="documents-access-label" for="documents-access-search">Add user</label>
+                                    <div class="documents-access-search-wrap">
+                                        <i class="bi bi-search documents-access-search-icon"></i>
+                                        <input type="search" id="documents-access-search" class="documents-access-search" placeholder="Search people by name or username" autocomplete="off" autofocus>
+                                        <div class="documents-access-search-results" id="documents-access-search-results" hidden></div>
                                     </div>
-                                    <p class="documents-access-help">Select one or multiple users. Adding users keeps everyone who is already tagged.</p>
+                                    <p class="documents-access-help">Start typing a name. Matching users will appear below the search box.</p>
                                 </div>
                             </div>
                             <div class="documents-access-current-head">

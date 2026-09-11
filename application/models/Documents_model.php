@@ -410,7 +410,7 @@ class Documents_model extends CI_Model
             ->from('data_f')
             ->where('file_id', (int) $row['file_id'])
             ->where('page_nof', (int) $row['page_no'])
-            /* WATERMARK PAIRING: match the exact document, not only page/time. */
+            /* Prefer an exact same-name match for legacy records. */
             ->where('data_namef', (string) $row['data_name'])
             ->where('date_uploadedf', (string) $row['date_uploaded'])
             ->where('statf', 0);
@@ -423,6 +423,32 @@ class Documents_model extends CI_Model
         }
 
         $viewer = $this->db->limit(1)->get()->row_array();
+
+        /*
+         * New uploads may use a different filename for the watermark copy.
+         * They are paired by upload index/page number, same upload timestamp,
+         * and the exact same folder hierarchy. If no same-name legacy match
+         * exists, use that paired watermark record so the protected filename
+         * is what appears in Manage Documents.
+         */
+        if (!$viewer) {
+            $this->db
+                ->select('data_namef')
+                ->from('data_f')
+                ->where('file_id', (int) $row['file_id'])
+                ->where('page_nof', (int) $row['page_no'])
+                ->where('date_uploadedf', (string) $row['date_uploaded'])
+                ->where('statf', 0);
+
+            for ($level = 1; $level <= $this->maximum_level; $level++) {
+                $this->db->where(
+                    'subfolder' . $level . '_idf',
+                    (int) $row['subfolder' . $level . '_id']
+                );
+            }
+
+            $viewer = $this->db->limit(1)->get()->row_array();
+        }
         $row['viewer_name'] = $viewer && !empty($viewer['data_namef'])
             ? (string) $viewer['data_namef']
             : '';
