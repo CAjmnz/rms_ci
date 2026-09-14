@@ -197,40 +197,35 @@ class User_portal extends CI_Controller
         $success_message = '';
         $error_message = '';
 
-        $this->form_validation->set_rules('complete_name', 'Complete name', 'trim|required|max_length[150]');
-        $this->form_validation->set_rules('username', 'Username', 'trim|required|max_length[25]');
         $this->form_validation->set_rules('new_password', 'New password', 'trim|min_length[8]|max_length[50]');
         $this->form_validation->set_rules('confirm_password', 'Confirm new password', 'trim|matches[new_password]');
 
-        /* Process only submitted profile forms, not the initial page request. */
+        /*
+         * Name and username are administrator-managed identity fields.
+         * Never trust posted copies of those values: a user can remove readonly
+         * attributes in browser developer tools and submit forged fields.
+         */
         if ($this->input->method(TRUE) === 'POST' && $this->form_validation->run() === TRUE) {
-            $complete_name = trim((string) $this->input->post('complete_name', TRUE));
-            $username = trim((string) $this->input->post('username', TRUE));
             $new_password = (string) $this->input->post('new_password', FALSE);
+            $updated = $this->User_portal_model->update_profile($user_id, $new_password);
 
-            if ($this->User_portal_model->username_exists_for_other_user($username, $user_id)) {
-                $error_message = 'That username is already used by another account.';
-            } else {
-                $updated = $this->User_portal_model->update_profile(
-                    $user_id,
-                    $complete_name,
-                    $username,
-                    $new_password
-                );
-
-                if ($updated) {
+            if ($updated) {
+                /* Reload identity values from the database instead of POST data. */
+                $profile = $this->User_portal_model->get_profile($user_id);
+                if ($profile !== FALSE) {
                     $this->session->set_userdata(array(
-                        'rms_portal_display_name' => $complete_name,
-                        'rms_portal_username' => $username
+                        'rms_portal_display_name' => $profile['emp_name'],
+                        'rms_portal_username' => $profile['username']
                     ));
-                    $success_message = 'Your profile changes were saved successfully.';
-                    $profile = $this->User_portal_model->get_profile($user_id);
-                } else {
-                    $error_message = 'Your profile could not be saved. Please try again.';
                 }
+                $success_message = $new_password !== ''
+                    ? 'Your password was updated successfully.'
+                    : 'No profile changes were made.';
+            } else {
+                $error_message = 'Your profile could not be saved. Please try again.';
             }
         } elseif ($this->input->method(TRUE) === 'POST') {
-            $error_message = 'Please correct the highlighted profile fields.';
+            $error_message = 'Please correct the highlighted password fields.';
         }
 
         $data = array(
@@ -413,6 +408,31 @@ class User_portal extends CI_Controller
             return;
         }
         $path = $this->User_portal_model->resolve_document_path($document, $download);
+
+        /*
+         * Match the Admin Documents viewer behavior for older/mixed uploads:
+         * prefer the protected data_f copy, but if its physical file cannot be
+         * resolved, re-authorize and serve the original instead of leaving the
+         * user viewer on an unavailable-preview screen.
+         */
+        if (!$download && ($path === FALSE || !is_file($path) || !is_readable($path))) {
+            $original_document = $this->User_portal_model->find_authorized_document(
+                $user_id,
+                $token,
+                TRUE
+            );
+            if ($original_document) {
+                $original_path = $this->User_portal_model->resolve_document_path(
+                    $original_document,
+                    TRUE
+                );
+                if ($original_path !== FALSE && is_file($original_path) && is_readable($original_path)) {
+                    $document = $original_document;
+                    $path = $original_path;
+                }
+            }
+        }
+
         if ($path === FALSE || !is_file($path) || !is_readable($path)) {
             show_error('The document file could not be found in storage.', 404);
             return;

@@ -107,7 +107,7 @@ $this->load->view('user/partials/header');
                             <span class="profile-section-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.6-4 2.9-6 7-6s6.4 2 7 6"/></svg>
                             </span>
-                            <span><h2 id="personal-information-title">Personal information</h2><p>Update the name displayed throughout your User Portal.</p></span>
+                            <span><h2 id="personal-information-title">Personal information</h2><p>Your name is managed by the administrator and cannot be changed from the User Portal.</p></span>
                         </header>
 
                         <div class="profile-field-grid">
@@ -115,9 +115,9 @@ $this->load->view('user/partials/header');
                                 <span>Complete name <strong aria-hidden="true">*</strong></span>
                                 <span class="profile-input-shell">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c.6-4 2.9-6 7-6s6.4 2 7 6"/></svg>
-                                    <input id="profile-complete-name" type="text" name="complete_name" value="<?php echo html_escape(set_value('complete_name', $profile['emp_name'])); ?>" maxlength="150" autocomplete="name" aria-label="Complete name" readonly required>
+                                    <input id="profile-complete-name" type="text" value="<?php echo html_escape($profile['emp_name']); ?>" maxlength="150" autocomplete="name" aria-label="Complete name" readonly aria-readonly="true">
                                 </span>
-                                <?php echo form_error('complete_name', '<small class="profile-field-error">', '</small>'); ?>
+                                <small class="profile-field-note">Complete name is managed by the administrator.</small>
                             </label>
 
                             <label class="profile-field">
@@ -144,9 +144,9 @@ $this->load->view('user/partials/header');
                                     <span>Username <strong aria-hidden="true">*</strong></span>
                                     <span class="profile-input-shell">
                                         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c.6-4 2.9-6 7-6s6.4 2 7 6"/></svg>
-                                        <input type="text" name="username" value="<?php echo html_escape(set_value('username', $profile['username'])); ?>" maxlength="25" required>
+                                        <input type="text" value="<?php echo html_escape($profile['username']); ?>" maxlength="25" readonly aria-readonly="true">
                                     </span>
-                                    <?php echo form_error('username', '<small class="profile-field-error">', '</small>'); ?>
+                                    <small class="profile-field-note">Username is managed by the administrator and cannot be changed here.</small>
                                 </label>
 
                                 <label class="profile-field">

@@ -3009,6 +3009,7 @@ class Documents extends CI_Controller
 
         $path_ids = $this->build_upload_path_ids($path);
         $stored_files = array();
+        $page_offset = max(0, (int) $this->input->post('page_offset', TRUE));
 
         $this->db->trans_begin();
 
@@ -3076,10 +3077,10 @@ class Documents extends CI_Controller
             $stored_files[] = $original_destination;
 
             /*
-             * Page numbers begin at 1 and preserve the selected-file order,
-             * matching the legacy New Documents V1 upload form.
+             * Preserve one continuous page sequence even when the browser
+             * splits a large upload into several PHP-safe batches.
              */
-            $page_no = $index + 1;
+            $page_no = $page_offset + $index + 1;
 
             if (
                 !$this->Documents_model->create_document(

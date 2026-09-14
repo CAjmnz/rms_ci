@@ -235,8 +235,12 @@ $this->load->view('user/partials/header');
 
                             <?php foreach ($workspace_documents as $document): ?>
                                 <?php
+                                /* Match the filename shown in Manage Documents when a protected viewer copy exists. */
+                                $display_name = isset($document['display_name']) && $document['display_name'] !== ''
+                                    ? $document['display_name']
+                                    : $document['data_name'];
                                 /* Show safe inline thumbnails only for common browser image formats. */
-                                $document_extension = strtolower(pathinfo($document['data_name'], PATHINFO_EXTENSION));
+                                $document_extension = strtolower(pathinfo($display_name, PATHINFO_EXTENSION));
                                 $image_extensions = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp');
                                 $is_image = in_array($document_extension, $image_extensions, TRUE);
                                 $file_type_class = 'file-type-document';
@@ -260,7 +264,7 @@ $this->load->view('user/partials/header');
                                                 type="checkbox"
                                                 name="document_tokens[]"
                                                 value="<?php echo html_escape($document['token']); ?>"
-                                                aria-label="Select <?php echo html_escape($document['data_name']); ?>">
+                                                aria-label="Select <?php echo html_escape($display_name); ?>">
                                             <span aria-hidden="true">
                                                 <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
                                             </span>
@@ -272,16 +276,16 @@ $this->load->view('user/partials/header');
                                         type="button"
                                         data-file-view-url="<?php echo $view_url; ?>"
                                         data-file-download-url="<?php echo $role_id === 3 ? $download_url : ''; ?>"
-                                        data-file-name="<?php echo html_escape($document['data_name']); ?>"
+                                        data-file-name="<?php echo html_escape($display_name); ?>"
                                         data-file-page="Page <?php echo (int) $document['page_no']; ?>"
                                         data-file-kind="<?php echo $is_image ? 'image' : 'document'; ?>"
-                                        aria-label="View <?php echo html_escape($document['data_name']); ?>">
+                                        aria-label="View <?php echo html_escape($display_name); ?>">
                                         <span class="drive-file-preview<?php echo $is_image ? ' is-image' : ' is-document'; ?> <?php echo $file_type_class; ?>">
                                             <?php if ($is_image): ?>
                                                 <img
                                                     loading="lazy"
                                                     src="<?php echo $view_url; ?>"
-                                                    alt="Preview of <?php echo html_escape($document['data_name']); ?>">
+                                                    alt="Preview of <?php echo html_escape($display_name); ?>">
                                             <?php endif; ?>
                                             <span class="drive-file-preview-fallback" aria-hidden="true">
                                                 <svg viewBox="0 0 24 24">
@@ -294,7 +298,7 @@ $this->load->view('user/partials/header');
                                             </span>
                                         </span>
                                         <span class="drive-file-copy">
-                                            <strong><?php echo html_escape($document['data_name']); ?></strong>
+                                            <strong><?php echo html_escape($display_name); ?></strong>
                                             <small>Page <?php echo (int) $document['page_no']; ?></small>
                                         </span>
                                     </button>

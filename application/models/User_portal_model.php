@@ -118,13 +118,17 @@ class User_portal_model extends CI_Model
     public function get_authorized_documents($user_id, $limit, $offset, $search)
     {
         $this->build_documents_query($user_id, $search, TRUE);
-        /* The legacy data table stores the document upload date. */
-        $rows = $this->db->order_by('data.date_uploaded', 'DESC')
+        /* Match the Admin Documents table's default ordering exactly: filename ASC. */
+        $rows = $this->db->order_by('data.data_name', 'ASC')
             ->limit(max(1, (int) $limit), max(0, (int) $offset))
             ->get()->result_array();
         foreach ($rows as $index => $row) {
             $rows[$index]['token'] = $this->make_token($row);
             $rows[$index]['path_label'] = $this->path_label($row);
+            $viewer = $this->find_viewer_copy($row);
+            $rows[$index]['display_name'] = $viewer && !empty($viewer['data_namef'])
+                ? (string) $viewer['data_namef']
+                : (string) $row['data_name'];
         }
         return $rows;
     }
@@ -311,10 +315,15 @@ class User_portal_model extends CI_Model
             $this->db->like('data.data_name', $search);
         }
 
-        $rows = $this->db->order_by('data.date_uploaded', 'DESC')->get()->result_array();
+        /* Keep User Portal ordering consistent with Admin Documents. */
+        $rows = $this->db->order_by('data.data_name', 'ASC')->get()->result_array();
         foreach ($rows as $index => $row) {
             $rows[$index]['token'] = $this->make_token($row);
             $rows[$index]['path_label'] = $this->path_label($row);
+            $viewer = $this->find_viewer_copy($row);
+            $rows[$index]['display_name'] = $viewer && !empty($viewer['data_namef'])
+                ? (string) $viewer['data_namef']
+                : (string) $row['data_name'];
         }
         return $rows;
     }
@@ -540,20 +549,65 @@ class User_portal_model extends CI_Model
             }
         }
 
-        $directory = rtrim($root, '/\\');
+        /*
+         * Legacy RMS can contain both display-name folders (with spaces) and
+         * normalized server folders (with underscores) at the same level.
+         * Keep every viable branch until the complete hierarchy is resolved;
+         * choosing the first match can lead into the wrong sibling branch.
+         */
+        $directories = array(rtrim($root, '/\\'));
         foreach ($parts as $part) {
-            $raw = $directory . DIRECTORY_SEPARATOR . $part;
-            $normalized = $directory . DIRECTORY_SEPARATOR . preg_replace('/\s+/', '_', trim((string) $part));
-            if (is_dir($raw)) {
-                $directory = $raw;
-            } elseif (is_dir($normalized)) {
-                $directory = $normalized;
-            } else {
+            $server_name = preg_replace('/\s+/', '_', trim((string) $part));
+            $candidate_names = array_values(array_unique(array($server_name, $part)));
+            $next_directories = array();
+
+            foreach ($directories as $current_directory) {
+                foreach ($candidate_names as $candidate_name) {
+                    $candidate = rtrim($current_directory, '/\\') . DIRECTORY_SEPARATOR . $candidate_name;
+                    if (is_dir($candidate)) {
+                        $next_directories[$candidate] = $candidate;
+                    }
+                }
+            }
+
+            if (empty($next_directories)) {
                 return FALSE;
+            }
+
+            $directories = array_values($next_directories);
+        }
+
+        foreach ($directories as $directory) {
+            $path = $this->resolve_portal_physical_file($directory, $row['served_name']);
+            if ($path !== FALSE) {
+                return $path;
             }
         }
 
-        return $this->resolve_portal_physical_file($directory, $row['served_name']);
+        /* Match the Admin viewer's compatibility search below resolved branches. */
+        foreach ($directories as $directory) {
+            try {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
+                );
+                foreach ($iterator as $file_info) {
+                    if (!$file_info->isFile()) {
+                        continue;
+                    }
+                    $candidate = $this->resolve_portal_physical_file(
+                        $file_info->getPath(),
+                        $row['served_name']
+                    );
+                    if ($candidate !== FALSE) {
+                        return $candidate;
+                    }
+                }
+            } catch (UnexpectedValueException $exception) {
+                continue;
+            }
+        }
+
+        return FALSE;
     }
 
     /** Resolve legacy plaintext files and newer encrypted physical filenames. */
@@ -652,17 +706,38 @@ class User_portal_model extends CI_Model
         }
     }
 
-    /** Find the protected viewer copy for the same page and hierarchy. */
+    /** Find the protected viewer copy using the same pairing rules as Admin. */
     private function find_viewer_copy($row)
     {
+        /*
+         * Prefer an exact same-name match. Multiple uploads can share the same
+         * page number, timestamp and hierarchy, so page/time/path alone is not
+         * a unique identity and can make Page 9 display the Page 1 watermark.
+         */
         $this->db->from('data_f')->where('file_id', (int) $row['file_id'])
             ->where('page_nof', (int) $row['page_no'])
+            ->where('data_namef', (string) $row['data_name'])
             ->where('date_uploadedf', (string) $row['date_uploaded'])
             ->where('statf', 0);
         for ($level = 1; $level <= $this->maximum_level; $level++) {
             $this->db->where('subfolder' . $level . '_idf', (int) $row['subfolder' . $level . '_id']);
         }
         $viewer = $this->db->limit(1)->get()->row_array();
+
+        /*
+         * Compatibility for uploads whose protected copy intentionally uses a
+         * different friendly filename. This mirrors Documents_model.
+         */
+        if (!$viewer) {
+            $this->db->from('data_f')->where('file_id', (int) $row['file_id'])
+                ->where('page_nof', (int) $row['page_no'])
+                ->where('date_uploadedf', (string) $row['date_uploaded'])
+                ->where('statf', 0);
+            for ($level = 1; $level <= $this->maximum_level; $level++) {
+                $this->db->where('subfolder' . $level . '_idf', (int) $row['subfolder' . $level . '_id']);
+            }
+            $viewer = $this->db->limit(1)->get()->row_array();
+        }
 
         if (!$viewer) {
             return FALSE;
@@ -780,18 +855,15 @@ class User_portal_model extends CI_Model
             ->count_all_results('users') > 0;
     }
 
-    /* Update only the editable profile fields in the existing users table. */
-    public function update_profile($user_id, $complete_name, $username, $new_password)
+    /* Update only the password from the User Portal. Identity fields stay read-only. */
+    public function update_profile($user_id, $new_password)
     {
-        $values = array(
-            'emp_name' => $complete_name,
-            'username' => $username
-        );
+        if ($new_password === '') {
+            return TRUE;
+        }
 
         /* Preserve the legacy 32-character format when a new password is set. */
-        if ($new_password !== '') {
-            $values['password'] = md5($new_password);
-        }
+        $values = array('password' => md5($new_password));
 
         $this->db->trans_start();
         $this->db
