@@ -4079,80 +4079,81 @@ showCurrentFolderRenameModal();
      * 1–4 chars    = remain pending.
      * 5+ chars     = search automatically.
      */
-    // DOCUMENT SEARCH: typing must never reload the DataTable.
-    $('#documents-folder-search').off('input.documentsSearch');
+    var documentsSearchTimer = null;
 
-    /* DOCUMENT SEARCH: apply only after Search is clicked. */
-    $('#documents-search-submit')
-        .off('click.documentsSearch')
-        .on('click.documentsSearch', function () {
+    /*
+     * Facebook-style search behavior:
+     * - 1–4 characters stay pending and do not redraw the server-side table.
+     * - 5+ characters automatically filter after a short typing pause.
+     * - Clearing the field immediately restores all records.
+     * - Search/Enter can still force a short 1–4 character name such as IAD.
+     */
+    $('#documents-folder-search')
+        .off('input.documentsSearch keydown.documentsSearch')
+        .on('input.documentsSearch', function () {
+            var value = String($(this).val() || '').trim();
+
+            window.clearTimeout(documentsSearchTimer);
+
             if (!table) {
                 return;
             }
 
-            table
-                .search(
-                    String($('#documents-folder-search').val() || '').trim()
-                )
-                .page('first')
-                .draw(false);
-        });
+            if (value.length === 0) {
+                if (table.search() !== '') {
+                    table.search('').page('first').draw(false);
+                }
+                return;
+            }
 
-    /* DOCUMENT SEARCH: Enter performs the same explicit search. */
-    $('#documents-folder-search')
-        .off('keydown.documentsSearch')
+            if (value.length < 5) {
+                return;
+            }
+
+            documentsSearchTimer = window.setTimeout(function () {
+                if (table.search() !== value) {
+                    table.search(value).page('first').draw(false);
+                }
+            }, 300);
+        })
         .on('keydown.documentsSearch', function (event) {
             if (event.key !== 'Enter' && event.which !== 13) {
                 return;
             }
 
             event.preventDefault();
-            $('#documents-search-submit').trigger('click');
+            window.clearTimeout(documentsSearchTimer);
+            applyDocumentsSearch();
         });
 
-    /* DOCUMENT SEARCH: Reset clears and reloads only the DataTable. */
+    /* Search button always applies the current value, including short names. */
+    $('#documents-search-submit')
+        .off('click.documentsSearch')
+        .on('click.documentsSearch', function () {
+            window.clearTimeout(documentsSearchTimer);
+            applyDocumentsSearch();
+        });
+
+    /* Reset clears the search and restores the first DataTable page. */
     $('#documents-search-reset')
         .off('click.documentsSearch')
         .on('click.documentsSearch', function () {
+            window.clearTimeout(documentsSearchTimer);
             $('#documents-folder-search').val('');
 
             if (table) {
                 table.search('').page('first').draw(false);
             }
 
+            try {
+                window.sessionStorage.removeItem(reloadSearchKey());
+            } catch (error) {
+                /* Reset still works when sessionStorage is unavailable. */
+            }
+
             $(this).blur();
+            $('#documents-folder-search').trigger('focus');
         });
-
-    /* Apply short or long searches explicitly. */
-    $('#documents-search-submit').on('click', function () {
-        applyDocumentsSearch();
-    });
-
-    /* Enter applies a pending 1–4 character search. */
-    $('#documents-folder-search').on('keydown', function (event) {
-        if (event.key === 'Enter' || event.which === 13) {
-            event.preventDefault();
-            applyDocumentsSearch();
-        }
-    });
-
-    $('#documents-search-reset').on('click', function () {
-        $('#documents-folder-search').val('');
-
-        if (table) {
-            table.search('').draw();
-        }
-
-        try {
-            window.sessionStorage.removeItem(
-                reloadSearchKey()
-            );
-        } catch (error) {
-            /* Reset still works when sessionStorage is unavailable. */
-        }
-
-        $('#documents-folder-search').trigger('focus');
-    });
     $(window).on('beforeunload.documentsSearch', rememberSearchForRefresh);
     $('#documents-filter-toggle').on('click', function () {
         var selectedOnly = !$(this).hasClass('is-active');

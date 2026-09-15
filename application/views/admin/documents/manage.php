@@ -304,7 +304,7 @@ $build_subfolder_parent_label = function ($path) {
                 ); ?>">
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        href="<?= base_url('assets/css/bootstrap-icons.css'); ?>">
 
 
 </head>
