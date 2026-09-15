@@ -6,7 +6,7 @@
 (function (window, document, $) {
     'use strict';
 
-    var toastDuration = 5000;
+    var toastDuration = 2500;
     var toastCounter = 0;
     var pendingToastKey = 'rms_documents_pending_toast';
 
@@ -39,7 +39,7 @@
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
             }
-        }, 220);
+        }, 140);
     }
 
     function saveToastForRefresh(toastData) {
@@ -305,6 +305,14 @@
                         return;
                     }
 
+                    /* Pin/Unpin actions already provide their own precise toast.
+                     * Bulk pinning sends several toggle-pin requests at once;
+                     * allowing the generic Ajax observer to report each request
+                     * creates the duplicate "Action completed successfully" toast. */
+                    if (url.toLowerCase().indexOf('/documents/toggle-pin') !== -1) {
+                        return;
+                    }
+
                     if (window.RMSDocumentsToast.suppressComplete) {
                         window.RMSDocumentsToast.suppressComplete = false;
                         return;
@@ -390,6 +398,8 @@
     var $publishButton = $('#documents-publish');
     var $unpublishButton = $('#documents-unpublish');
     var $selection = $('#documents-selection');
+    var $pinSelected = $('#documents-pin-selected');
+    var $unpinSelected = $('#documents-unpin-selected');
     var $downloadSelected = $('#documents-download-selected');
     var $transferSelected = $('#documents-transfer-files');
     var $deleteFiles = $('#documents-delete-files');
@@ -413,6 +423,131 @@
     var table = null;
     var manageTablePositioned = false;
     var restoredSearch = '';
+    var documentsLayoutStorageKey = 'rms-admin-documents-layout';
+
+    function setDocumentsLayout(layout) {
+        var selected = layout === 'grid' ? 'grid' : 'list';
+        var $wrap = $('.documents-table-wrap');
+        var $buttons = $('[data-documents-layout]');
+        var $grid = $('#documents-grid-view');
+        var $dataTable = $tableElement.closest('.dataTables_wrapper');
+
+        $wrap.toggleClass('is-grid-layout', selected === 'grid');
+        $wrap.toggleClass('is-list-layout', selected === 'list');
+        $wrap.attr('data-documents-layout', selected);
+
+        if ($dataTable.length) {
+            $dataTable.toggleClass('documents-list-hidden', selected === 'grid');
+
+            if (selected === 'grid') {
+                /* Keep exactly one DataTables control bar above the cards and
+                 * exactly one footer below them. Move the real grid between
+                 * those two controls instead of cloning pagination controls. */
+                var $topControls = $dataTable.children('.documents-data-controls-top').first();
+                if ($topControls.length) {
+                    $grid.insertAfter($topControls);
+                } else {
+                    $grid.prependTo($dataTable);
+                }
+            } else if ($grid.parent().is($dataTable)) {
+                /* In list mode the DataTables wrapper owns only the list/table
+                 * controls again; keep the hidden grid outside the wrapper. */
+                $grid.insertBefore($dataTable);
+            }
+        }
+        $grid.prop('hidden', selected !== 'grid');
+        $('.documents-data-footer').show();
+
+        $buttons.each(function () {
+            var $button = $(this);
+            var active = $button.attr('data-documents-layout') === selected;
+            $button.toggleClass('is-active', active);
+            $button.attr('aria-pressed', active ? 'true' : 'false');
+        });
+
+        if (selected === 'grid') {
+            renderDocumentsGrid();
+        }
+
+        try {
+            window.localStorage.setItem(documentsLayoutStorageKey, selected);
+        } catch (error) {
+            /* Layout still works if browser storage is unavailable. */
+        }
+    }
+
+    function renderDocumentsGrid() {
+        var $grid = $('#documents-grid-view');
+        if (!$grid.length || !table) return;
+
+        var rows = table.rows({ page: 'current' }).data().toArray();
+        if (!rows.length) {
+            $grid.html('<div class="documents-grid-empty">This folder is empty.</div>');
+            return;
+        }
+
+        var html = '<div class="documents-grid-select-all"><label><input type="checkbox" id="documents-grid-select-all"> <span>Select all</span></label></div>';
+
+        html += $.map(rows, function (row) {
+            var itemType = row.item_type || 'folder';
+            var itemId = itemType === 'file' ? row.data_id : row.record_id;
+            var isFile = itemType === 'file';
+            var meta = '';
+            var footer = '';
+
+            if (isFile) {
+                meta = 'Page ' + escapeHtml(row.page_no || 1);
+                footer = '<span class="documents-grid-badge documents-grid-badge--download">Download enabled</span>';
+            } else {
+                var count = Number(row.document_count) > 0 ? Number(row.document_count) : Number(row.child_count || 0);
+                var noun = Number(row.document_count) > 0 ? 'uploaded file' : 'subfolder';
+                meta = 'ID #' + escapeHtml(row.record_id) + ' &middot; ' + count + ' ' + noun + (count === 1 ? '' : 's');
+                footer = '<span class="documents-grid-badge documents-grid-badge--status">' + (Number(row.publish_status) === 1 ? 'Published' : 'Unpublished') + '</span>';
+            }
+
+            return '<article class="documents-grid-card" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '">' +
+                '<div class="documents-grid-card-top">' +
+                '<input type="checkbox" class="documents-grid-check" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="Select ' + escapeHtml(row.record_name) + '">' +
+                '<button type="button" class="documents-grid-more" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="More actions"><i class="bi bi-three-dots-vertical"></i></button>' +
+                '</div>' +
+                '<button type="button" class="documents-grid-open" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '">' +
+                (isFile
+                    ? (function () {
+                        var extension = String(row.record_name || '').split('.').pop().toLowerCase();
+                        var isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].indexOf(extension) !== -1;
+                        if (isImage && row.view_url) {
+                            return '<span class="documents-grid-preview is-image"><img src="' + escapeHtml(row.view_url) + '" alt="Preview of ' + escapeHtml(row.record_name) + '" loading="lazy"></span>';
+                        }
+                        return '<span class="documents-grid-preview"><i class="bi bi-file-earmark-text"></i></span>';
+                    }())
+                    : '<span class="documents-grid-folder-icon"><i class="bi bi-folder-fill"></i></span>') +
+                '<span class="documents-grid-name">' + escapeHtml(row.record_name) + '</span>' +
+                '<span class="documents-grid-meta">' + meta + '</span>' +
+                '</button>' +
+                '<div class="documents-grid-divider"></div>' +
+                '<div class="documents-grid-uploaded"><strong>' + (isFile ? 'Uploaded:' : 'Modified:') + '</strong> ' + escapeHtml(row.date_modified || row.date_uploaded || '—') + '</div>' +
+                '<div class="documents-grid-footer">' + footer + '</div>' +
+                '</article>';
+        }).join('');
+
+        $grid.html(html);
+    }
+
+    function restoreDocumentsLayout() {
+        var saved = 'list';
+        try {
+            saved = window.localStorage.getItem(documentsLayoutStorageKey) || 'list';
+        } catch (error) {
+            saved = 'list';
+        }
+        setDocumentsLayout(saved);
+    }
+
+    $(document).on('click', '[data-documents-layout]', function () {
+        setDocumentsLayout($(this).attr('data-documents-layout'));
+    });
+
+    restoreDocumentsLayout();
     var groupCounts = { unpublished: 0, published: 0, files: 0 };
     var invalidCharacters = /[<>:"/\\|?*\x00-\x1F]/;
     var trailingPeriodOrSpace = /[. ]$/;
@@ -1053,13 +1188,20 @@
 
         $publishButton.prop('disabled', !canPublish);
         $unpublishButton.prop('disabled', !canUnpublish);
+        $pinSelected.prop('disabled', selected === 0);
+        $unpinSelected.prop('disabled', selected === 0);
         var selectedFiles = $selectedChecks.filter('[data-item-type="file"]').length;
         var selectedFolders = $selectedChecks.filter('[data-item-type="folder"]').length;
-        $downloadSelected.prop('disabled', selectedFiles !== 1 || selectedFolders > 0);
+        $downloadSelected.prop('disabled', selectedFiles === 0 || selectedFolders > 0);
         $transferSelected.prop('disabled', selectedFiles === 0 || selectedFolders > 0);
         $deleteFiles.prop('disabled', selected === 0);
         currentChecks().each(function () {
             $(this).closest('tr').toggleClass('is-selected', this.checked);
+            var id = String($(this).attr('data-record-id'));
+            var itemType = $(this).attr('data-item-type');
+            $('.documents-grid-check').filter(function () {
+                return String($(this).attr('data-grid-id')) === id && $(this).attr('data-item-type') === itemType;
+            }).prop('checked', this.checked).closest('.documents-grid-card').toggleClass('is-selected', this.checked);
         });
 
         $selectAll.prop(
@@ -1149,6 +1291,10 @@
             'data-owned="' +
             (Number(row.owned_by_current_user) === 1 ? '1' : '0') +
             '" ' +
+            'data-record-level="' + escapeHtml(itemType === 'file' ? Number(config.level - 1) : Number(config.level)) + '" ' +
+            'data-parent-id="' + escapeHtml(Number(config.parentId || 0)) + '" ' +
+            'data-record-token="' + escapeHtml(itemType === 'file' ? row.data_id : '') + '" ' +
+            'data-pinned="' + (Number(row.is_pinned) === 1 ? '1' : '0') + '" ' +
             'aria-label="Select ' +
             escapeHtml(row.record_name) +
             '">'
@@ -1519,6 +1665,8 @@
             .attr('aria-expanded', 'false');
 
         $('.doc-actions').removeClass('is-open');
+        $('.documents-grid-actions-menu').remove();
+        $('.documents-grid-more').attr('aria-expanded', 'false');
         $tableElement.find('tbody tr').removeClass('is-actions-open');
     }
 
@@ -2712,6 +2860,8 @@ function loadRecord(recordId, done, requestedLevel) {
                 });
 
                 updateSelection();
+                renderDocumentsGrid();
+                setDocumentsLayout($('.documents-table-wrap').attr('data-documents-layout') || 'list');
                 positionManageTable();
                 updateHierarchyPinMarkers();
             },
@@ -3076,6 +3226,98 @@ showCurrentFolderRenameModal();
         });
     }
 
+    $(document).on('change', '#documents-grid-select-all', function () {
+        var checked = this.checked;
+        $('.documents-grid-check').prop('checked', checked).each(function () {
+            $(this).closest('.documents-grid-card').toggleClass('is-selected', checked);
+            var id = String($(this).attr('data-grid-id'));
+            var itemType = $(this).attr('data-item-type');
+            currentChecks().filter(function () {
+                return String($(this).attr('data-record-id')) === id && $(this).attr('data-item-type') === itemType;
+            }).prop('checked', checked);
+        });
+        updateSelection();
+    });
+
+    $(document).on('click', '.documents-grid-check, #documents-grid-select-all', function (event) {
+        event.stopPropagation();
+    });
+
+    $(document).on('change', '.documents-grid-check', function () {
+        var id = String($(this).attr('data-grid-id'));
+        var itemType = $(this).attr('data-item-type');
+        $(this).closest('.documents-grid-card').toggleClass('is-selected', this.checked);
+        currentChecks().filter(function () {
+            return String($(this).attr('data-record-id')) === id && $(this).attr('data-item-type') === itemType;
+        }).prop('checked', this.checked).trigger('change');
+
+        var $gridChecks = $('.documents-grid-check');
+        $('#documents-grid-select-all').prop(
+            'checked',
+            $gridChecks.length > 0 && $gridChecks.filter(':checked').length === $gridChecks.length
+        );
+    });
+
+    $(document).on('click', '.documents-grid-open', function () {
+        var id = String($(this).attr('data-grid-id'));
+        var itemType = $(this).attr('data-item-type');
+        var rowData = null;
+        table.rows({ page: 'current' }).every(function () {
+            var row = this.data();
+            var rowId = String(itemType === 'file' ? row.data_id : row.record_id);
+            if (!rowData && row.item_type === itemType && rowId === id) rowData = row;
+        });
+        if (!rowData) return;
+        if (itemType === 'file') {
+            openUnifiedFileViewer(rowData);
+        } else if (rowData.next_url) {
+            saveManageTableState();
+            window.location.href = rowData.next_url;
+        }
+    });
+
+    $(document).on('click', '.documents-grid-more', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var $gridToggle = $(this);
+        var id = String($gridToggle.attr('data-grid-id'));
+        var itemType = $gridToggle.attr('data-item-type');
+        var $row = $tableElement.find('tbody tr').filter(function () {
+            var data = table.row(this).data();
+            if (!data) return false;
+            var rowId = String(itemType === 'file' ? data.data_id : data.record_id);
+            return data.item_type === itemType && rowId === id;
+        }).first();
+        if (!$row.length) return;
+
+        var $openGridMenu = $('.documents-grid-actions-menu');
+        var sameMenuOpen = $gridToggle.attr('aria-expanded') === 'true' &&
+            $openGridMenu.length &&
+            String($openGridMenu.attr('data-grid-id')) === id &&
+            String($openGridMenu.attr('data-item-type')) === itemType;
+
+        closeAllActionMenus();
+        closeBulkMenu();
+        $('.documents-grid-actions-menu').remove();
+        $('.documents-grid-more').attr('aria-expanded', 'false');
+
+        if (sameMenuOpen) return;
+
+        var $sourceMenu = $row.find('.doc-actions-menu').first();
+        if (!$sourceMenu.length) return;
+
+        var $gridMenu = $sourceMenu.clone(false, false)
+            .addClass('documents-grid-actions-menu')
+            .attr('data-grid-id', id)
+            .attr('data-item-type', itemType)
+            .prop('hidden', false)
+            .appendTo(document.body);
+
+        positionActionMenu($gridToggle, $gridMenu);
+        $gridToggle.attr('aria-expanded', 'true');
+    });
+
     $selectAll.on('change', function () {
         currentChecks().prop(
             'checked',
@@ -3311,7 +3553,8 @@ showCurrentFolderRenameModal();
         $('#unified-file-title').text(file.record_name);
         $('#unified-file-position').text('File ' + (unifiedFileIndex + 1) + ' of ' + unifiedFiles.length);
         $('#unified-file-download').attr('href', file.download_url);
-        $('#unified-previous-file, #unified-next-file').prop('disabled', unifiedFiles.length < 2);
+        $('#unified-previous-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex <= 0);
+        $('#unified-next-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex >= unifiedFiles.length - 1);
         $('#unified-zoom-out, #unified-zoom-in, #unified-fit-file, #unified-actual-file').prop('disabled', !isImage);
         unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0;
         if (isImage) {
@@ -3497,8 +3740,45 @@ showCurrentFolderRenameModal();
     );
 
     $('#unified-file-rename').on('click', function () { renameUnifiedFile(); });
-    $('#unified-previous-file').on('click', function () { displayUnifiedFile(unifiedFileIndex - 1); });
-    $('#unified-next-file').on('click', function () { displayUnifiedFile(unifiedFileIndex + 1); });
+
+    /* Adjustable viewer sidebar. Keep the resize local to the modal and refit
+     * the current image when the available canvas width changes. */
+    (function () {
+        var resizingSidebar = false;
+        var sidebarStartX = 0;
+        var sidebarStartWidth = 0;
+        var $sidebar = $('.unified-viewer-sidebar');
+
+        $('#unified-viewer-sidebar-resizer').on('mousedown.unifiedSidebar', function (event) {
+            event.preventDefault();
+            resizingSidebar = true;
+            sidebarStartX = event.clientX;
+            sidebarStartWidth = $sidebar.outerWidth();
+            $sidebar.addClass('is-resizing');
+            $('body').css({ cursor: 'col-resize', userSelect: 'none' });
+        });
+
+        $(document).on('mousemove.unifiedSidebar', function (event) {
+            if (!resizingSidebar) return;
+            var width = Math.max(170, Math.min(360, sidebarStartWidth + (event.clientX - sidebarStartX)));
+            $sidebar.css({ width: width + 'px', flexBasis: width + 'px' });
+        }).on('mouseup.unifiedSidebar', function () {
+            if (!resizingSidebar) return;
+            resizingSidebar = false;
+            $sidebar.removeClass('is-resizing');
+            $('body').css({ cursor: '', userSelect: '' });
+            if ($('#unified-file-image').is(':visible')) fitUnifiedImage();
+        });
+    }());
+
+    /* Page Navigation moves through the files in the current folder. At the
+     * first/last file the matching arrow is disabled instead of wrapping. */
+    $('#unified-previous-file').on('click', function () {
+        if (unifiedFileIndex > 0) displayUnifiedFile(unifiedFileIndex - 1);
+    });
+    $('#unified-next-file').on('click', function () {
+        if (unifiedFileIndex < unifiedFiles.length - 1) displayUnifiedFile(unifiedFileIndex + 1);
+    });
     $('#unified-zoom-in').on('click', function () { changeUnifiedZoom(.1); });
     $('#unified-zoom-out').on('click', function () { changeUnifiedZoom(-.1); });
     $('#unified-fit-file').on('click', fitUnifiedImage);
@@ -3656,6 +3936,107 @@ showCurrentFolderRenameModal();
 
     $unpublishButton.on('click', function () {
         changePublishStatus(0);
+    });
+
+    $('#documents-create-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $button = $(this);
+        var $menu = $('#documents-create-menu');
+        var willOpen = $menu.prop('hidden');
+        $menu.prop('hidden', !willOpen);
+        $button.attr('aria-expanded', willOpen ? 'true' : 'false');
+    });
+
+    $(document).on('click', function (event) {
+        if (!$(event.target).closest('.documents-create-dropdown').length) {
+            $('#documents-create-menu').prop('hidden', true);
+            $('#documents-create-toggle').attr('aria-expanded', 'false');
+        }
+    });
+
+    $(document).on('click', '#documents-create-menu [data-modal-open]', function () {
+        $('#documents-create-menu').prop('hidden', true);
+        $('#documents-create-toggle').attr('aria-expanded', 'false');
+    });
+
+    $pinSelected.on('click', function () {
+        var $selected = currentChecks().filter(':checked');
+        var $toPin = $selected.filter(function () {
+            return Number($(this).attr('data-pinned')) !== 1;
+        });
+
+        closeBulkMenu();
+        if (!$selected.length) return;
+        if (!$toPin.length) {
+            notifyDocumentsAction('success', 'Already pinned', 'All selected items are already pinned.', 'documents-pin');
+            return;
+        }
+
+        $pinSelected.prop('disabled', true);
+        var requests = [];
+        $toPin.each(function () {
+            var $check = $(this);
+            var request = {
+                item_type: $check.attr('data-item-type') === 'file' ? 'document' : 'folder',
+                record_level: Number($check.attr('data-record-level')),
+                parent_id: Number($check.attr('data-parent-id') || 0)
+            };
+            if (request.item_type === 'document') request.record_token = String($check.attr('data-record-token') || '');
+            else request.record_id = Number($check.attr('data-record-id') || 0);
+            request[config.csrfName] = config.csrfHash;
+            requests.push($.ajax({ url: config.togglePinUrl, type: 'POST', dataType: 'json', data: request }).done(updateCsrf));
+        });
+
+        $.when.apply($, requests).done(function () {
+            notifyDocumentsAction('success', 'Items pinned', $toPin.length + ' selected item' + ($toPin.length === 1 ? ' was' : 's were') + ' pinned successfully.', 'documents-pin');
+            if (typeof window.RMSDocumentsRefreshPins === 'function') window.RMSDocumentsRefreshPins();
+            table.ajax.reload(null, false);
+        }).fail(function () {
+            notifyDocumentsAction('error', 'Pinning incomplete', 'One or more selected items could not be pinned.', 'documents-pin');
+            table.ajax.reload(null, false);
+        }).always(function () {
+            $pinSelected.prop('disabled', false);
+        });
+    });
+
+    $unpinSelected.on('click', function () {
+        var $selected = currentChecks().filter(':checked');
+        var $toUnpin = $selected.filter(function () {
+            return Number($(this).attr('data-pinned')) === 1;
+        });
+
+        closeBulkMenu();
+        if (!$selected.length) return;
+        if (!$toUnpin.length) {
+            notifyDocumentsAction('success', 'Already unpinned', 'None of the selected items are currently pinned.', 'documents-pin');
+            return;
+        }
+
+        $unpinSelected.prop('disabled', true);
+        var requests = [];
+        $toUnpin.each(function () {
+            var $check = $(this);
+            var request = {
+                item_type: $check.attr('data-item-type') === 'file' ? 'document' : 'folder',
+                record_level: Number($check.attr('data-record-level')),
+                parent_id: Number($check.attr('data-parent-id') || 0)
+            };
+            if (request.item_type === 'document') request.record_token = String($check.attr('data-record-token') || '');
+            else request.record_id = Number($check.attr('data-record-id') || 0);
+            request[config.csrfName] = config.csrfHash;
+            requests.push($.ajax({ url: config.togglePinUrl, type: 'POST', dataType: 'json', data: request }).done(updateCsrf));
+        });
+
+        $.when.apply($, requests).done(function () {
+            notifyDocumentsAction('success', 'Items unpinned', $toUnpin.length + ' selected item' + ($toUnpin.length === 1 ? ' was' : 's were') + ' unpinned successfully.', 'documents-pin');
+            if (typeof window.RMSDocumentsRefreshPins === 'function') window.RMSDocumentsRefreshPins();
+            table.ajax.reload(null, false);
+        }).fail(function () {
+            notifyDocumentsAction('error', 'Unpinning incomplete', 'One or more selected items could not be unpinned.', 'documents-pin');
+            table.ajax.reload(null, false);
+        }).always(function () {
+            $unpinSelected.prop('disabled', false);
+        });
     });
 
     $('#documents-bulk-toggle').on('click', function (event) {
@@ -4030,7 +4411,28 @@ showCurrentFolderRenameModal();
         });
     $downloadSelected.on('click', function () {
         var files = selectedFileRows();
-        if (files.length === 1) window.location.href = files[0].download_url;
+        if (!files.length) return;
+
+        if (files.length === 1) {
+            window.location.href = files[0].download_url;
+            return;
+        }
+
+        var $form = $('<form>', {
+            method: 'post',
+            action: config.downloadSelectedUrl,
+            style: 'display:none'
+        });
+
+        $.each(files, function (_, file) {
+            $('<input>', {
+                type: 'hidden',
+                name: 'tokens[]',
+                value: file.data_id
+            }).appendTo($form);
+        });
+
+        $form.appendTo(document.body).trigger('submit').remove();
     });
     $deleteFiles.on('click', function () {
         var files = selectedFileRows();

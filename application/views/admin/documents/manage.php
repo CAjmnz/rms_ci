@@ -393,7 +393,9 @@ $build_subfolder_parent_label = function ($path) {
                                 ? (int) $current_folder['child_count'] : 0;
                             $current_record_id = isset($current_folder['record_id'])
                                 ? (int) $current_folder['record_id'] : $active_parent_id;
-                            $context_path = implode(' / ', $current_path_labels);
+                            $context_path = !empty($current_path_labels)
+                                ? end($current_path_labels)
+                                : '';
                             ?>
                             <section class="documents-folder-context <?php echo $current_status === 1 ? 'is-published' : 'is-unpublished'; ?>"
                                 data-pin-record-id="<?php echo $current_record_id; ?>"
@@ -549,22 +551,31 @@ $build_subfolder_parent_label = function ($path) {
                                 ? $breadcrumbs[$back_index]['url']
                                 : $manage_root_url;
                             ?>
-                            <a
-                                class="documents-back"
-                                href="<?php echo html_escape($back_url); ?>">
-                                &larr; Back
-                            </a>
+
                         <?php endif; ?>
 
                     </nav>
                     <div class="documents-toolbar">
-                        <?php if ($active_level > 0 && $current_can_upload): ?>
-                            <button type="button" class="document-action primary" data-modal-open="documents-upload-modal">
-                                <svg class="document-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm1 7V3.5L18.5 9H15zM8 13h8v2H8v-2zm0 4h5v2H8v-2z" />
-                                </svg>
-                                <span>Upload documents</span>
-                            </button>
+                        <?php if ($active_level > 0): ?>
+                            <div class="documents-create-dropdown">
+                                <button type="button" class="document-action primary" id="documents-create-toggle" aria-expanded="false" aria-haspopup="true">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <span>Add new</span>
+                                    <i class="bi bi-chevron-down documents-create-chevron"></i>
+                                </button>
+                                <div class="documents-create-menu" id="documents-create-menu" hidden>
+                                    <?php if ($current_can_upload): ?>
+                                        <button type="button" data-modal-open="documents-upload-modal">
+                                            <i class="bi bi-file-earmark-arrow-up"></i>
+                                            <span><strong>Upload documents</strong><small>Add files to the current folder</small></span>
+                                        </button>
+                                    <?php endif; ?>
+                                    <button type="button" data-modal-open="subfolder-modal">
+                                        <i class="bi bi-folder-plus"></i>
+                                        <span><strong>New folder</strong><small>Create a subfolder here</small></span>
+                                    </button>
+                                </div>
+                            </div>
                         <?php endif; ?>
 
                         <?php if ($active_level === 0): ?>
@@ -573,15 +584,6 @@ $build_subfolder_parent_label = function ($path) {
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 13h8v2H8v-2zm0 4h5v2H8v-2z" />
                                 </svg>
                                 <span>New filename</span>
-                            </button>
-                        <?php endif; ?>
-
-                        <?php if ($active_level > 0): ?>
-                            <button type="button" class="document-action" data-modal-open="subfolder-modal">
-                                <svg class="document-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                    <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2zm2 6h2v2h2v2h-2v2h-2v-2h-2v-2h2v-2z" />
-                                </svg>
-                                <span>New folder</span>
                             </button>
                         <?php endif; ?>
 
@@ -606,7 +608,9 @@ $build_subfolder_parent_label = function ($path) {
                                     </svg>
                                     <span>Unpublish selected folders</span>
                                 </button>
-                                <button type="button" id="documents-download-selected" disabled><i class="bi bi-download"></i> Download selected file</button>
+                                <button type="button" id="documents-pin-selected" disabled><i class="bi bi-pin-angle-fill"></i> Pin selected items</button>
+                                <button type="button" id="documents-unpin-selected" disabled><i class="bi bi-pin-angle"></i> Unpin selected items</button>
+                                <button type="button" id="documents-download-selected" disabled><i class="bi bi-download"></i> Download selected files (ZIP)</button>
                                 <button type="button" id="documents-transfer-files" disabled><i class="bi bi-arrow-left-right"></i> Transfer selected files</button>
                                 <button type="button" id="documents-delete-files" disabled><i class="bi bi-trash"></i> Delete selected items</button>
                             </div>
@@ -616,6 +620,16 @@ $build_subfolder_parent_label = function ($path) {
                             No records selected
                         </span>
                         <span class="documents-toolbar-spacer"></span>
+                        <div class="documents-view-switch" role="group" aria-label="Document layout">
+                            <button type="button" class="documents-view-switch-button is-active" id="documents-view-list" data-documents-layout="list" aria-pressed="true" title="List view">
+                                <i class="bi bi-list-ul" aria-hidden="true"></i>
+                                <span>List</span>
+                            </button>
+                            <button type="button" class="documents-view-switch-button" id="documents-view-grid" data-documents-layout="grid" aria-pressed="false" title="Grid view">
+                                <i class="bi bi-grid" aria-hidden="true"></i>
+                                <span>Grid</span>
+                            </button>
+                        </div>
                         <div class="documents-search-wrap">
                             <label class="documents-folder-search">
                                 <i class="bi bi-search" aria-hidden="true"></i>
@@ -652,6 +666,7 @@ $build_subfolder_parent_label = function ($path) {
                         role="alert"></div>
 
                     <div class="documents-table-wrap">
+                        <div class="documents-grid-view" id="documents-grid-view" hidden aria-live="polite"></div>
                         <div class="documents-marquee-selection" id="documents-marquee-selection" aria-hidden="true"></div>
                         <table
                             class="documents-table display"
@@ -1358,43 +1373,41 @@ $build_subfolder_parent_label = function ($path) {
     <div class="unified-viewer" id="unified-file-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="unified-file-title">
         <div class="unified-viewer-card">
             <div class="unified-viewer-head">
-                <!-- VIEWER FIX: close button moved to the far right of the header. -->
                 <div class="unified-viewer-heading"><small>DOCUMENT VIEWER</small>
                     <h3 id="unified-file-title">Document preview</h3><small id="unified-file-position">File 1 of 1</small>
                 </div>
-                <div class="unified-viewer-actions">
-                    <div class="unified-file-actions-menu"><button type="button" class="document-action" id="unified-file-actions-toggle" aria-expanded="false">Actions <i class="bi bi-chevron-down"></i></button>
-                        <div class="unified-file-actions-dropdown" id="unified-file-actions-dropdown" hidden><button type="button" id="unified-file-transfer"><i class="bi bi-arrow-left-right"></i>Transfer</button><a id="unified-file-download" href="#"><i class="bi bi-download"></i>Download</a><button type="button" id="unified-file-rename"><i class="bi bi-pencil"></i>Rename</button><button type="button" class="danger" id="unified-file-delete"><i class="bi bi-trash"></i>Delete</button></div>
-                    </div>
-                </div>
                 <button type="button" class="unified-viewer-close" data-close-unified-viewer aria-label="Close document viewer">&times;</button>
             </div>
-            <div class="unified-viewer-toolbar">
-                <button type="button" id="unified-zoom-out"><i class="bi bi-zoom-out"></i> Zoom Out</button>
-                <span class="unified-viewer-zoom" id="unified-file-zoom">100%</span>
-                <button type="button" id="unified-zoom-in"><i class="bi bi-zoom-in"></i> Zoom In</button>
-                <button type="button" id="unified-fit-file">Fit to Screen</button>
-                <button type="button" id="unified-actual-file">Actual Size</button>
-                <span class="documents-toolbar-spacer"></span>
-                <div class="unified-view-mode">
-                    <button type="button" id="unified-view-mode-toggle" aria-expanded="false">
-                        <i class="bi bi-display"></i>
-                        <span id="unified-view-mode-label">Page Navigation</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                    <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
-                        <button type="button" class="is-active" data-view-mode="page">
-                            <i class="bi bi-display"></i>
-                            <span><strong>Page Navigation (&larr; &rarr;)</strong><small>Click left/right or use arrow keys</small></span>
-                        </button>
-                        <button type="button" data-view-mode="vertical">
-                            <i class="bi bi-arrows-expand-vertical"></i>
-                            <span><strong>Vertical Scroll (&uarr; &darr;)</strong><small>Scroll smoothly through every page</small></span>
-                        </button>
+            <div class="unified-viewer-workspace">
+                <aside class="unified-viewer-sidebar" aria-label="Document viewer actions">
+                    <div class="unified-viewer-sidebar-resizer" id="unified-viewer-sidebar-resizer" aria-hidden="true"></div>
+                    <div class="unified-viewer-side-section">
+                        <span class="unified-viewer-side-label">File actions</span>
+                        <button type="button" id="unified-file-transfer"><i class="bi bi-arrow-left-right"></i><span>Transfer</span></button>
+                        <a id="unified-file-download" href="#"><i class="bi bi-download"></i><span>Download</span></a>
+                        <button type="button" id="unified-file-rename"><i class="bi bi-pencil"></i><span>Rename</span></button>
+                        <button type="button" class="danger" id="unified-file-delete"><i class="bi bi-trash"></i><span>Delete</span></button>
                     </div>
-                </div>
-            </div>
-            <div class="unified-viewer-body">
+                    <div class="unified-viewer-side-section">
+                        <span class="unified-viewer-side-label">Zoom</span>
+                        <button type="button" id="unified-zoom-in"><i class="bi bi-zoom-in"></i><span>Zoom In</span></button>
+                        <button type="button" id="unified-zoom-out"><i class="bi bi-zoom-out"></i><span>Zoom Out</span></button>
+                        <button type="button" id="unified-fit-file"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
+                        <button type="button" id="unified-actual-file"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
+                        <div class="unified-viewer-side-zoom"><span>Zoom level</span><strong class="unified-viewer-zoom" id="unified-file-zoom">100%</strong></div>
+                    </div>
+                    <div class="unified-viewer-side-section unified-view-mode">
+                        <span class="unified-viewer-side-label">View options</span>
+                        <button type="button" id="unified-view-mode-toggle" aria-expanded="false">
+                            <i class="bi bi-display"></i><span id="unified-view-mode-label">Page Navigation</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
+                            <button type="button" class="is-active" data-view-mode="page"><i class="bi bi-display"></i><span><strong>Page Navigation (&larr; &rarr;)</strong><small>Click left/right or use arrow keys</small></span></button>
+                            <button type="button" data-view-mode="vertical"><i class="bi bi-arrows-expand-vertical"></i><span><strong>Vertical Scroll (&uarr; &darr;)</strong><small>Scroll smoothly through every page</small></span></button>
+                        </div>
+                    </div>
+                </aside>
+                <div class="unified-viewer-body">
                 <button type="button" class="unified-canvas-nav previous" id="unified-previous-file" aria-label="Previous file"><i class="bi bi-chevron-left"></i></button>
                 <img id="unified-file-image" alt="Document preview" draggable="false" hidden>
                 <iframe id="unified-file-frame" title="Document preview" hidden></iframe>
@@ -1403,12 +1416,7 @@ $build_subfolder_parent_label = function ($path) {
                 <?php if ($current_can_upload): ?>
 
                 <?php endif; ?>
-            </div>
-            <div class="unified-viewer-help">
-                <div><i class="bi bi-mouse2"></i><span><strong>Drag to move</strong><small>Hold the left mouse button and drag to pan the document.</small></span></div>
-                <div><i class="bi bi-arrow-down-up"></i><span><strong>Scroll to navigate</strong><small>In Vertical Scroll mode, use the wheel or &uarr; &darr; keys to move smoothly.</small></span></div>
-                <div><i class="bi bi-zoom-in"></i><span><strong>Zoom in / Zoom out</strong><small>Hold Ctrl + mouse wheel or use the zoom buttons.</small></span></div>
-                <div><i class="bi bi-display"></i><span><strong>View options</strong><small>Switch between Page Navigation and Vertical Scroll anytime.</small></span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -1430,6 +1438,7 @@ $build_subfolder_parent_label = function ($path) {
                                     'transferUploadedUrl' => site_url('administrator/documents/transfer_uploaded_files'),
                                     'folderFilesUrl' => site_url('administrator/documents/view_documents') . '?datatable=1',
                                     'fileUrl' => site_url('administrator/documents/file'),
+                                    'downloadSelectedUrl' => site_url('administrator/documents/download-selected'),
                                     'uploadUrl' => site_url('administrator/documents/upload'),
                                     'createFilenameUrl' => site_url('administrator/documents/create-filename'),
                                     'createSubfolderUrl' => site_url('administrator/documents/create-subfolder'),

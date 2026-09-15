@@ -92,6 +92,7 @@ $route['administrator/documents/record'] = 'documents/record';
 $route['administrator/documents/publish'] = 'documents/publish';
 $route['administrator/documents/toggle-pin'] = 'documents/toggle_pin';
 $route['administrator/documents/datatable'] = 'documents/datatable';
+$route['administrator/documents/download-selected'] = 'documents/download_selected';
 $route['administrator/documents/create-filename'] ='documents/create_filename';
 $route['administrator/documents/create-subfolder'] ='documents/create_subfolder';
 $route['administrator/documents/save'] ='documents/update_record';

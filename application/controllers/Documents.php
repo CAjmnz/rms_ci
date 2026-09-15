@@ -1202,6 +1202,151 @@ class Documents extends CI_Controller
     }
 
     /**
+     * Download the selected Manage Documents files as one ZIP archive.
+     * Even a single selected file is wrapped in a ZIP so batch-download
+     * behavior is consistent and physical storage names remain private.
+     */
+    public function download_selected()
+    {
+        if (!$this->require_manager()) {
+            return;
+        }
+
+        if (strtoupper($this->input->method()) !== 'POST') {
+            show_404();
+            return;
+        }
+
+        $tokens = $this->input->post('tokens');
+        if (!is_array($tokens) || empty($tokens)) {
+            show_error('No documents were selected for download.', 400);
+            return;
+        }
+
+        if (!class_exists('ZipArchive')) {
+            show_error('ZIP downloads are not available on this server.', 500);
+            return;
+        }
+
+        $documents = array();
+        foreach (array_unique($tokens) as $token) {
+            $data_id = $this->decrypt_document_id_token((string) $token, 'document');
+            if ($data_id === FALSE || $data_id <= 0) {
+                show_error('One or more selected documents are invalid.', 400);
+                return;
+            }
+
+            $document = $this->Documents_model->get_document_file($data_id);
+            if (!$document) {
+                show_error('One or more selected documents no longer exist.', 404);
+                return;
+            }
+
+            $path = $this->document_storage_path(
+                $document,
+                $document['data_name'],
+                TRUE
+            );
+            if ($path === FALSE || !is_file($path) || !is_readable($path)) {
+                show_error('One or more selected document files could not be found in storage.', 404);
+                return;
+            }
+
+            $documents[] = array('document' => $document, 'path' => $path);
+        }
+
+        $temporary = tempnam(sys_get_temp_dir(), 'rms_zip_');
+        if ($temporary === FALSE) {
+            show_error('The download archive could not be prepared.', 500);
+            return;
+        }
+        @unlink($temporary);
+        $zip_path = $temporary . '.zip';
+
+        $zip = new ZipArchive();
+        if ($zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+            @unlink($zip_path);
+            show_error('The download archive could not be created.', 500);
+            return;
+        }
+
+        $used_names = array();
+        foreach ($documents as $item) {
+            $name = basename((string) $item['document']['data_name']);
+            $name = str_replace(array('/', '\\'), '_', $name);
+            if ($name === '' || $name === '.' || $name === '..') {
+                $name = 'document';
+            }
+
+            $extension = pathinfo($name, PATHINFO_EXTENSION);
+            $base = pathinfo($name, PATHINFO_FILENAME);
+            $candidate = $name;
+            $counter = 2;
+            while (isset($used_names[strtolower($candidate)])) {
+                $candidate = $base . ' (' . $counter . ')' .
+                    ($extension !== '' ? '.' . $extension : '');
+                $counter++;
+            }
+            $used_names[strtolower($candidate)] = TRUE;
+
+            /*
+             * libzip on Windows can reject an otherwise readable RMS storage
+             * path (especially deep/legacy paths). Prefer addFile so large
+             * documents are streamed from disk, then fall back to adding the
+             * already-resolved file bytes when libzip cannot open that path.
+             */
+            $added = $zip->addFile($item['path'], $candidate);
+            if (!$added) {
+                $contents = @file_get_contents($item['path']);
+                if ($contents === FALSE || !$zip->addFromString($candidate, $contents)) {
+                    $zip->close();
+                    @unlink($zip_path);
+                    show_error('One or more selected files could not be added to the download archive.', 500);
+                    return;
+                }
+                unset($contents);
+            }
+        }
+
+        $closed = $zip->close();
+        clearstatcache(TRUE, $zip_path);
+
+        if (!$closed || !is_file($zip_path) || !is_readable($zip_path) || filesize($zip_path) <= 0) {
+            @unlink($zip_path);
+            show_error('The download archive could not be finalized.', 500);
+            return;
+        }
+
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+        if (function_exists('header_remove')) {
+            @header_remove('Content-Type');
+            @header_remove('Content-Length');
+        }
+
+        $archive_name = 'RMS_Selected_Documents_' . date('Ymd_His') . '.zip';
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Type: application/zip');
+        header('Content-Length: ' . filesize($zip_path));
+        header('Content-Disposition: attachment; filename="' . $archive_name . '"');
+        header('Cache-Control: private, no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        $handle = @fopen($zip_path, 'rb');
+        if ($handle === FALSE) {
+            @unlink($zip_path);
+            show_error('The download archive could not be opened.', 500);
+            return;
+        }
+
+        fpassthru($handle);
+        fclose($handle);
+        @unlink($zip_path);
+        exit;
+    }
+
+    /**
      * Delete selected files from one View Documents page.
      * Level 3 may delete only inside its own unpublished destination; Level 4
      * may delete inside any globally unpublished destination.
