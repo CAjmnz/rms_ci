@@ -40,6 +40,7 @@ $route['administrator/departments/delete'] = 'departments/delete';
 $route['administrator/system'] = 'system/index';
 $route['administrator/system/global-configuration'] = 'system/index';
 $route['administrator/system/save'] = 'system/save';
+$route['administrator/system/clear-documents'] = 'system/clear_documents';
 $route['administrator/system/file-types'] = 'system/file_types';
 $route['administrator/system/file-types/save'] = 'system/save_file_type';
 $route['administrator/system/file-types/status'] = 'system/set_file_type_status';
@@ -87,6 +88,7 @@ $route['users/uploader'] = 'users/uploader';
  */
 $route['administrator/documents'] = 'documents/index';
 $route['administrator/documents/new'] = 'documents/create';
+$route['administrator/documents/check-upload-duplicates'] = 'documents/check_upload_duplicates';
 $route['administrator/documents/upload'] = 'documents/upload';
 $route['administrator/documents/record'] = 'documents/record';
 $route['administrator/documents/publish'] = 'documents/publish';

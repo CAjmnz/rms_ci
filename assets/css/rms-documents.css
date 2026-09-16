@@ -1509,6 +1509,7 @@
     flex: 0 0 210px;
     min-width: 170px;
     max-width: 360px;
+    overflow-x: hidden;
     overflow-y: auto;
     padding: 12px;
     position: relative;
@@ -1602,6 +1603,71 @@
     touch-action: none;
 }
 
+/* Vertical mode owns the stage scroll. The normal viewer remains locked. */
+.unified-file-viewer.is-vertical .unified-viewer-body {
+    touch-action: pan-y;
+}
+
+/* Reworked Vertical mode: continuous PDF-reader stage inside the CURRENT
+ * document-viewer modal. Do not change .unified-viewer-card dimensions. */
+.unified-file-viewer.is-vertical-single .unified-viewer-body {
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+    padding: 0;
+    touch-action: pan-y;
+}
+
+.unified-file-viewer.is-vertical-single .unified-vertical-scroll {
+    box-sizing: border-box;
+    display: block;
+    height: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    padding: 4px 48px 28px;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    text-align: center;
+    width: 100%;
+}
+
+.unified-file-viewer.is-vertical-single .unified-vertical-page {
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto 4px;
+    max-width: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.unified-file-viewer.is-vertical-single .unified-vertical-page img {
+    display: block;
+    background: #fff;
+    border: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .42);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.unified-file-viewer.is-vertical-single .unified-vertical-page-label {
+    background: rgba(21, 30, 34, .82);
+    border-radius: 5px;
+    bottom: 10px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    left: 50%;
+    line-height: 1;
+    margin: 0;
+    padding: 5px 8px;
+    pointer-events: none;
+    position: absolute;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
 /* VIEWER FIX: grab cursor by default; right-button drag no longer needs the Ctrl key. */
 .unified-viewer-body img {
     cursor: grab;
@@ -1626,6 +1692,7 @@
     position: relative;
 }
 
+
 #unified-view-mode-toggle {
     align-items: center;
     display: inline-flex;
@@ -1643,9 +1710,10 @@
     overflow: hidden;
     padding: 6px;
     position: absolute;
-    left: calc(100% + 8px);
+    bottom: calc(100% + 8px);
+    left: 0;
     right: auto;
-    top: 0;
+    top: auto;
     z-index: 20;
 }
 
@@ -1724,7 +1792,89 @@
     padding: 4px 9px;
 }
 
+/* Page Navigation is intentionally separate from Vertical Scroll. */
+.unified-page-navigation {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 18px;
+    height: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 24px 58px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    width: 100%;
+    -ms-overflow-style: none;
+}
+.unified-page-navigation::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+.unified-page-strip-item {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex: 0 0 220px;
+    flex-direction: column;
+    gap: 9px;
+    margin: 0;
+    padding: 3px;
+}
+
+.unified-page-strip-preview {
+    align-items: center;
+    background: #fff;
+    border: 3px solid transparent;
+    border-radius: 5px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .24);
+    display: flex;
+    height: 312px;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    width: 220px;
+    max-width: none;
+}
+
+.unified-page-strip-preview img {
+    display: block;
+    height: 100% !important;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transform: none !important;
+    width: 100% !important;
+}
+
+.unified-page-strip-item.is-active .unified-page-strip-preview {
+    border-color: #0aa477;
+    box-shadow: 0 0 0 1px rgba(10, 164, 119, .35), 0 8px 24px rgba(0, 0, 0, .28);
+}
+
+.unified-page-strip-label {
+    color: #f4f8f7;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.unified-page-strip-unavailable {
+    color: #60716b;
+    font-size: 42px;
+}
+
 .unified-viewer.is-vertical .unified-canvas-nav,
+.unified-viewer.is-page-strip > .unified-viewer-card > .unified-viewer-workspace > .unified-viewer-body > #unified-file-image,
+.unified-viewer.is-page-strip > .unified-viewer-card > .unified-viewer-workspace > .unified-viewer-body > #unified-file-frame,
 .unified-viewer.is-vertical > .unified-viewer-card > .unified-viewer-body > #unified-file-image,
 .unified-viewer.is-vertical > .unified-viewer-card > .unified-viewer-body > #unified-file-frame {
     display: none !important;

@@ -511,10 +511,16 @@ class User_portal_model extends CI_Model
         $row['served_name'] = $row['data_name'];
         if (!$original) {
             $viewer = $this->find_viewer_copy($row);
-            if (!$viewer) {
-                return FALSE;
+            if ($viewer) {
+                $row['served_name'] = $viewer['data_name'];
             }
-            $row['served_name'] = $viewer['data_name'];
+            /*
+             * Keep the authorized original row when an older document has no
+             * matching data_f record. serve_document() will first try the
+             * protected storage and then use its existing authorized-original
+             * fallback, so legacy files remain viewable without changing
+             * permissions, database records, or storage.
+             */
         }
         return $row;
     }

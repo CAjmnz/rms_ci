@@ -17,6 +17,7 @@ class System extends CI_Controller
         $this->load->model('Filetype_model');
         $this->load->model('Access_log_model');
         $this->load->model('Backup_model');
+        $this->load->model('Documents_model');
     }
 
     /**
@@ -217,6 +218,33 @@ class System extends CI_Controller
         }
 
         return $this->json(TRUE, 'All access logs were deleted successfully.');
+    }
+
+    /**
+     * TEMPORARY QA TOOL: clear only Documents-module records and stored files.
+     * Users, departments, subsidiaries, file types, settings and logs are not touched.
+     */
+    public function clear_documents()
+    {
+        if (!$this->require_super_user()) {
+            return;
+        }
+
+        if (strtoupper($this->input->method()) !== 'POST') {
+            show_404();
+            return;
+        }
+
+        if (trim((string) $this->input->post('confirmation')) !== 'CLEAR DOCUMENTS') {
+            return $this->json(FALSE, 'Type CLEAR DOCUMENTS to confirm this action.');
+        }
+
+        $result = $this->Documents_model->clear_document_module_data();
+        if (!$result['success']) {
+            return $this->json(FALSE, $result['message']);
+        }
+
+        return $this->json(TRUE, 'All Documents-module data and stored document files were cleared successfully.');
     }
 
     /**

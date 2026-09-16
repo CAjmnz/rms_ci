@@ -122,6 +122,17 @@ class Documents extends CI_Controller
     }
 
     /**
+     * Level 3 Admin (role_id 2) may use the uploading side together with
+     * Level 4 Super Admin. This helper is intentionally upload-only.
+     */
+    private function can_upload_all_unpublished()
+    {
+        $role = (int) $this->session->userdata('rms_role');
+
+        return $role === 1 || $role === 2;
+    }
+
+    /**
      * Return an empty ownership map for Filename through Subfolder10.
      */
     private function empty_unpublished_ownership()
@@ -753,6 +764,13 @@ class Documents extends CI_Controller
          * Data used by the three Manage Documents modals.
          */
         $data['upload_paths'] =
+            $this->Documents_model->get_upload_paths(
+                $owned_records,
+                $this->can_upload_all_unpublished()
+            );
+
+        /* Keep non-upload destination permissions unchanged. */
+        $data['transfer_paths'] =
             $this->Documents_model->get_upload_paths(
                 $owned_records,
                 $include_all_unpublished
@@ -2300,7 +2318,7 @@ class Documents extends CI_Controller
         $data['upload_paths'] =
             $this->Documents_model->get_upload_paths(
                 $this->get_unpublished_ownership(),
-                $this->is_super_admin()
+                $this->can_upload_all_unpublished()
             );
 
         $this->load->view(
@@ -2991,6 +3009,50 @@ class Documents extends CI_Controller
      * system_setting setting_id = 7
      * database table = data_f
      */
+    public function check_upload_duplicates()
+    {
+        if (!$this->require_manager()) {
+            return;
+        }
+
+        if (strtoupper($this->input->method()) !== 'POST') {
+            show_404();
+            return;
+        }
+
+        $level = $this->normalize_level($this->input->post('record_level', TRUE));
+        $record_id = (int) $this->input->post('record_id', TRUE);
+        $names = $this->input->post('file_names');
+
+        if ($record_id <= 0 || !is_array($names)) {
+            return $this->json(FALSE, 'Please select a valid upload destination.');
+        }
+
+        $path = $this->Documents_model->get_upload_path(
+            $level,
+            $record_id,
+            $this->get_unpublished_ownership(),
+            $this->can_upload_all_unpublished(),
+            TRUE
+        );
+
+        if (!$path) {
+            return $this->json(FALSE, 'Please select a valid upload destination.');
+        }
+
+        $path_ids = $this->build_upload_path_ids($path);
+        $duplicates = array();
+
+        foreach ($names as $name) {
+            $name = basename(trim((string) $name));
+            if ($name !== '' && $this->Documents_model->uploaded_document_exists($name, $path_ids)) {
+                $duplicates[] = $name;
+            }
+        }
+
+        return $this->json(TRUE, '', array('duplicates' => array_values(array_unique($duplicates))));
+    }
+
     public function upload()
     {
         if (!$this->require_manager()) {
@@ -3027,7 +3089,7 @@ class Documents extends CI_Controller
             $level,
             $record_id,
             $this->get_unpublished_ownership(),
-            $this->is_super_admin(),
+            $this->can_upload_all_unpublished(),
             TRUE
         );
 
@@ -3057,17 +3119,17 @@ class Documents extends CI_Controller
             );
         }
 
-        if (count($original_files) > 250) {
+        if (count($original_files) > 150) {
             return $this->upload_response(
                 FALSE,
-                'A maximum of 250 original files may be uploaded at one time.'
+                'A maximum of 150 original files may be uploaded at one time.'
             );
         }
 
-        if (count($watermark_files) > 250) {
+        if (count($watermark_files) > 150) {
             return $this->upload_response(
                 FALSE,
-                'A maximum of 250 watermark files may be uploaded at one time.'
+                'A maximum of 150 watermark files may be uploaded at one time.'
             );
         }
 

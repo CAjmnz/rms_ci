@@ -9,6 +9,14 @@
     --muted:#6b7f78
 }
 
+/* Temporary Documents-only QA reset control. */
+.document-clear-panel { border:1px solid #f0b9b9; }
+.document-clear-confirm { display:flex; align-items:end; gap:12px; padding:20px; flex-wrap:wrap; }
+.document-clear-confirm label { width:100%; }
+.document-clear-confirm input { min-width:260px; padding:10px 12px; border:1px solid #d5d9dd; border-radius:8px; }
+.document-clear-confirm button { padding:10px 16px; border:0; border-radius:8px; background:#b42318; color:#fff; font-weight:700; cursor:pointer; }
+.document-clear-confirm button:disabled { opacity:.45; cursor:not-allowed; }
+
 /* --------------------------------------------------------------------------
    File Type Setting panel
    -------------------------------------------------------------------------- */

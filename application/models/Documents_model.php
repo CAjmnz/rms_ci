@@ -1168,6 +1168,25 @@ class Documents_model extends CI_Model
         return $this->db->get()->result_array();
     }
 
+    /** Return TRUE when the same original filename already exists at this exact path. */
+    public function uploaded_document_exists($data_name, $path_ids)
+    {
+        if (!is_array($path_ids) || trim((string) $data_name) === '') {
+            return FALSE;
+        }
+
+        $this->db->from('data');
+        $this->db->where('LOWER(data_name) =', strtolower(trim((string) $data_name)));
+        $this->db->where('file_id', isset($path_ids['file_id']) ? (int) $path_ids['file_id'] : 0);
+
+        for ($level = 1; $level <= $this->maximum_level; $level++) {
+            $column = 'subfolder' . $level . '_id';
+            $this->db->where($column, isset($path_ids[$column]) ? (int) $path_ids[$column] : 0);
+        }
+
+        return $this->db->count_all_results() > 0;
+    }
+
     /**
      * Save an uploaded document record in the existing data table.
      *
@@ -1330,6 +1349,100 @@ class Documents_model extends CI_Model
         return $row && isset($row['value'])
             ? $row['value']
             : FALSE;
+    }
+
+    /**
+     * TEMPORARY QA RESET: clear only data owned by the Documents module.
+     * Shared users, roles, subsidiaries, departments, settings, file types and
+     * activity logs are intentionally excluded.
+     */
+    public function clear_document_module_data()
+    {
+        $roots = array();
+        foreach (array(1, 7) as $setting_id) {
+            $value = $this->get_system_setting($setting_id);
+            if ($value === FALSE || trim((string) $value) === '') {
+                continue;
+            }
+
+            $root = trim((string) $value);
+            if (!preg_match('/^(?:[A-Za-z]:[\\\\\/]|\/)/', $root)) {
+                $root = rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR .
+                    str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $root);
+            }
+            $resolved = realpath($root);
+            if ($resolved !== FALSE && is_dir($resolved)) {
+                $roots[$resolved] = $resolved;
+            }
+        }
+
+        foreach ($roots as $root) {
+            if (!$this->clear_document_storage_directory($root)) {
+                return array(
+                    'success' => FALSE,
+                    'message' => 'Document storage could not be cleared completely. No database records were cleared.'
+                );
+            }
+        }
+
+        $tables = array('document_pins', 'user_allowed_data', 'data_f', 'data');
+        for ($level = 10; $level >= 1; $level--) {
+            $tables[] = 'subfolder' . $level;
+        }
+        $tables[] = 'filename';
+
+        $this->db->trans_begin();
+        foreach ($tables as $table) {
+            /*
+             * CI3 intentionally refuses delete() without a WHERE clause.
+             * empty_table() is the query-builder operation intended for this
+             * explicit, Super-User-confirmed Documents-only reset.
+             */
+            if ($this->db->table_exists($table) && !$this->db->empty_table($table)) {
+                $this->db->trans_rollback();
+                return array(
+                    'success' => FALSE,
+                    'message' => 'Document database records could not be cleared completely.'
+                );
+            }
+        }
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return array(
+                'success' => FALSE,
+                'message' => 'Document database records could not be cleared completely.'
+            );
+        }
+
+        $this->db->trans_commit();
+        return array('success' => TRUE, 'message' => 'Documents-module data was cleared.');
+    }
+
+    /** Remove the contents of one configured document root but retain the root itself. */
+    private function clear_document_storage_directory($directory)
+    {
+        $items = @scandir($directory);
+        if (!is_array($items)) {
+            return FALSE;
+        }
+
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            $path = rtrim($directory, '/\\') . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($path) && !is_link($path)) {
+                if (!$this->clear_document_storage_directory($path) || !@rmdir($path)) {
+                    return FALSE;
+                }
+            } elseif (!@unlink($path)) {
+                return FALSE;
+            }
+        }
+
+        return TRUE;
     }
 
     /**
