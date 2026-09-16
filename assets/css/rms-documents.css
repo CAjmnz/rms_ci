@@ -1509,9 +1509,9 @@
     flex: 0 0 210px;
     min-width: 170px;
     max-width: 360px;
-    overflow-x: hidden;
+    overflow-x: visible;
     overflow-y: auto;
-    padding: 12px;
+    padding: 12px 12px 48px;
     position: relative;
     width: 210px;
 }
@@ -1603,180 +1603,65 @@
     touch-action: none;
 }
 
-/* Vertical mode owns the stage scroll. The normal viewer remains locked. */
-.unified-file-viewer.is-vertical .unified-viewer-body {
-    touch-action: pan-y;
-}
-
-/* Reworked Vertical mode: continuous PDF-reader stage inside the CURRENT
- * document-viewer modal. Do not change .unified-viewer-card dimensions. */
-.unified-file-viewer.is-vertical-single .unified-viewer-body {
+/* ========== VERTICAL SCROLL MODE (PDF-style continuous stack) ========== */
+.unified-viewer.is-vertical .unified-viewer-body {
     align-items: stretch;
-    justify-content: stretch;
+    display: block;
+    justify-content: flex-start;
     overflow: hidden;
-    padding: 0;
+    position: relative;
     touch-action: pan-y;
 }
 
-.unified-file-viewer.is-vertical-single .unified-vertical-scroll {
+/* Scroll host fills the entire dark canvas. Absolute only on the container,
+   never on individual pages — pages stay in normal document flow. */
+.unified-viewer.is-vertical #unified-vertical-scroll {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 20px 40px;
+    scroll-behavior: smooth;
+    touch-action: pan-y;
+    z-index: 1;
+}
+
+.unified-vertical-scroll {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Each page: full width of canvas, content centered, small gap below */
+.unified-vertical-page {
     box-sizing: border-box;
     display: block;
-    height: 100%;
-    max-width: 100%;
-    overflow-x: hidden !important;
-    overflow-y: auto;
-    padding: 4px 48px 28px;
-    scroll-behavior: smooth;
-    scrollbar-gutter: stable;
+    margin: 0 0 16px 0;
+    position: relative;
     text-align: center;
     width: 100%;
 }
 
-.unified-file-viewer.is-vertical-single .unified-vertical-page {
-    box-sizing: border-box;
-    display: block;
-    margin: 0 auto 4px;
-    max-width: 100%;
-    position: relative;
-    width: 100%;
-}
-
-.unified-file-viewer.is-vertical-single .unified-vertical-page img {
-    display: block;
-    background: #fff;
-    border: 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .42);
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-}
-
-.unified-file-viewer.is-vertical-single .unified-vertical-page-label {
-    background: rgba(21, 30, 34, .82);
-    border-radius: 5px;
-    bottom: 10px;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    left: 50%;
-    line-height: 1;
-    margin: 0;
-    padding: 5px 8px;
-    pointer-events: none;
-    position: absolute;
-    transform: translateX(-50%);
-    z-index: 2;
-}
-
-/* VIEWER FIX: grab cursor by default; right-button drag no longer needs the Ctrl key. */
-.unified-viewer-body img {
-    cursor: grab;
-    max-height: none;
-    max-width: none;
-    transform-origin: center center;
-    user-select: none;
-}
-
-.unified-viewer-body img.is-dragging {
-    cursor: grabbing;
-}
-
-.unified-viewer-body iframe {
-    background: #fff;
-    border: 0;
-    height: 100%;
-    width: 100%;
-}
-
-.unified-view-mode {
-    position: relative;
-}
-
-
-#unified-view-mode-toggle {
-    align-items: center;
-    display: inline-flex;
-    gap: 8px;
-    min-width: 172px;
-    justify-content: space-between;
-}
-
-.unified-view-mode-menu {
-    background: #fff;
-    border: 1px solid #d9e5df;
-    border-radius: 10px;
-    box-shadow: 0 14px 36px rgba(0, 0, 0, .18);
-    min-width: 280px;
-    overflow: hidden;
-    padding: 6px;
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 0;
-    right: auto;
-    top: auto;
-    z-index: 20;
-}
-
-.unified-view-mode-menu button {
-    align-items: flex-start;
-    border: 0;
-    border-radius: 8px;
-    display: flex;
-    gap: 10px;
-    padding: 10px 12px;
-    text-align: left;
-    width: 100%;
-}
-
-.unified-view-mode-menu button.is-active {
-    background: #e6f6ef;
-    color: #087a58;
-}
-
-.unified-view-mode-menu button > i {
-    font-size: 20px;
-    margin-top: 2px;
-}
-
-.unified-view-mode-menu button span {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.unified-view-mode-menu button small {
-    color: #63766f;
-    font-size: 11px;
-}
-
-.unified-vertical-scroll {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    height: 100%;
-    overflow: auto;
-    padding: 22px 56px 34px;
-    scroll-behavior: smooth;
-    width: 100%;
-}
-
-.unified-vertical-page {
-    align-items: center;
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: column;
-    gap: 8px;
-    max-width: 100%;
+.unified-vertical-page:last-child {
+    margin-bottom: 32px;
 }
 
 .unified-vertical-page img {
     background: #fff;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, .25);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
     cursor: grab;
     display: block;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
     max-width: none;
-    transform-origin: top center;
     user-select: none;
 }
 
@@ -1785,96 +1670,18 @@
 }
 
 .unified-vertical-page-label {
-    background: rgba(14, 28, 33, .8);
+    background: rgba(14, 28, 33, 0.78);
     border-radius: 999px;
     color: #fff;
-    font-size: 11px;
-    padding: 4px 9px;
+    display: inline-block;
+    font-size: 10px;
+    margin-bottom: 6px;
+    padding: 2px 8px;
+    white-space: nowrap;
 }
 
-/* Page Navigation is intentionally separate from Vertical Scroll. */
-.unified-page-navigation {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 18px;
-    height: 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 24px 58px;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    width: 100%;
-    -ms-overflow-style: none;
-}
-.unified-page-navigation::-webkit-scrollbar {
-    display: none;
-    height: 0;
-    width: 0;
-}
-
-.unified-page-strip-item {
-    align-items: center;
-    appearance: none;
-    background: transparent;
-    border: 0;
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    flex: 0 0 220px;
-    flex-direction: column;
-    gap: 9px;
-    margin: 0;
-    padding: 3px;
-}
-
-.unified-page-strip-preview {
-    align-items: center;
-    background: #fff;
-    border: 3px solid transparent;
-    border-radius: 5px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .24);
-    display: flex;
-    height: 312px;
-    justify-content: center;
-    overflow: hidden;
-    transition: border-color .15s ease, box-shadow .15s ease;
-    width: 220px;
-    max-width: none;
-}
-
-.unified-page-strip-preview img {
-    display: block;
-    height: 100% !important;
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    transform: none !important;
-    width: 100% !important;
-}
-
-.unified-page-strip-item.is-active .unified-page-strip-preview {
-    border-color: #0aa477;
-    box-shadow: 0 0 0 1px rgba(10, 164, 119, .35), 0 8px 24px rgba(0, 0, 0, .28);
-}
-
-.unified-page-strip-label {
-    color: #f4f8f7;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.unified-page-strip-unavailable {
-    color: #60716b;
-    font-size: 42px;
-}
-
+/* Hide single-page image, iframe, and nav arrows in vertical mode */
 .unified-viewer.is-vertical .unified-canvas-nav,
-.unified-viewer.is-page-strip > .unified-viewer-card > .unified-viewer-workspace > .unified-viewer-body > #unified-file-image,
-.unified-viewer.is-page-strip > .unified-viewer-card > .unified-viewer-workspace > .unified-viewer-body > #unified-file-frame,
 .unified-viewer.is-vertical > .unified-viewer-card > .unified-viewer-body > #unified-file-image,
 .unified-viewer.is-vertical > .unified-viewer-card > .unified-viewer-body > #unified-file-frame {
     display: none !important;

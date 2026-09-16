@@ -1402,8 +1402,8 @@ $build_subfolder_parent_label = function ($path) {
                             <i class="bi bi-display"></i><span id="unified-view-mode-label">Page Navigation</span><i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
-                            <button type="button" class="is-active" data-view-mode="single"><i class="bi bi-display"></i><span><strong>Page Navigation (&larr; &rarr;)</strong><small>View one document at a time</small></span></button>
-                            <button type="button" data-view-mode="vertical"><i class="bi bi-arrows-expand-vertical"></i><span><strong>Vertical Scroll (&uarr; &darr;)</strong><small>Continuous PDF-style pages</small></span></button>
+                            <button type="button" class="is-active" data-view-mode="page"><i class="bi bi-display"></i><span><strong>Page Navigation</strong><small>← → arrow keys</small></span></button>
+                            <button type="button" data-view-mode="vertical"><i class="bi bi-arrows-expand-vertical"></i><span><strong>Vertical Scroll</strong><small>↑ ↓ scroll pages</small></span></button>
                         </div>
                     </div>
                 </aside>
@@ -1411,7 +1411,6 @@ $build_subfolder_parent_label = function ($path) {
                 <button type="button" class="unified-canvas-nav previous" id="unified-previous-file" aria-label="Previous file"><i class="bi bi-chevron-left"></i></button>
                 <img id="unified-file-image" alt="Document preview" draggable="false" hidden>
                 <iframe id="unified-file-frame" title="Document preview" hidden></iframe>
-                <div class="unified-page-navigation" id="unified-page-navigation" hidden></div>
                 <div class="unified-vertical-scroll" id="unified-vertical-scroll" hidden></div>
                 <button type="button" class="unified-canvas-nav next" id="unified-next-file" aria-label="Next file"><i class="bi bi-chevron-right"></i></button>
                 <?php if ($current_can_upload): ?>
@@ -1441,7 +1440,6 @@ $build_subfolder_parent_label = function ($path) {
                                     'fileUrl' => site_url('administrator/documents/file'),
                                     'downloadSelectedUrl' => site_url('administrator/documents/download-selected'),
                                     'uploadUrl' => site_url('administrator/documents/upload'),
-                                    'checkUploadDuplicatesUrl' => site_url('administrator/documents/check-upload-duplicates'),
                                     'createFilenameUrl' => site_url('administrator/documents/create-filename'),
                                     'createSubfolderUrl' => site_url('administrator/documents/create-subfolder'),
                                     'level' => (int) $active_level,

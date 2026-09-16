@@ -3367,7 +3367,7 @@ showCurrentFolderRenameModal();
     /* VIEWER FIX: remember the page scroll position while the viewer locks the background. */
     var unifiedViewerScrollY = 0;
     var unifiedViewerBodyTop = '';
-    var unifiedViewMode = 'single';
+    var unifiedViewMode = 'page';
     var unifiedVerticalDragging = false;
     var unifiedVerticalDragX = 0;
     var unifiedVerticalDragY = 0;
@@ -3423,177 +3423,180 @@ showCurrentFolderRenameModal();
         };
     }
 
+    /**
+     * Apply unifiedScale to every vertical page image.
+     * Pixel width/height from natural size * scale — aspect ratio preserved,
+     * pages stay in normal block flow (no absolute positioning).
+     */
     function applyUnifiedVerticalZoom() {
-        var scroll = $('#unified-vertical-scroll').get(0);
-        if (!scroll) return;
-        /* Reworked PDF-style continuous reader. Keep the existing modal size;
-         * only the document stage changes. Pages are centered and capped to a
-         * readable width instead of stretching across the whole canvas. */
-        var canvasWidth = Math.max(320, scroll.clientWidth);
-        /* Match a normal PDF reader: the page should occupy most of the stage,
-         * not render as a small preview floating on the right. */
-        var fittedWidth = Math.max(320, canvasWidth - 96);
-        $('#unified-vertical-scroll .unified-vertical-page img').each(function () {
-            if (!this.naturalWidth || !this.naturalHeight) return;
-            var width = Math.max(1, Math.round(fittedWidth * unifiedScale));
-            var height = Math.max(1, Math.round(width * (this.naturalHeight / this.naturalWidth)));
-            $(this).css({
-                width: width + 'px',
-                height: height + 'px',
-                position: 'static',
-                left: 'auto',
-                top: 'auto',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                transform: 'none'
-            });
-            $(this).closest('.unified-vertical-page').css('height', 'auto');
-        });
-    }
-
-    function applyUnifiedPageZoom() {
-        if (unifiedViewMode !== 'page') return;
-        var stage = $('#unified-page-navigation').get(0);
-        if (!stage) return;
-
-        /* Keep Page Navigation useful as a document overview. At 100% we size
-         * four portrait pages across the available canvas; zoom only adjusts
-         * that fitted size instead of turning thumbnails into giant pages. */
-        var available = Math.max(560, stage.clientWidth - 116);
-        var fittedWidth = Math.max(190, Math.min(250, Math.floor((available - 54) / 4)));
-        var zoomFactor = Math.max(.8, Math.min(1.35, unifiedScale));
-        var width = Math.round(fittedWidth * zoomFactor);
-        /* Match the live View Documents viewer's usable image height. Its
-         * dialog is 720px high and the stage fills the remaining space; Page
-         * Navigation should therefore use tall previews rather than thumbnails. */
-        var height = Math.round(width * 1.42);
-
-        $('#unified-page-navigation .unified-page-strip-item').css({
-            flexBasis: width + 'px',
-            width: width + 'px'
-        });
-        $('#unified-page-navigation .unified-page-strip-preview').css({
-            width: width + 'px',
-            height: height + 'px'
-        });
+        var nodes = document.querySelectorAll('#unified-vertical-scroll .unified-vertical-page img');
+        for (var i = 0; i < nodes.length; i++) {
+            var img = nodes[i];
+            if (!img.naturalWidth || !img.naturalHeight) continue;
+            var w = Math.max(1, Math.round(img.naturalWidth * unifiedScale));
+            var h = Math.max(1, Math.round(img.naturalHeight * unifiedScale));
+            img.style.width = w + 'px';
+            img.style.height = h + 'px';
+            img.style.maxWidth = 'none';
+            img.style.transform = 'none';
+        }
     }
 
     function renderUnifiedTransform() {
         $('#unified-file-image').css('transform',
             'translate(' + unifiedOffsetX + 'px,' + unifiedOffsetY + 'px) scale(' + unifiedScale + ')');
         applyUnifiedVerticalZoom();
-        applyUnifiedPageZoom();
         $('#unified-file-zoom').text(Math.round(unifiedScale * 100) + '%');
     }
 
-    function renderUnifiedVerticalPages() {
-        var $scroll = $('#unified-vertical-scroll');
-        $scroll.empty().scrollTop(0);
-        unifiedScale = 1;
-        $('#unified-file-zoom').text('100%');
-
-        $.each(unifiedFiles, function (index, file) {
-            var extension = String(file.record_name || '').split('.').pop().toLowerCase();
-            var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
-            var $page = $('<div class="unified-vertical-page"></div>')
-                .attr('data-file-index', index);
-
-            $('<div class="unified-vertical-page-label"></div>')
-                .text('Page ' + (index + 1) + ' of ' + unifiedFiles.length)
-                .appendTo($page);
-
-            if (isImage && file.view_url) {
-                $('<img alt="Document page" draggable="false">')
-                    .attr('src', file.view_url)
-                    .on('load', function () {
-                        applyUnifiedVerticalZoom();
-                    })
-                    .appendTo($page);
-            } else {
-                $('<div class="unified-vertical-page-label"></div>')
-                    .text(file.record_name + ' cannot be displayed in vertical image mode.')
-                    .appendTo($page);
-            }
-
-            $scroll.append($page);
-        });
+    /**
+     * Available width inside the dark canvas for vertical pages.
+     * Measures the scroll host (or body) and subtracts modest gutters.
+     */
+    function getUnifiedVerticalAvailableWidth() {
+        var scrollEl = document.getElementById('unified-vertical-scroll');
+        var bodyEl = document.querySelector('#unified-file-viewer .unified-viewer-body');
+        var width = 0;
+        if (scrollEl && scrollEl.clientWidth > 40) {
+            width = scrollEl.clientWidth;
+        } else if (bodyEl && bodyEl.clientWidth > 40) {
+            width = bodyEl.clientWidth;
+        } else {
+            width = 700;
+        }
+        /* ~20px padding each side already on the scroll host; extra inset ~4px */
+        return Math.max(200, width - 8);
     }
 
-    /* Page Navigation has its own renderer. Do not reuse the continuous-scroll
-     * page renderer here: that renderer applies full-size/zoomed image dimensions
-     * and caused the pages to stack vertically in the browser. */
-    function renderUnifiedPageStrip() {
-        var $scroll = $('#unified-page-navigation');
-        $scroll.empty();
+    /**
+     * Fit to screen: page width fills most of the dark canvas.
+     * Scale = availableWidth / naturalWidth (can be >1 for small images).
+     */
+    function fitUnifiedVertical() {
+        var availableWidth = getUnifiedVerticalAvailableWidth();
+        var bestScale = null;
+        var nodes = document.querySelectorAll('#unified-vertical-scroll .unified-vertical-page img');
+        for (var i = 0; i < nodes.length; i++) {
+            var img = nodes[i];
+            if (!img.naturalWidth) continue;
+            var s = availableWidth / img.naturalWidth;
+            if (bestScale === null || s < bestScale) bestScale = s;
+        }
+        if (bestScale === null) return;
+        unifiedScale = Math.max(0.05, Math.min(5, bestScale));
+        unifiedOffsetX = 0;
+        unifiedOffsetY = 0;
+        applyUnifiedVerticalZoom();
+        $('#unified-file-zoom').text(Math.round(unifiedScale * 100) + '%');
+    }
 
-        $.each(unifiedFiles, function (index, file) {
+    /**
+     * Build the continuous vertical stack:
+     *   Page 1
+     *   gap
+     *   Page 2
+     *   gap
+     *   Page 3
+     *   ...
+     */
+    function renderUnifiedVerticalPages() {
+        var scrollEl = document.getElementById('unified-vertical-scroll');
+        if (!scrollEl) return;
+
+        scrollEl.innerHTML = '';
+        scrollEl.scrollTop = 0;
+        /* The viewer already preserves the active page during zoom. Disable the
+         * browser's own scroll anchoring so it cannot apply a second automatic
+         * correction and jump several pages (for example Page 38 to Page 30). */
+        scrollEl.style.overflowAnchor = 'none';
+        /* Hide the vertical canvas while pages are being measured so switching
+         * modes never visibly travels from Page 1 to the opened page. */
+        scrollEl.style.visibility = 'hidden';
+
+        var pending = 0;
+        var done = 0;
+        var fitted = false;
+
+        function showOpenedVerticalPage() {
+            var activePage = scrollEl.querySelector('.unified-vertical-page[data-file-index="' + unifiedFileIndex + '"]');
+            if (activePage) {
+                scrollEl.scrollTop = activePage.offsetTop;
+            }
+            scrollEl.style.visibility = '';
+        }
+
+        function maybeFit() {
+            done += 1;
+            if (fitted || done < pending) return;
+            fitted = true;
+            window.requestAnimationFrame(function () {
+                fitUnifiedVertical();
+                showOpenedVerticalPage();
+                window.setTimeout(function () {
+                    fitUnifiedVertical();
+                    showOpenedVerticalPage();
+                }, 100);
+            });
+        }
+
+        for (var index = 0; index < unifiedFiles.length; index++) {
+            var file = unifiedFiles[index];
             var extension = String(file.record_name || '').split('.').pop().toLowerCase();
             var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
-            var $page = $('<button type="button" class="unified-page-strip-item"></button>')
-                .attr('data-file-index', index)
-                .toggleClass('is-active', index === unifiedFileIndex)
-                .on('click', function () { navigateUnifiedFile(index); });
+
+            var page = document.createElement('div');
+            page.className = 'unified-vertical-page';
+            page.setAttribute('data-file-index', String(index));
+
+            var label = document.createElement('div');
+            label.className = 'unified-vertical-page-label';
+            label.textContent = 'Page ' + (index + 1) + ' of ' + unifiedFiles.length;
+            page.appendChild(label);
 
             if (isImage && file.view_url) {
-                $('<span class="unified-page-strip-preview"></span>')
-                    .append($('<img alt="Document preview" draggable="false">').attr('src', file.view_url))
-                    .appendTo($page);
+                pending += 1;
+                var img = document.createElement('img');
+                img.alt = 'Page ' + (index + 1);
+                img.draggable = false;
+                img.decoding = 'async';
+                img.onload = function () {
+                    applyUnifiedVerticalZoom();
+                    maybeFit();
+                };
+                img.onerror = function () { maybeFit(); };
+                img.src = file.view_url;
+                page.appendChild(img);
+                if (img.complete && img.naturalWidth) {
+                    (function () {
+                        applyUnifiedVerticalZoom();
+                        maybeFit();
+                    })();
+                }
             } else {
-                $('<span class="unified-page-strip-preview unified-page-strip-unavailable"></span>')
-                    .append($('<i class="bi bi-file-earmark"></i>'))
-                    .appendTo($page);
+                var fb = document.createElement('div');
+                fb.className = 'unified-vertical-page-label';
+                fb.textContent = (file.record_name || 'File') + ' cannot be displayed in vertical image mode.';
+                page.appendChild(fb);
             }
 
-            $('<span class="unified-page-strip-label"></span>')
-                .text('File ' + (index + 1))
-                .appendTo($page);
-            $scroll.append($page);
-        });
+            scrollEl.appendChild(page);
+        }
+
+        if (pending === 0) {
+            window.requestAnimationFrame(function () {
+                fitUnifiedVertical();
+                showOpenedVerticalPage();
+            });
+        }
     }
 
     function setUnifiedViewMode(mode) {
-        /* Page Navigation remains the existing one-file viewer. Vertical is a
-         * separate continuous PDF-style stage rendered inside the same modal. */
-        unifiedViewMode = mode === 'vertical' ? 'vertical-single' : 'single';
-        if (unifiedViewMode === 'single' || unifiedViewMode === 'vertical-single') {
-            var isVerticalSingle = unifiedViewMode === 'vertical-single';
-            $('#unified-file-viewer')
-                .removeClass('is-vertical is-page-strip is-vertical-single')
-                .toggleClass('is-vertical-single', isVerticalSingle);
-            $('#unified-view-mode-label').text(isVerticalSingle ? 'Vertical Scroll' : 'Page Navigation');
-            $('#unified-view-mode-menu [data-view-mode]')
-                .removeClass('is-active')
-                .filter('[data-view-mode="' + (isVerticalSingle ? 'vertical' : 'single') + '"]')
-                .addClass('is-active');
-            $('#unified-view-mode-menu').prop('hidden', true);
-            $('#unified-view-mode-toggle').attr('aria-expanded', 'false');
-            $('#unified-page-navigation').prop('hidden', true).empty();
-            $('#unified-previous-file, #unified-next-file').prop('hidden', false);
-            if (isVerticalSingle) {
-                $('#unified-file-image, #unified-file-frame').prop('hidden', true);
-                $('#unified-vertical-scroll').prop('hidden', false);
-                renderUnifiedVerticalPages();
-                window.requestAnimationFrame(function () {
-                    var $scroll = $('#unified-vertical-scroll');
-                    var $current = $scroll.find('.unified-vertical-page').eq(unifiedFileIndex);
-                    if ($current.length) {
-                        $scroll.scrollTop($scroll.scrollTop() + $current.position().top);
-                    }
-                });
-            } else {
-                $('#unified-vertical-scroll').prop('hidden', true).empty();
-                displayUnifiedFile(unifiedFileIndex);
-            }
-            return;
-        }
+        unifiedViewMode = mode === 'vertical' ? 'vertical' : 'page';
         var vertical = unifiedViewMode === 'vertical';
-        var pageStrip = false;
+        var $viewer = $('#unified-file-viewer');
+        var $scroll = $('#unified-vertical-scroll');
 
-        $('#unified-file-viewer')
-            .toggleClass('is-vertical', vertical)
-            .toggleClass('is-page-strip', pageStrip);
-        $('#unified-file-viewer .unified-viewer-card')
-            .toggleClass('is-page-strip', pageStrip);
+        $viewer.toggleClass('is-vertical', vertical);
         $('#unified-view-mode-label').text(vertical ? 'Vertical Scroll' : 'Page Navigation');
         $('#unified-view-mode-menu [data-view-mode]')
             .removeClass('is-active')
@@ -3602,49 +3605,24 @@ showCurrentFolderRenameModal();
         $('#unified-view-mode-menu').prop('hidden', true);
         $('#unified-view-mode-toggle').attr('aria-expanded', 'false');
 
-        $('#unified-file-image, #unified-file-frame').prop('hidden', true);
-
-        if (pageStrip) {
-            $('#unified-vertical-scroll').prop('hidden', true).empty();
-            $('#unified-page-navigation').prop('hidden', false);
-            $('#unified-previous-file, #unified-next-file').prop('hidden', false);
-            renderUnifiedPageStrip();
-            applyUnifiedPageZoom();
+        if (vertical) {
+            $scroll.removeAttr('hidden').prop('hidden', false);
+            unifiedScale = 1;
+            unifiedOffsetX = 0;
+            unifiedOffsetY = 0;
             window.requestAnimationFrame(function () {
-                var $strip = $('#unified-page-navigation');
-                var $current = $strip.find('.unified-page-strip-item').eq(unifiedFileIndex);
-                if ($current.length) {
-                    var strip = $strip.get(0);
-                    var target = $current.get(0);
-                    strip.scrollLeft = Math.max(0, target.offsetLeft - Math.max(0, (strip.clientWidth - target.offsetWidth) / 2));
-                }
+                renderUnifiedVerticalPages();
             });
-            return;
+        } else {
+            $scroll.attr('hidden', 'hidden').prop('hidden', true).empty();
+            displayUnifiedFile(unifiedFileIndex);
         }
-
-        $('#unified-page-navigation').prop('hidden', true).empty();
-        $('#unified-previous-file, #unified-next-file').prop('hidden', true);
-        $('#unified-vertical-scroll').prop('hidden', false);
-        renderUnifiedVerticalPages();
-        window.requestAnimationFrame(function () {
-            var $scroll = $('#unified-vertical-scroll');
-            var $current = $scroll.find('.unified-vertical-page').eq(unifiedFileIndex);
-            if ($current.length) $scroll.scrollTop($scroll.scrollTop() + $current.position().top);
-        });
     }
 
     function fitUnifiedImage() {
         markUnifiedInspecting(true);
-        if (unifiedViewMode === 'page') {
-            unifiedScale = 1;
-            applyUnifiedPageZoom();
-            $('#unified-file-zoom').text('100%');
-            return;
-        }
-        if (unifiedViewMode === 'vertical-single') {
-            unifiedScale = 1;
-            applyUnifiedVerticalZoom();
-            $('#unified-file-zoom').text('100%');
+        if (unifiedViewMode === 'vertical') {
+            fitUnifiedVertical();
             return;
         }
         var image = $('#unified-file-image').get(0);
@@ -3662,15 +3640,7 @@ showCurrentFolderRenameModal();
 
     function changeUnifiedZoom(delta) {
         markUnifiedInspecting(true);
-        if (unifiedViewMode === 'page') {
-            unifiedScale = Math.max(.8, Math.min(1.35, unifiedScale + delta));
-        } else if (unifiedViewMode === 'vertical-single') {
-            /* Vertical mode stays in normal document flow. Zoom may enlarge
-             * the page, while horizontal overflow remains clipped by the canvas. */
-            unifiedScale = Math.max(.6, Math.min(1.6, unifiedScale + delta));
-        } else {
-            unifiedScale = Math.max(.1, Math.min(5, unifiedScale + delta));
-        }
+        unifiedScale = Math.max(0.1, Math.min(5, unifiedScale + delta));
         renderUnifiedTransform();
     }
 
@@ -3718,21 +3688,7 @@ showCurrentFolderRenameModal();
         unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0;
         if (isImage) {
             $('#unified-file-frame').prop('hidden', true).attr('src', '');
-            $('#unified-file-image').prop('hidden', false).one('load', function () {
-                if (unifiedViewMode === 'vertical-single') {
-                    /* Vertical orientation: one document only, fitted to the
-                     * viewer width so the user reads it from top to bottom. */
-                    var stage = $('.unified-viewer-body').get(0);
-                    if (stage && this.naturalWidth) {
-                        unifiedScale = Math.min(1, Math.max(.1, (stage.clientWidth - 44) / this.naturalWidth));
-                        unifiedOffsetX = 0;
-                        unifiedOffsetY = 0;
-                        renderUnifiedTransform();
-                    }
-                } else {
-                    fitUnifiedImage();
-                }
-            }).attr('src', file.view_url);
+            $('#unified-file-image').prop('hidden', false).one('load', fitUnifiedImage).attr('src', file.view_url);
         } else {
             $('#unified-file-image').prop('hidden', true).attr('src', '');
             $('#unified-file-frame').prop('hidden', false).attr('src', file.view_url);
@@ -3752,17 +3708,10 @@ showCurrentFolderRenameModal();
             return;
         }
         unifiedFiles = [initial];
-        unifiedScale = 1;
-        unifiedOffsetX = 0;
-        unifiedOffsetY = 0;
-        $('#unified-file-zoom').text('100%');
         $('#unified-file-viewer').addClass('show').attr('aria-hidden', 'false');
         /* VIEWER FIX: lock the background as soon as the viewer opens. */
         lockUnifiedViewerBackground();
-        /* Apply the active view mode immediately. Page Navigation must open as
-         * the one-line page strip rather than briefly/indefinitely using the
-         * legacy single-file renderer. */
-        setUnifiedViewMode(unifiedViewMode);
+        displayUnifiedFile(0);
 
         /* Load every direct file so Next/Previous is independent of paging. */
         /* Load files from the exact folder currently open in Manage Documents.
@@ -3775,15 +3724,13 @@ showCurrentFolderRenameModal();
             viewerFolderLevel = Math.max(0, Number(config.level || 0) - 1);
             viewerFolderId = Number(config.parentId || 0);
         }
-        /* Load every file in the current folder in server-sized batches.
-         * Vertical Scroll must not stop at the first 100 records. */
-        var loadedViewerFiles = [];
-        var viewerBatchSize = 100;
-
-        function finishViewerFolderLoad() {
-            if (!loadedViewerFiles.length) return;
-
-            unifiedFiles = loadedViewerFiles;
+        $.getJSON(config.folderFilesUrl, {
+            level: viewerFolderLevel,
+            record_id: viewerFolderId,
+            draw: 1, start: 0, length: 100, search: { value: '' }
+        }).done(function (response) {
+            if (!response || !$.isArray(response.data) || !response.data.length) return;
+            unifiedFiles = $.map(response.data, normalizedViewerFile);
             var found = -1;
             $.each(unifiedFiles, function (index, candidate) {
                 /* Document tokens are encrypted with a random IV, so the same
@@ -3798,61 +3745,15 @@ showCurrentFolderRenameModal();
                     return false;
                 }
             });
-
-            if (found < 0) return;
-            unifiedFileIndex = found;
-            if (unifiedViewMode === 'page') {
-                renderUnifiedPageStrip();
-                applyUnifiedPageZoom();
-                window.requestAnimationFrame(function () {
-                    var $strip = $('#unified-page-navigation');
-                    var $current = $strip.find('.unified-page-strip-item').eq(found);
-                    if ($current.length) {
-                        var strip = $strip.get(0);
-                        var target = $current.get(0);
-                        strip.scrollLeft = Math.max(0, target.offsetLeft - Math.max(0, (strip.clientWidth - target.offsetWidth) / 2));
-                    }
-                });
-            } else if (unifiedViewMode === 'vertical-single') {
-                renderUnifiedVerticalPages();
-                window.requestAnimationFrame(function () {
-                    var $scroll = $('#unified-vertical-scroll');
-                    var $current = $scroll.find('.unified-vertical-page').eq(found);
-                    if ($current.length) {
-                        $scroll.scrollTop($scroll.scrollTop() + $current.position().top);
-                    }
-                });
-            } else {
-                displayUnifiedFile(found);
-            }
-        }
-
-        function loadViewerFolderBatch(start) {
-            $.getJSON(config.folderFilesUrl, {
-                level: viewerFolderLevel,
-                record_id: viewerFolderId,
-                draw: 1,
-                start: start,
-                length: viewerBatchSize,
-                search: { value: '' }
-            }).done(function (response) {
-                if (!response || !$.isArray(response.data)) return;
-
-                $.each(response.data, function (index, fileRow) {
-                    loadedViewerFiles.push(normalizedViewerFile(fileRow));
-                });
-
-                var total = Number(response.recordsFiltered || response.recordsTotal || loadedViewerFiles.length);
-                if (response.data.length === viewerBatchSize && loadedViewerFiles.length < total) {
-                    loadViewerFolderBatch(start + viewerBatchSize);
-                    return;
+            if (found >= 0) {
+                unifiedFileIndex = found;
+                if (unifiedViewMode === 'vertical') {
+                    renderUnifiedVerticalPages();
+                } else {
+                    displayUnifiedFile(found);
                 }
-
-                finishViewerFolderLoad();
-            });
-        }
-
-        loadViewerFolderBatch(0);
+            }
+        });
     }
 
     function closeUnifiedViewer() {
@@ -3995,41 +3896,18 @@ showCurrentFolderRenameModal();
             resizingSidebar = false;
             $sidebar.removeClass('is-resizing');
             $('body').css({ cursor: '', userSelect: '' });
-            if ($('#unified-file-image').is(':visible')) fitUnifiedImage();
+            if (unifiedViewMode === 'vertical') fitUnifiedVertical();
+            else if ($('#unified-file-image').is(':visible')) fitUnifiedImage();
         });
     }());
 
     /* Page Navigation moves through the files in the current folder. At the
      * first/last file the matching arrow is disabled instead of wrapping. */
-    function navigateUnifiedFile(index) {
-        if (index < 0 || index >= unifiedFiles.length) return;
-        if (unifiedViewMode === 'page') {
-            unifiedFileIndex = index;
-            var file = unifiedFiles[unifiedFileIndex];
-            $('#unified-file-title').text(file.record_name);
-            $('#unified-file-position').text('File ' + (unifiedFileIndex + 1) + ' of ' + unifiedFiles.length);
-            $('#unified-file-download').attr('href', file.download_url);
-            $('#unified-previous-file').prop('disabled', unifiedFileIndex <= 0);
-            $('#unified-next-file').prop('disabled', unifiedFileIndex >= unifiedFiles.length - 1);
-            var $pages = $('#unified-page-navigation .unified-page-strip-item');
-            $pages.removeClass('is-active');
-            var $page = $pages.eq(unifiedFileIndex).addClass('is-active');
-            if ($page.length) {
-                var strip = $('#unified-page-navigation').get(0);
-                var target = $page.get(0);
-                var centeredLeft = target.offsetLeft - Math.max(0, (strip.clientWidth - target.offsetWidth) / 2);
-                $('#unified-page-navigation').stop(true).animate({ scrollLeft: Math.max(0, centeredLeft) }, 180);
-            }
-            return;
-        }
-        displayUnifiedFile(index);
-    }
-
     $('#unified-previous-file').on('click', function () {
-        navigateUnifiedFile(unifiedFileIndex - 1);
+        if (unifiedFileIndex > 0) displayUnifiedFile(unifiedFileIndex - 1);
     });
     $('#unified-next-file').on('click', function () {
-        navigateUnifiedFile(unifiedFileIndex + 1);
+        if (unifiedFileIndex < unifiedFiles.length - 1) displayUnifiedFile(unifiedFileIndex + 1);
     });
     $('#unified-zoom-in').on('click', function () { changeUnifiedZoom(.1); });
     $('#unified-zoom-out').on('click', function () { changeUnifiedZoom(-.1); });
@@ -4049,11 +3927,6 @@ showCurrentFolderRenameModal();
         }
         event.preventDefault();
         event.stopPropagation();
-
-        if (unifiedViewMode === 'vertical') {
-            return;
-        }
-
         unifiedDragging = true;
         markUnifiedInspecting(true);
         unifiedDragX = originalEvent.clientX - unifiedOffsetX;
@@ -4088,55 +3961,18 @@ showCurrentFolderRenameModal();
         if (event.key === '+' || event.key === '=') { event.preventDefault(); changeUnifiedZoom(.1); }
         if (event.key === '-') { event.preventDefault(); changeUnifiedZoom(-.1); }
     });
-    /* In Vertical Scroll mode, a normal mouse wheel scrolls through files.
-     * Ctrl + wheel keeps the existing zoom behavior. */
-    $('.unified-viewer-body').on('wheel.unifiedViewer', function (event) {
-        var originalEvent = event.originalEvent || event;
-        var verticalScroll = $('#unified-vertical-scroll').get(0);
-
-        if (unifiedViewMode === 'vertical' && verticalScroll && !event.ctrlKey) {
+    /* VIEWER FIX: while Ctrl is held, the wheel belongs to document zoom only.
+       Use a native non-passive listener so the browser cannot zoom/scroll the page. */
+    var unifiedViewerBody = document.querySelector('.unified-viewer-body');
+    if (unifiedViewerBody) {
+        unifiedViewerBody.addEventListener('wheel', function (event) {
+            if (!event.ctrlKey || !$('#unified-file-viewer').hasClass('show')) return;
             event.preventDefault();
             event.stopPropagation();
-            verticalScroll.scrollTop += originalEvent.deltaY;
-            return;
-        }
 
-        if (!event.ctrlKey) return;
-        event.preventDefault();
-        event.stopPropagation();
-
-        var oldScale = unifiedScale;
-        var oldScrollWidth = verticalScroll ? verticalScroll.scrollWidth : 0;
-        var oldScrollHeight = verticalScroll ? verticalScroll.scrollHeight : 0;
-        var oldScrollLeft = verticalScroll ? verticalScroll.scrollLeft : 0;
-        var oldScrollTop = verticalScroll ? verticalScroll.scrollTop : 0;
-
-        changeUnifiedZoom(originalEvent.deltaY < 0 ? .1 : -.1);
-
-        if (
-            unifiedViewMode === 'vertical' &&
-            verticalScroll &&
-            oldScale !== unifiedScale
-        ) {
-            var xRatio = oldScrollWidth > 0
-                ? (oldScrollLeft + originalEvent.offsetX) / oldScrollWidth
-                : 0;
-            var yRatio = oldScrollHeight > 0
-                ? (oldScrollTop + originalEvent.offsetY) / oldScrollHeight
-                : 0;
-
-            window.requestAnimationFrame(function () {
-                verticalScroll.scrollLeft = Math.max(
-                    0,
-                    (verticalScroll.scrollWidth * xRatio) - originalEvent.offsetX
-                );
-                verticalScroll.scrollTop = Math.max(
-                    0,
-                    (verticalScroll.scrollHeight * yRatio) - originalEvent.offsetY
-                );
-            });
-        }
-    });
+            changeUnifiedZoom(event.deltaY < 0 ? .1 : -.1);
+        }, { passive: false });
+    }
 
     $('#unified-vertical-scroll')
         .on('dragstart.unifiedViewer', 'img', function (event) {
@@ -4145,10 +3981,10 @@ showCurrentFolderRenameModal();
         .on('contextmenu.unifiedViewer', function (event) {
             event.preventDefault();
         })
-        .on('mousedown.unifiedViewer', 'img', function (event) {
+        .on('mousedown.unifiedViewer', function (event) {
             var originalEvent = event.originalEvent || event;
             var scroll = $('#unified-vertical-scroll').get(0);
-            if (originalEvent.button !== 0 || !scroll) return;
+            if (unifiedViewMode !== 'vertical' || originalEvent.button !== 0 || !scroll) return;
             event.preventDefault();
             event.stopPropagation();
             unifiedVerticalDragging = true;
@@ -4156,7 +3992,7 @@ showCurrentFolderRenameModal();
             unifiedVerticalDragY = originalEvent.clientY;
             unifiedVerticalScrollLeft = scroll.scrollLeft;
             unifiedVerticalScrollTop = scroll.scrollTop;
-            $(this).addClass('is-dragging');
+            $(originalEvent.target).closest('.unified-vertical-page').find('img').addClass('is-dragging');
             markUnifiedInspecting(true);
         });
 
@@ -4181,30 +4017,17 @@ showCurrentFolderRenameModal();
         if (!$('#unified-file-viewer').hasClass('show') || event.ctrlKey || event.altKey || event.metaKey) return;
         if ($(event.target).is('input, textarea, select')) return;
         if (unifiedViewMode === 'vertical') {
-            var $verticalPages = $('#unified-vertical-scroll .unified-vertical-page');
-            if (event.key === 'ArrowUp' && unifiedFileIndex > 0) {
+            var scroll = $('#unified-vertical-scroll').get(0);
+            if (scroll && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
                 event.preventDefault();
-                unifiedFileIndex -= 1;
-                if ($verticalPages.eq(unifiedFileIndex).length) {
-                    $verticalPages.eq(unifiedFileIndex).get(0).scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-            if (event.key === 'ArrowDown' && unifiedFileIndex < unifiedFiles.length - 1) {
-                event.preventDefault();
-                unifiedFileIndex += 1;
-                if ($verticalPages.eq(unifiedFileIndex).length) {
-                    $verticalPages.eq(unifiedFileIndex).get(0).scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                scroll.scrollBy({
+                    top: event.key === 'ArrowDown' ? 180 : -180,
+                    behavior: 'smooth'
+                });
             }
         } else {
-            if (event.key === 'ArrowLeft' && unifiedFileIndex > 0) {
-                event.preventDefault();
-                navigateUnifiedFile(unifiedFileIndex - 1);
-            }
-            if (event.key === 'ArrowRight' && unifiedFileIndex < unifiedFiles.length - 1) {
-                event.preventDefault();
-                navigateUnifiedFile(unifiedFileIndex + 1);
-            }
+            if (event.key === 'ArrowLeft') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex - 1); }
+            if (event.key === 'ArrowRight') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex + 1); }
         }
         if (event.key === 'Escape') { event.preventDefault(); closeUnifiedViewer(); }
     });
@@ -5268,7 +5091,6 @@ showCurrentFolderRenameModal();
         clearUploadFiles();
         setUploadProgress(0);
         $uploadForm.data('uploading', false);
-        $uploadForm.data('duplicatesChecked', false);
         $uploadButton.text('Upload Documents');
         selectCurrentUploadPath();
         updateUploadState();
@@ -5288,8 +5110,8 @@ showCurrentFolderRenameModal();
         var maximumSize = 15 * 1024 * 1024;
         var index;
 
-        if (files.length > 150) {
-            return 'A maximum of 150 ' + label +
+        if (files.length > 250) {
+            return 'A maximum of 250 ' + label +
                 ' files may be uploaded at one time.';
         }
 
@@ -5774,69 +5596,6 @@ showCurrentFolderRenameModal();
             return;
         }
 
-        if ($uploadForm.data('duplicatesChecked') !== true) {
-            var duplicateData = {
-                record_id: $uploadPath.val(),
-                record_level: Number($uploadPath.find('option:selected').attr('data-level') || 0),
-                file_names: $.map(originalFiles, function (file) {
-                    return file.name;
-                })
-            };
-
-            if (config.csrfName) {
-                duplicateData[config.csrfName] = config.csrfHash;
-            }
-
-            $.ajax({
-                url: config.checkUploadDuplicatesUrl,
-                type: 'POST',
-                dataType: 'json',
-                data: duplicateData
-            }).done(function (response) {
-                updateUploadCsrf(response);
-
-                if (!response || response.success !== true) {
-                    showUploadMessage('error', response && response.message
-                        ? response.message
-                        : 'The existing-file validation could not be completed.');
-                    return;
-                }
-
-                var duplicates = $.isArray(response.duplicates)
-                    ? response.duplicates
-                    : [];
-
-                if (duplicates.length > 0) {
-                    documentsSwal({
-                        title: 'File already exists',
-                        text: duplicates.length === 1
-                            ? 'This file already exists in this folder. Upload it again?'
-                            : 'These files already exist in this folder. Upload them again?',
-                        lines: duplicates,
-                        icon: 'warning',
-                        confirmText: 'Upload Anyway',
-                        cancelText: 'Cancel'
-                    }).done(function (result) {
-                        if (!result.confirmed) {
-                            return;
-                        }
-
-                        $uploadForm.data('duplicatesChecked', true);
-                        $uploadForm.trigger('submit');
-                    });
-                    return;
-                }
-
-                $uploadForm.data('duplicatesChecked', true);
-                $uploadForm.trigger('submit');
-            }).fail(function () {
-                showUploadMessage('error', 'The existing-file validation could not be completed.');
-            });
-
-            return;
-        }
-
-        $uploadForm.data('duplicatesChecked', false);
         clearUploadMessage();
         showUploadProgressToast(originalFiles.length + watermarkFiles.length);
         setUploadProgress(1);
