@@ -3505,6 +3505,7 @@ showCurrentFolderRenameModal();
 
         scrollEl.innerHTML = '';
         scrollEl.scrollTop = 0;
+        scrollEl.scrollLeft = 0;
         /* The viewer already preserves the active page during zoom. Disable the
          * browser's own scroll anchoring so it cannot apply a second automatic
          * correction and jump several pages (for example Page 38 to Page 30). */
@@ -3520,7 +3521,11 @@ showCurrentFolderRenameModal();
         function showOpenedVerticalPage() {
             var activePage = scrollEl.querySelector('.unified-vertical-page[data-file-index="' + unifiedFileIndex + '"]');
             if (activePage) {
-                scrollEl.scrollTop = activePage.offsetTop;
+                if (unifiedViewMode === 'horizontal') {
+                    scrollEl.scrollLeft = Math.max(0, activePage.offsetLeft - ((scrollEl.clientWidth - activePage.offsetWidth) / 2));
+                } else {
+                    scrollEl.scrollTop = activePage.offsetTop;
+                }
             }
             scrollEl.style.visibility = '';
         }
@@ -3591,13 +3596,14 @@ showCurrentFolderRenameModal();
     }
 
     function setUnifiedViewMode(mode) {
-        unifiedViewMode = mode === 'vertical' ? 'vertical' : 'page';
+        unifiedViewMode = mode === 'vertical' ? 'vertical' : (mode === 'horizontal' ? 'horizontal' : 'page');
         var vertical = unifiedViewMode === 'vertical';
+        var horizontal = unifiedViewMode === 'horizontal';
         var $viewer = $('#unified-file-viewer');
         var $scroll = $('#unified-vertical-scroll');
 
-        $viewer.toggleClass('is-vertical', vertical);
-        $('#unified-view-mode-label').text(vertical ? 'Vertical Scroll' : 'Page Navigation');
+        $viewer.toggleClass('is-vertical', vertical).toggleClass('is-horizontal', horizontal);
+        $('#unified-view-mode-label').text(vertical ? 'Vertical Scroll' : (horizontal ? 'Horizontal' : 'Page Navigation'));
         $('#unified-view-mode-menu [data-view-mode]')
             .removeClass('is-active')
             .filter('[data-view-mode="' + unifiedViewMode + '"]')
@@ -3605,7 +3611,7 @@ showCurrentFolderRenameModal();
         $('#unified-view-mode-menu').prop('hidden', true);
         $('#unified-view-mode-toggle').attr('aria-expanded', 'false');
 
-        if (vertical) {
+        if (vertical || horizontal) {
             $scroll.removeAttr('hidden').prop('hidden', false);
             unifiedScale = 1;
             unifiedOffsetX = 0;
@@ -3970,7 +3976,49 @@ showCurrentFolderRenameModal();
             event.preventDefault();
             event.stopPropagation();
 
+            if (unifiedViewMode !== 'vertical') {
+                changeUnifiedZoom(event.deltaY < 0 ? .1 : -.1);
+                return;
+            }
+
+            var verticalScroll = document.getElementById('unified-vertical-scroll');
+            if (!verticalScroll) return;
+
+            /* Anchor zoom to the page currently at the center of the viewport.
+             * Page labels/gaps have fixed heights, so scaling scrollTop itself
+             * can jump to another page. Preserve the same point in the same page. */
+            var scrollRect = verticalScroll.getBoundingClientRect();
+            var anchorY = scrollRect.top + (scrollRect.height / 2);
+            var pages = verticalScroll.querySelectorAll('.unified-vertical-page');
+            var anchorPage = null;
+            var anchorRatio = 0;
+            var nearestDistance = Infinity;
+
+            for (var pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                var pageRect = pages[pageIndex].getBoundingClientRect();
+                var distance = anchorY < pageRect.top
+                    ? pageRect.top - anchorY
+                    : (anchorY > pageRect.bottom ? anchorY - pageRect.bottom : 0);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    anchorPage = pages[pageIndex];
+                    anchorRatio = pageRect.height > 0
+                        ? Math.max(0, Math.min(1, (anchorY - pageRect.top) / pageRect.height))
+                        : 0;
+                    if (distance === 0) break;
+                }
+            }
+
             changeUnifiedZoom(event.deltaY < 0 ? .1 : -.1);
+
+            if (anchorPage) {
+                var previousScrollBehavior = verticalScroll.style.scrollBehavior;
+                verticalScroll.style.scrollBehavior = 'auto';
+                var resizedPageRect = anchorPage.getBoundingClientRect();
+                var resizedAnchorY = resizedPageRect.top + (resizedPageRect.height * anchorRatio);
+                verticalScroll.scrollTop += resizedAnchorY - anchorY;
+                verticalScroll.style.scrollBehavior = previousScrollBehavior;
+            }
         }, { passive: false });
     }
 
@@ -4024,6 +4072,15 @@ showCurrentFolderRenameModal();
                     top: event.key === 'ArrowDown' ? 180 : -180,
                     behavior: 'smooth'
                 });
+            }
+        } else if (unifiedViewMode === 'horizontal') {
+            var horizontalScroll = $('#unified-vertical-scroll').get(0);
+            if (horizontalScroll && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+                event.preventDefault();
+                var currentPage = horizontalScroll.querySelector('.unified-vertical-page[data-file-index="' + unifiedFileIndex + '"]');
+                unifiedFileIndex = Math.max(0, Math.min(unifiedFiles.length - 1, unifiedFileIndex + (event.key === 'ArrowRight' ? 1 : -1)));
+                var targetPage = horizontalScroll.querySelector('.unified-vertical-page[data-file-index="' + unifiedFileIndex + '"]');
+                if (targetPage) targetPage.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         } else {
             if (event.key === 'ArrowLeft') { event.preventDefault(); displayUnifiedFile(unifiedFileIndex - 1); }

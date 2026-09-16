@@ -1404,6 +1404,7 @@ $build_subfolder_parent_label = function ($path) {
                         <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
                             <button type="button" class="is-active" data-view-mode="page"><i class="bi bi-display"></i><span><strong>Page Navigation</strong><small>← → arrow keys</small></span></button>
                             <button type="button" data-view-mode="vertical"><i class="bi bi-arrows-expand-vertical"></i><span><strong>Vertical Scroll</strong><small>↑ ↓ scroll pages</small></span></button>
+                            <button type="button" data-view-mode="horizontal"><i class="bi bi-arrows-expand"></i><span><strong>Horizontal</strong><small>← → move pages</small></span></button>
                         </div>
                     </div>
                 </aside>

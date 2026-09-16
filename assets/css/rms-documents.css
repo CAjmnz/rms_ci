@@ -1639,6 +1639,46 @@
     width: 100%;
 }
 
+/* Horizontal document mode: reuse the existing page stack, but lay every
+   document page in one left-to-right row with horizontal scrolling. */
+.unified-viewer.is-horizontal #unified-vertical-scroll {
+    align-items: center;
+    display: flex !important;
+    flex-direction: row;
+    gap: 24px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 16px 24px 40px;
+    position: absolute;
+    inset: 0;
+    scroll-behavior: smooth;
+    width: 100%;
+    height: 100%;
+}
+
+.unified-viewer.is-horizontal .unified-vertical-page {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    margin: 0;
+    width: auto;
+}
+
+.unified-viewer.is-horizontal .unified-vertical-page img {
+    flex: 0 0 auto;
+}
+
+.unified-viewer.is-horizontal .unified-vertical-page:last-child {
+    margin-right: 24px;
+}
+
+.unified-viewer.is-horizontal > .unified-viewer-card > .unified-viewer-body > #unified-file-image,
+.unified-viewer.is-horizontal > .unified-viewer-card > .unified-viewer-body > #unified-file-frame,
+.unified-viewer.is-horizontal .unified-canvas-nav {
+    display: none !important;
+}
+
 /* Each page: full width of canvas, content centered, small gap below */
 .unified-vertical-page {
     box-sizing: border-box;
