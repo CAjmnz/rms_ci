@@ -3439,6 +3439,16 @@ showCurrentFolderRenameModal();
             img.style.height = h + 'px';
             img.style.maxWidth = 'none';
             img.style.transform = 'none';
+            /* Horizontal pages must reserve the exact rendered image width.
+             * Otherwise the image can overflow its page box and appear behind
+             * the next document. */
+            if (unifiedViewMode === 'horizontal' && img.parentNode) {
+                img.parentNode.style.width = w + 'px';
+                img.parentNode.style.minWidth = w + 'px';
+            } else if (img.parentNode) {
+                img.parentNode.style.width = '';
+                img.parentNode.style.minWidth = '';
+            }
         }
     }
 

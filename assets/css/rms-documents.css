@@ -1673,8 +1673,11 @@
     margin-right: 24px;
 }
 
-.unified-viewer.is-horizontal > .unified-viewer-card > .unified-viewer-body > #unified-file-image,
-.unified-viewer.is-horizontal > .unified-viewer-card > .unified-viewer-body > #unified-file-frame,
+/* Horizontal mode owns the canvas completely. Hide the single-page preview
+   layer so the previously opened document cannot remain visible behind the
+   horizontal document strip. */
+.unified-viewer.is-horizontal #unified-file-image,
+.unified-viewer.is-horizontal #unified-file-frame,
 .unified-viewer.is-horizontal .unified-canvas-nav {
     display: none !important;
 }
