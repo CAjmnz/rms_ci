@@ -124,8 +124,9 @@ class Subsidiaries extends CI_Controller
         if (strlen($sub_name) > 100) {
             return $this->json(FALSE, 'The subsidiary name must not exceed 100 characters.');
         }
-        if (preg_match('/[\\x00-\\x1F\\x7F\\/\\\\]/', $sub_name)) {
-            return $this->json(FALSE, 'The subsidiary name contains a character that cannot be used in a storage folder.');
+        /* Windows/storage folder names must not contain reserved characters. */
+        if (preg_match('/[\\x00-\\x1F\\x7F<>:"\\/\\\\|?*]/', $sub_name)) {
+            return $this->json(FALSE, 'The subsidiary name cannot contain these special characters: \\ / : * ? " < > |');
         }
         if ($sub_id > 0 && !$this->Subsidiary_model->find($sub_id)) {
             return $this->json(FALSE, 'The selected subsidiary no longer exists.');

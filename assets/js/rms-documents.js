@@ -492,6 +492,7 @@
             var itemType = row.item_type || 'folder';
             var itemId = itemType === 'file' ? row.data_id : row.record_id;
             var isFile = itemType === 'file';
+            var isPinned = Number(row.is_pinned) === 1;
             var meta = '';
             var footer = '';
 
@@ -505,9 +506,10 @@
                 footer = '<span class="documents-grid-badge documents-grid-badge--status">' + (Number(row.publish_status) === 1 ? 'Published' : 'Unpublished') + '</span>';
             }
 
-            return '<article class="documents-grid-card" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '">' +
+            return '<article class="documents-grid-card' + (isPinned ? ' is-pinned' : '') + '" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '">' +
                 '<div class="documents-grid-card-top">' +
                 '<input type="checkbox" class="documents-grid-check" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="Select ' + escapeHtml(row.record_name) + '">' +
+                (isPinned ? '<span class="documents-grid-pin" title="Pinned" aria-label="Pinned"><i class="bi bi-pin-angle-fill"></i></span>' : '') +
                 '<button type="button" class="documents-grid-more" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="More actions"><i class="bi bi-three-dots-vertical"></i></button>' +
                 '</div>' +
                 '<button type="button" class="documents-grid-open" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '">' +
@@ -1558,18 +1560,6 @@
                 'aria-haspopup="true" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>' +
                 '<div class="doc-actions-menu" hidden>' +
 
-                /*
-                 * WATERMARK-FIRST DISPLAY:
-                 * The Open action uses row.view_url. The server securely selects
-                 * the watermark or falls back to the original.
-                 */
-                (Number(row.has_watermark) === 1
-                    ? '<button type="button" class="doc-action-item" ' +
-                    'data-action="preview-file" data-id="' +
-                    escapeHtml(row.data_id) + '">' +
-                    '<i class="bi bi-eye"></i>Open watermarked preview</button>'
-                    : '<span class="doc-action-item is-disabled" aria-disabled="true">' +
-                    '<i class="bi bi-eye-slash"></i>Watermarked preview unavailable</span>') +
 
                 '<button type="button" class="doc-action-item pin-action" ' +
                 'data-action="toggle-pin" data-item-type="document" ' +
@@ -1958,11 +1948,26 @@ function loadRecord(recordId, done, requestedLevel) {
         return ids.length ? (ids.length - 1) + ':' + ids.join('/') : '';
     }
 
-    function documentsInfoPath() {
-        if (config.currentPath && $.isArray(config.currentPath) && config.currentPath.length) {
-            return config.currentPath.join(' / ');
+    function documentsInfoPath(row, includeRowFolder) {
+        var parts = [];
+        var subsidiary = row && row.subsidiary ? row.subsidiary : config.currentSubsidiary;
+        var department = row && row.department ? row.department : config.currentDepartment;
+
+        if (subsidiary) parts.push(String(subsidiary));
+        if (department) parts.push(String(department));
+
+        if (config.currentPath && $.isArray(config.currentPath)) {
+            $.each(config.currentPath, function (_, label) {
+                if (label) parts.push(String(label));
+            });
         }
-        return 'Manage Documents';
+
+        if (includeRowFolder && row && row.record_name) {
+            var rowName = String(row.record_name);
+            if (!parts.length || parts[parts.length - 1] !== rowName) parts.push(rowName);
+        }
+
+        return parts.length ? parts.join(' / ') : 'Manage Documents';
     }
 
     function documentsInfoOpenDrawer() {
@@ -2178,7 +2183,7 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(documentsInfoFileSize(row));
         documentsInfoSetIcon('file', name);
         $('#documents-info-type').text(documentsInfoValue(row.preview_label || row.preview_type || 'Document'));
-        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-location').text(documentsInfoPath(row, false));
         $('#documents-info-owner').text(documentsInfoValue(row.created_by));
         $('#documents-info-created').text(documentsInfoValue(row.date_created));
         $('#documents-info-modified').text(documentsInfoValue(row.date_modified));
@@ -2200,7 +2205,7 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(status);
         documentsInfoSetIcon('folder', name);
         $('#documents-info-type').text('Folder');
-        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-location').text(documentsInfoPath(row, true));
         $('#documents-info-subfolders').text(documentsInfoValue(row.child_count));
         $('#documents-info-files').text(documentsInfoValue(row.document_count));
         $('#documents-info-owner').text(documentsInfoValue(row.created_by));
@@ -2232,7 +2237,7 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-subtitle').text(status);
         documentsInfoSetIcon('folder', pathName);
         $('#documents-info-type').text('Folder');
-        $('#documents-info-location').text(documentsInfoPath());
+        $('#documents-info-location').text(documentsInfoPath(documentsInfoSelected, true));
         $('#documents-info-subfolders').text(documentsInfoValue($button.data('child-count')));
         $('#documents-info-files').text(documentsInfoValue($button.data('file-count')));
         $('#documents-info-owner, #documents-info-created, #documents-info-modified').text('—');
@@ -2472,10 +2477,28 @@ function loadRecord(recordId, done, requestedLevel) {
 
             if (action === 'toggle-pin') {
                 togglePinnedItem($(this));
-            } else if (action === 'file-information') {
-                showDocumentInformation(table.row($(this).closest('tr')).data());
-            } else if (action === 'folder-information') {
-                showFolderInformation(table.row($(this).closest('tr')).data());
+            } else if (action === 'file-information' || action === 'folder-information') {
+                var $action = $(this);
+                var infoRow = table.row($action.closest('tr')).data();
+
+                /* Grid action menus are cloned to <body>, so they do not have
+                 * a table row ancestor. Resolve the original DataTable record
+                 * from the grid menu's item type/id instead. */
+                if (!infoRow && $action.closest('.documents-grid-actions-menu').length) {
+                    var $gridInfoMenu = $action.closest('.documents-grid-actions-menu');
+                    var gridInfoId = String($gridInfoMenu.attr('data-grid-id') || '');
+                    var gridInfoType = String($gridInfoMenu.attr('data-item-type') || '');
+                    table.rows().every(function () {
+                        if (infoRow) return;
+                        var candidate = this.data();
+                        if (!candidate || String(candidate.item_type || '') !== gridInfoType) return;
+                        var candidateId = String(gridInfoType === 'file' ? candidate.data_id : candidate.record_id);
+                        if (candidateId === gridInfoId) infoRow = candidate;
+                    });
+                }
+
+                if (action === 'file-information') showDocumentInformation(infoRow);
+                else showFolderInformation(infoRow);
             } else if (action === 'preview-file') {
                 var row = table.row($(this).closest('tr')).data();
                 openUnifiedFileViewer(row);
@@ -2768,14 +2791,22 @@ function loadRecord(recordId, done, requestedLevel) {
                     render: renderDate
                 },
                 {
-                    /* Owner username from created_by (was before Modified; now after) */
+                    /* Department is visible; hover shows the full Subsidiary / Department path. */
                     data: null,
-                    defaultContent: 'Admin',
+                    defaultContent: '',
                     render: function (data, type, row) {
-                        return renderUserLabel(
-                            (row && row.created_by) ? row.created_by : 'Admin',
-                            type
-                        );
+                        var department = row && row.department ? String(row.department) : '—';
+                        var subsidiary = row && row.subsidiary ? String(row.subsidiary) : '';
+                        var fullPath = subsidiary && department !== '—'
+                            ? subsidiary + ' / ' + department
+                            : (subsidiary || department);
+
+                        if (type !== 'display') {
+                            return department;
+                        }
+
+                        return '<span class="documents-department-owner" title="' +
+                            escapeHtml(fullPath) + '">' + escapeHtml(department) + '</span>';
                     }
                 },
                 {
@@ -3259,6 +3290,13 @@ showCurrentFolderRenameModal();
     });
 
     $(document).on('click', '.documents-grid-open', function () {
+        var $card = $(this).closest('.documents-grid-card');
+        $('.documents-grid-card').removeClass('is-active');
+        $card.addClass('is-active');
+    });
+
+    $(document).on('dblclick', '.documents-grid-open', function (event) {
+        event.preventDefault();
         var id = String($(this).attr('data-grid-id'));
         var itemType = $(this).attr('data-item-type');
         var rowData = null;
@@ -3843,11 +3881,30 @@ showCurrentFolderRenameModal();
             $.post(config.deleteUploadedUrl, request, function (response) { updateCsrf(response); if (!response || response.success !== true) { documentsAlert('Delete failed', response && response.message ? response.message : 'The file could not be deleted.', 'error'); return; } closeUnifiedViewer(); table.ajax.reload(null, false); showMessage('success', response.message); }, 'json').fail(function () { documentsAlert('Delete failed', 'The server could not delete the file.', 'error'); });
         });
     });
-    $('#unified-file-actions-toggle').on('click', function (event) { event.stopPropagation(); var $menu = $('#unified-file-actions-dropdown'), open = $menu.prop('hidden'); $menu.prop('hidden', !open); $(this).attr('aria-expanded', open ? 'true' : 'false'); });
+    $('#unified-file-actions-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $menu = $('#unified-file-actions-dropdown');
+        var open = $menu.prop('hidden');
+        $('#unified-zoom-actions-dropdown, #unified-view-mode-menu').prop('hidden', true);
+        $('#unified-zoom-actions-toggle, #unified-view-mode-toggle').attr('aria-expanded', 'false');
+        $menu.prop('hidden', !open);
+        $(this).attr('aria-expanded', open ? 'true' : 'false');
+    });
+    $('#unified-zoom-actions-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $menu = $('#unified-zoom-actions-dropdown');
+        var open = $menu.prop('hidden');
+        $('#unified-file-actions-dropdown, #unified-view-mode-menu').prop('hidden', true);
+        $('#unified-file-actions-toggle, #unified-view-mode-toggle').attr('aria-expanded', 'false');
+        $menu.prop('hidden', !open);
+        $(this).attr('aria-expanded', open ? 'true' : 'false');
+    });
     $('#unified-view-mode-toggle').on('click', function (event) {
         event.stopPropagation();
         var $menu = $('#unified-view-mode-menu');
         var open = $menu.prop('hidden');
+        $('#unified-file-actions-dropdown, #unified-zoom-actions-dropdown').prop('hidden', true);
+        $('#unified-file-actions-toggle, #unified-zoom-actions-toggle').attr('aria-expanded', 'false');
         $menu.prop('hidden', !open);
         $(this).attr('aria-expanded', open ? 'true' : 'false');
     });
@@ -3859,6 +3916,10 @@ showCurrentFolderRenameModal();
         if (!$(event.target).closest('.unified-file-actions-menu').length) {
             $('#unified-file-actions-dropdown').prop('hidden', true);
             $('#unified-file-actions-toggle').attr('aria-expanded', 'false');
+        }
+        if (!$(event.target).closest('.unified-zoom-menu').length) {
+            $('#unified-zoom-actions-dropdown').prop('hidden', true);
+            $('#unified-zoom-actions-toggle').attr('aria-expanded', 'false');
         }
         if (!$(event.target).closest('.unified-view-mode').length) {
             $('#unified-view-mode-menu').prop('hidden', true);
@@ -3968,8 +4029,26 @@ showCurrentFolderRenameModal();
         }
         var originalEvent = event.originalEvent || event;
         event.preventDefault();
-        unifiedOffsetX = originalEvent.clientX - unifiedDragX;
-        unifiedOffsetY = originalEvent.clientY - unifiedDragY;
+        var image = $('#unified-file-image').get(0);
+        var stage = $('.unified-viewer-body').get(0);
+        var nextOffsetX = originalEvent.clientX - unifiedDragX;
+        var nextOffsetY = originalEvent.clientY - unifiedDragY;
+
+        /* Constrain the pan to the visible viewer canvas. The image may move
+         * only until one of its edges reaches the corresponding canvas edge,
+         * so dragging farther can never send the document out of view. */
+        if (image && stage && image.naturalWidth && image.naturalHeight) {
+            var renderedWidth = image.naturalWidth * unifiedScale;
+            var renderedHeight = image.naturalHeight * unifiedScale;
+            var maxOffsetX = Math.max(0, (renderedWidth - stage.clientWidth) / 2);
+            var maxOffsetY = Math.max(0, (renderedHeight - stage.clientHeight) / 2);
+
+            nextOffsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, nextOffsetX));
+            nextOffsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, nextOffsetY));
+        }
+
+        unifiedOffsetX = nextOffsetX;
+        unifiedOffsetY = nextOffsetY;
         renderUnifiedTransform();
     }).on('mouseup.unifiedViewer', function (event) {
         var originalEvent = event.originalEvent || event;
@@ -5419,6 +5498,18 @@ showCurrentFolderRenameModal();
         uploadFileSummary('original');
         updateUploadState();
         openModal('documents-upload-modal');
+    });
+
+    $('#modal-upload-reset').on('click', function () {
+        if ($uploadForm.data('uploading') === true) {
+            return;
+        }
+
+        /* Cancel in the uploader means start over without leaving the modal. */
+        prepareUploadModal();
+        $uploadForm.get(0).reset();
+        selectCurrentUploadPath();
+        updateUploadState();
     });
 
     $('[data-modal-close]').on(

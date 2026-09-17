@@ -888,11 +888,34 @@ window.RMS_DEPARTMENTS = <?php echo json_encode(array(
         }
     });
 
+    var departmentHasInvalidCharacter = false;
+
+    $('#dept-name').on('input', function () {
+        var $input = $(this);
+        var value = $input.val();
+
+        departmentHasInvalidCharacter = /[<>:"\/\\|?*]/.test(value);
+
+        if (departmentHasInvalidCharacter) {
+            $('#dept-form-error').text('Special characters \\ / : * ? " < > | are not allowed.');
+            return;
+        }
+
+        $('#dept-form-error').text('');
+    });
+
     $form.on('submit', function (event) {
         event.preventDefault();
 
         var $submit = $form.find('button[type="submit"]');
         var originalText = $submit.text();
+        var departmentName = $.trim($('#dept-name').val());
+
+        if (departmentHasInvalidCharacter || /[<>:"\/\\|?*]/.test(departmentName)) {
+            $('#dept-form-error').text('The department name cannot contain these special characters: \\ / : * ? " < > |');
+            $('#dept-name').focus();
+            return;
+        }
 
         $('#dept-form-error').text('');
         $submit.prop('disabled', true).text('Saving...');

@@ -74,9 +74,28 @@
             .fail(function () { message('error', 'Request failed', 'The subsidiary details could not be loaded.', 'Close'); });
     });
     $('[data-close="form"]').on('click', closeForm);
+    $('#subs-name').on('input', function () {
+        var $input = $(this);
+        var value = $input.val();
+        var cleaned = value.replace(/[<>:"\/\\|?*]/g, '');
+        if (value !== cleaned) {
+            $input.val(cleaned);
+            $('#subs-form-error').text('Special characters \\ / : * ? " < > | are not allowed.').show();
+        } else {
+            $('#subs-form-error').text('').hide();
+        }
+    });
+
     $('#subs-form').on('submit', function (event) {
         event.preventDefault();
         var form = $(this), button = form.find('.save');
+        var name = $.trim($('#subs-name').val());
+        if (/[<>:"\/\\|?*]/.test(name)) {
+            $('#subs-form-error').text('The subsidiary name cannot contain these special characters: \\ / : * ? " < > |').show();
+            $('#subs-name').focus();
+            return;
+        }
+        $('#subs-form-error').text('').hide();
         button.prop('disabled', true);
         post(window.RMS_SUBS.save, form.serialize(), function (response) {
             button.prop('disabled', false);

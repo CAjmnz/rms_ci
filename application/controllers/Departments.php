@@ -245,13 +245,11 @@ class Departments extends CI_Controller
             );
         }
 
-        /*
-         * Folder names cannot contain control characters, slash, or backslash.
-         */
-        if (preg_match('/[\\x00-\\x1F\\x7F\\/\\\\]/', $dept_name)) {
+        /* Windows/storage folder names must not contain reserved characters. */
+        if (preg_match('/[\\x00-\\x1F\\x7F<>:"\\/\\\\|?*]/', $dept_name)) {
             return $this->json(
                 FALSE,
-                'The department name contains a character that cannot be used in a storage folder.'
+                'The department name cannot contain these special characters: \\ / : * ? " < > |'
             );
         }
 

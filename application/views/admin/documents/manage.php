@@ -679,7 +679,7 @@ $build_subfolder_parent_label = function ($path) {
                                     <th>Name</th>
                                     <th>Status</th>
                                     <th>Modified</th>
-                                    <th>Owner</th>
+                                    <th>Department/Owner</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -748,13 +748,6 @@ $build_subfolder_parent_label = function ($path) {
                                     <div class="documents-info-access-empty">Loading access...</div>
                                 </div>
                                 <button type="button" class="documents-info-manage-access" id="documents-info-manage-access">Manage access</button>
-                            </div>
-                            <div class="documents-info-section">
-                                <h4><i class="bi bi-shield-check"></i> Security limitations</h4>
-                                <div class="documents-info-security-box">
-                                    <strong>No limitations applied</strong>
-                                    <span>Existing RMS restrictions will continue to apply.</span>
-                                </div>
                             </div>
                         </section>
 
@@ -1031,7 +1024,7 @@ $build_subfolder_parent_label = function ($path) {
             </div>
 
             <div class="rms-modal-footer">
-                <button type="button" class="modal-cancel" data-modal-close>Cancel</button>
+                <button type="button" class="modal-cancel" id="modal-upload-reset">Cancel</button>
                 <button type="submit" class="document-action primary" id="modal-upload-submit" disabled>Upload Documents</button>
             </div>
             <?php echo form_close(); ?>
@@ -1381,24 +1374,34 @@ $build_subfolder_parent_label = function ($path) {
             <div class="unified-viewer-workspace">
                 <aside class="unified-viewer-sidebar" aria-label="Document viewer actions">
                     <div class="unified-viewer-sidebar-resizer" id="unified-viewer-sidebar-resizer" aria-hidden="true"></div>
-                    <div class="unified-viewer-side-section">
+                    <div class="unified-viewer-side-section unified-file-actions-menu">
                         <span class="unified-viewer-side-label">File actions</span>
-                        <button type="button" id="unified-file-transfer"><i class="bi bi-arrow-left-right"></i><span>Transfer</span></button>
-                        <a id="unified-file-download" href="#"><i class="bi bi-download"></i><span>Download</span></a>
-                        <button type="button" id="unified-file-rename"><i class="bi bi-pencil"></i><span>Rename</span></button>
-                        <button type="button" class="danger" id="unified-file-delete"><i class="bi bi-trash"></i><span>Delete</span></button>
+                        <button type="button" id="unified-file-actions-toggle" aria-expanded="false" aria-haspopup="true">
+                            <i class="bi bi-three-dots"></i><span>File actions</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-file-actions-dropdown" id="unified-file-actions-dropdown" hidden>
+                            <button type="button" id="unified-file-transfer"><i class="bi bi-arrow-left-right"></i><span>Transfer</span></button>
+                            <a id="unified-file-download" href="#"><i class="bi bi-download"></i><span>Download</span></a>
+                            <button type="button" id="unified-file-rename"><i class="bi bi-pencil"></i><span>Rename</span></button>
+                            <button type="button" class="danger" id="unified-file-delete"><i class="bi bi-trash"></i><span>Delete</span></button>
+                        </div>
                     </div>
-                    <div class="unified-viewer-side-section">
+                    <div class="unified-viewer-side-section unified-zoom-menu">
                         <span class="unified-viewer-side-label">Zoom</span>
-                        <button type="button" id="unified-zoom-in"><i class="bi bi-zoom-in"></i><span>Zoom In</span></button>
-                        <button type="button" id="unified-zoom-out"><i class="bi bi-zoom-out"></i><span>Zoom Out</span></button>
-                        <button type="button" id="unified-fit-file"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
-                        <button type="button" id="unified-actual-file"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
-                        <div class="unified-viewer-side-zoom"><span>Zoom level</span><strong class="unified-viewer-zoom" id="unified-file-zoom">100%</strong></div>
+                        <button type="button" id="unified-zoom-actions-toggle" aria-expanded="false" aria-haspopup="true">
+                            <i class="bi bi-search"></i><span>Zoom</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-zoom-actions-dropdown" id="unified-zoom-actions-dropdown" hidden>
+                            <button type="button" id="unified-zoom-in"><i class="bi bi-zoom-in"></i><span>Zoom In</span></button>
+                            <button type="button" id="unified-zoom-out"><i class="bi bi-zoom-out"></i><span>Zoom Out</span></button>
+                            <button type="button" id="unified-fit-file"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
+                            <button type="button" id="unified-actual-file"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
+                            <div class="unified-viewer-side-zoom"><span>Zoom level</span><strong class="unified-viewer-zoom" id="unified-file-zoom">100%</strong></div>
+                        </div>
                     </div>
                     <div class="unified-viewer-side-section unified-view-mode">
                         <span class="unified-viewer-side-label">View options</span>
-                        <button type="button" id="unified-view-mode-toggle" aria-expanded="false">
+                        <button type="button" id="unified-view-mode-toggle" aria-expanded="false" aria-haspopup="true">
                             <i class="bi bi-display"></i><span id="unified-view-mode-label">Page Navigation</span><i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="unified-view-mode-menu" id="unified-view-mode-menu" hidden>
@@ -1462,6 +1465,12 @@ $build_subfolder_parent_label = function ($path) {
                                     'openUpload' => $dashboard_upload_mode ? 1 : 0,
                                     'currentPath' => $current_path_labels,
                                     'currentPathIds' => $current_path_ids,
+                                    'currentSubsidiary' => isset($current_folder['sub_name'])
+                                        ? (string) $current_folder['sub_name']
+                                        : '',
+                                    'currentDepartment' => isset($current_folder['dept_name'])
+                                        ? (string) $current_folder['dept_name']
+                                        : '',
                                     'csrfName' => $this->security->get_csrf_token_name(),
                                     'csrfHash' => $this->security->get_csrf_hash()
                                 )); ?>;
