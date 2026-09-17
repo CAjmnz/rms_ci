@@ -185,22 +185,6 @@ $asset_url = function ($path) {
                     <?php echo form_close(); ?>
                 </section>
 
-                <!-- TEMPORARY QA control. This clears Documents-module data only. -->
-                <section class="settings-panel document-clear-panel">
-                    <div class="settings-heading">
-                        <div>
-                            <p>TEMPORARY QA TOOL</p>
-                            <h2>Clear Documents data</h2>
-                            <span>Deletes only document records, document access tags, pins, folders and stored original/watermark files. Users, departments, subsidiaries and System settings are not included.</span>
-                        </div>
-                    </div>
-                    <div class="document-clear-confirm">
-                        <label for="document-clear-confirmation">Type <strong>CLEAR DOCUMENTS</strong> to enable deletion.</label>
-                        <input id="document-clear-confirmation" type="text" autocomplete="off" placeholder="CLEAR DOCUMENTS">
-                        <button type="button" id="document-clear-submit" disabled>Clear all Documents data</button>
-                    </div>
-                    <div class="settings-error" id="document-clear-error" role="alert"></div>
-                </section>
             </div>
         </main>
     </div>
