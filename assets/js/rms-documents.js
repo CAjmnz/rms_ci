@@ -3929,7 +3929,12 @@ showCurrentFolderRenameModal();
     $('#unified-zoom-out').on('click', function () { changeUnifiedZoom(-.1); });
     $('#unified-fit-file').on('click', fitUnifiedImage);
     $('#unified-actual-file').on('click', function () { markUnifiedInspecting(true); unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0; renderUnifiedTransform(); });
-    /* Hold the left mouse button and drag to pan the current document. */
+    /* Page Navigation swipe: a normal left-button horizontal drag changes
+       files. Ctrl+drag keeps the existing document-pan behavior. */
+    var unifiedSwipeStartX = 0;
+    var unifiedSwipeStartY = 0;
+    var unifiedSwipeActive = false;
+
     $('#unified-file-image')
     .on('dragstart.unifiedViewer', function (event) {
         event.preventDefault();
@@ -3943,6 +3948,14 @@ showCurrentFolderRenameModal();
         }
         event.preventDefault();
         event.stopPropagation();
+
+        if (unifiedViewMode === 'page' && !originalEvent.ctrlKey) {
+            unifiedSwipeActive = true;
+            unifiedSwipeStartX = originalEvent.clientX;
+            unifiedSwipeStartY = originalEvent.clientY;
+            return;
+        }
+
         unifiedDragging = true;
         markUnifiedInspecting(true);
         unifiedDragX = originalEvent.clientX - unifiedOffsetX;
@@ -3959,9 +3972,24 @@ showCurrentFolderRenameModal();
         unifiedOffsetY = originalEvent.clientY - unifiedDragY;
         renderUnifiedTransform();
     }).on('mouseup.unifiedViewer', function (event) {
-        if (!unifiedDragging) {
+        var originalEvent = event.originalEvent || event;
+
+        if (unifiedSwipeActive) {
+            unifiedSwipeActive = false;
+            var swipeX = originalEvent.clientX - unifiedSwipeStartX;
+            var swipeY = originalEvent.clientY - unifiedSwipeStartY;
+            if (Math.abs(swipeX) >= 60 && Math.abs(swipeX) > Math.abs(swipeY)) {
+                event.preventDefault();
+                if (swipeX < 0 && unifiedFileIndex < unifiedFiles.length - 1) {
+                    displayUnifiedFile(unifiedFileIndex + 1);
+                } else if (swipeX > 0 && unifiedFileIndex > 0) {
+                    displayUnifiedFile(unifiedFileIndex - 1);
+                }
+            }
             return;
         }
+
+        if (!unifiedDragging) return;
         event.preventDefault();
         stopUnifiedDrag();
     });
@@ -4050,6 +4078,9 @@ showCurrentFolderRenameModal();
             unifiedVerticalDragY = originalEvent.clientY;
             unifiedVerticalScrollLeft = scroll.scrollLeft;
             unifiedVerticalScrollTop = scroll.scrollTop;
+            /* Keep drag/swipe movement locked to the pointer in real time. */
+            scroll.dataset.dragScrollBehavior = scroll.style.scrollBehavior || '';
+            scroll.style.scrollBehavior = 'auto';
             $(originalEvent.target).closest('.unified-vertical-page').find('img').addClass('is-dragging');
             markUnifiedInspecting(true);
         });
@@ -4066,6 +4097,11 @@ showCurrentFolderRenameModal();
         if (!unifiedVerticalDragging) return;
         event.preventDefault();
         unifiedVerticalDragging = false;
+        var scroll = $('#unified-vertical-scroll').get(0);
+        if (scroll) {
+            scroll.style.scrollBehavior = scroll.dataset.dragScrollBehavior || '';
+            delete scroll.dataset.dragScrollBehavior;
+        }
         $('#unified-vertical-scroll .unified-vertical-page img').removeClass('is-dragging');
         markUnifiedInspecting(false);
     });

@@ -1152,11 +1152,17 @@ body .sidebar-toggle {
 }
 
 @media (min-width: 981px) {
+    /* Match the compact desktop topbar height exactly. */
+    .sidebar-brand {
+        height: 68px !important;
+    }
+
     .sidebar-toggle,
     .system-page .sidebar-toggle,
     .dashboard-app .sidebar-toggle,
     body .sidebar-toggle {
-        top: 94px !important;
+        /* 30px toggle centered on the 68px sidebar-brand/topbar boundary. */
+        top: 53px !important;
         left: 253px !important;
         z-index: 180 !important;
         border-radius: 50% !important;

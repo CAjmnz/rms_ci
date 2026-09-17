@@ -93,8 +93,8 @@ $asset_url = function ($path) {
                     <table class="filetype-table access-log-table" id="access-log-table">
                         <thead><tr><th>Username / IP</th><th>Date</th><th>Activity</th><th>Source</th></tr></thead>
                         <tbody>
-                        <?php foreach ($logs as $row): ?>
-                            <tr data-log-row>
+                        <?php foreach ($logs as $log_index => $row): ?>
+                            <tr data-log-row<?php echo $log_index >= 10 ? ' hidden' : ''; ?>>
                                 <td><strong><?php echo html_escape($row['identity']); ?></strong></td>
                                 <td><?php echo html_escape($row['date']); ?></td>
                                 <td><?php echo html_escape($row['activity']); ?></td>
@@ -109,11 +109,12 @@ $asset_url = function ($path) {
                 </div>
 
                 <footer class="filetype-footer access-log-footer">
-                    <span id="access-log-range">Showing 0 entries</span>
+                    <?php $log_count = count($logs); $log_pages = max(1, (int) ceil($log_count / 10)); ?>
+                    <span id="access-log-range">Showing <?php echo $log_count ? '1–' . min(10, $log_count) . ' of ' . $log_count : '0–0 of 0'; ?> entries</span>
                     <div class="pagination-controls">
-                        <button type="button" id="access-log-prev" aria-label="Previous page">‹</button>
-                        <span id="access-log-page">Page 1 of 1</span>
-                        <button type="button" id="access-log-next" aria-label="Next page">›</button>
+                        <button type="button" id="access-log-prev" aria-label="Previous page" disabled>‹</button>
+                        <span id="access-log-page">Page 1 of <?php echo $log_pages; ?></span>
+                        <button type="button" id="access-log-next" aria-label="Next page"<?php echo $log_pages <= 1 ? ' disabled' : ''; ?>>›</button>
                     </div>
                 </footer>
             </section>

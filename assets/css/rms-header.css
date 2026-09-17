@@ -723,13 +723,13 @@ body {
 
 /* ========================================================================== */
 /* Professional compact header typography                                    */
-/* Keeps the approved 112px header height while reducing the text/card scale. */
+/* Keeps the approved header layout while using a slightly smaller height. */
 /* Visual-only: no routes, data, dropdown behavior, or page processes change. */
 /* ========================================================================== */
 @media (min-width: 981px) {
   .topbar {
-    min-height: 112px !important;
-    padding: 17px 40px 16px 44px !important;
+    min-height: 90px !important;
+    padding: 13px 40px 12px 44px !important;
     overflow: visible !important;
   }
 
@@ -738,17 +738,17 @@ body {
   }
 
   .topbar-kicker {
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
     color: #075f46 !important;
     font-size: 10px !important;
     font-weight: 700 !important;
     line-height: 1 !important;
-    letter-spacing: .24em !important;
+    letter-spacing: .18em !important;
   }
 
   .topbar h1 {
     color: #113d31 !important;
-    font-size: 27px !important;
+    font-size: 24px !important;
     font-weight: 700 !important;
     line-height: 1.08 !important;
     letter-spacing: 0 !important;
@@ -757,11 +757,11 @@ body {
   .topbar-description,
   .topbar-title::after {
     max-width: 720px !important;
-    margin-top: 7px !important;
+    margin-top: 4px !important;
     color: #6b7d76 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 400 !important;
-    line-height: 1.42 !important;
+    line-height: 1.25 !important;
     letter-spacing: 0 !important;
   }
 
@@ -771,8 +771,9 @@ body {
 
   .topbar-stat {
     min-width: 172px !important;
-    min-height: 58px !important;
-    padding: 8px 14px 8px 10px !important;
+    min-height: 56px !important;
+    height: 56px !important;
+    padding: 7px 14px 7px 10px !important;
     gap: 11px !important;
     border-radius: 14px !important;
   }
@@ -802,8 +803,9 @@ body {
 
   .user-menu-button {
     min-width: 220px !important;
-    min-height: 58px !important;
-    padding: 7px 13px 7px 10px !important;
+    min-height: 56px !important;
+    height: 56px !important;
+    padding: 6px 13px 6px 10px !important;
     gap: 10px !important;
     border-radius: 14px !important;
   }
@@ -853,8 +855,9 @@ body {
   }
 
   .topbar {
-    min-height: 108px !important;
-    padding: 15px 40px 14px 44px !important;
+    min-height: 68px !important;
+    height: 68px !important;
+    padding: 0 40px 0 44px !important;
     overflow: visible !important;
   }
 
@@ -892,7 +895,7 @@ body {
 
   .topbar-title {
     display: flex !important;
-    min-height: 100% !important;
+    min-height: 70% !important;
     flex-direction: column !important;
     justify-content: center !important;
   }
