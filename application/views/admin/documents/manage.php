@@ -488,7 +488,6 @@ $build_subfolder_parent_label = function ($path) {
                                 <div class="documents-context-legend" aria-label="Record color legend">
                                     <span><i class="legend-dot published"></i>Published</span>
                                     <span><i class="legend-dot unpublished"></i>Unpublished</span>
-                                    <span><i class="legend-dot file"></i>File</span>
                                 </div>
 
                             </section>
@@ -1367,9 +1366,19 @@ $build_subfolder_parent_label = function ($path) {
         <div class="unified-viewer-card">
             <div class="unified-viewer-head">
                 <div class="unified-viewer-heading"><small>DOCUMENT VIEWER</small>
-                    <h3 id="unified-file-title">Document preview</h3><small id="unified-file-position">File 1 of 1</small>
+                    <div class="unified-viewer-file-meta"><h3 id="unified-file-title">Document preview</h3><small id="unified-file-position">File 1 of 1</small></div>
+                    <div class="unified-viewer-comment" id="unified-file-comment" title="Document full path">—</div>
                 </div>
-                <button type="button" class="unified-viewer-close" data-close-unified-viewer aria-label="Close document viewer">&times;</button>
+                <div class="unified-viewer-head-actions">
+                    <div class="unified-actions-position" aria-label="Actions position">
+                        <button type="button" id="unified-actions-position-toggle" aria-expanded="false" aria-haspopup="true"><i class="bi bi-layout-sidebar-inset"></i><span>Actions</span><i class="bi bi-chevron-down"></i></button>
+                        <div class="unified-actions-position-menu" id="unified-actions-position-menu" hidden>
+                            <button type="button" data-actions-position="side"><i class="bi bi-layout-sidebar-inset"></i><span>Side</span></button>
+                            <button type="button" data-actions-position="top"><i class="bi bi-layout-text-sidebar-reverse"></i><span>Top</span></button>
+                        </div>
+                    </div>
+                    <button type="button" class="unified-viewer-close" data-close-unified-viewer aria-label="Close document viewer">&times;</button>
+                </div>
             </div>
             <div class="unified-viewer-workspace">
                 <aside class="unified-viewer-sidebar" aria-label="Document viewer actions">
@@ -1443,6 +1452,7 @@ $build_subfolder_parent_label = function ($path) {
                                     'fileUrl' => site_url('administrator/documents/file'),
                                     'downloadSelectedUrl' => site_url('administrator/documents/download-selected'),
                                     'uploadUrl' => site_url('administrator/documents/upload'),
+                                    'checkUploadDuplicatesUrl' => site_url('administrator/documents/check-upload-duplicates'),
                                     'createFilenameUrl' => site_url('administrator/documents/create-filename'),
                                     'createSubfolderUrl' => site_url('administrator/documents/create-subfolder'),
                                     'level' => (int) $active_level,

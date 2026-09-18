@@ -1,0 +1,5 @@
+rose|2026-09-18 13:27:42|Login to Administrator Portal|Administrator
+rose|2026-09-18 13:46:44|Login to Administrator Portal|Administrator
+rose|2026-09-18 18:11:02|Upload Data: Encryption_Test_002.png, gene.png, indetail.png, Monthly Report Final.png, testng.png, Encryption Te st 001.png|Administrator
+rose|2026-09-18 18:14:29|Upload Data: gene.png, indetail.png, Monthly Report Final.png, Encryption Te st 001.png, Encryption_Test_002.png|Administrator
+rose|2026-09-18 18:23:20|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=page orentaion.png,vertical.png)|Administrator

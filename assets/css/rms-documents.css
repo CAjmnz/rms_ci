@@ -1452,7 +1452,7 @@
 }
 
 .unified-viewer-head h3 {
-    font-size: 16px;
+    font-size: 10px;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1462,6 +1462,84 @@
 .unified-viewer-heading {
     min-width: 0;
 }
+
+.unified-viewer-file-meta {
+    align-items: baseline;
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+}
+
+.unified-viewer-file-meta #unified-file-title {
+    flex: 0 1 auto;
+    max-width: min(520px, 70%);
+}
+
+.unified-viewer-file-meta #unified-file-position {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.unified-viewer-comment {
+    color: rgba(255, 255, 255, .78);
+    font-size: 12px;
+    line-height: 1.3;
+    margin-top: 4px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.unified-viewer-head-actions {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    justify-self: end;
+    margin-left: auto;
+}
+
+.unified-actions-position { position: relative; }
+.unified-actions-position > button {
+    align-items: center;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    gap: 7px;
+    min-height: 38px;
+    padding: 7px 10px;
+}
+.unified-actions-position-menu {
+    background: #fff;
+    border: 1px solid #dcebe5;
+    border-radius: 9px;
+    box-shadow: 0 12px 30px rgba(18,55,44,.18);
+    min-width: 140px;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 30;
+}
+.unified-actions-position-menu[hidden] { display: none !important; }
+.unified-actions-position-menu button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: #29483e;
+    cursor: pointer;
+    display: flex;
+    gap: 9px;
+    padding: 8px 10px;
+    text-align: left;
+    width: 100%;
+}
+.unified-actions-position-menu button:hover,
+.unified-actions-position-menu button.is-active { background: #edf7f3; color: #087a58; }
 
 /* Square close button at the far right of the header. */
 .unified-viewer-close {
@@ -1509,8 +1587,9 @@
     flex: 0 0 210px;
     min-width: 170px;
     max-width: 360px;
-    overflow-x: visible;
+    overflow-x: hidden;
     overflow-y: auto;
+    scrollbar-gutter: auto;
     padding: 12px 12px 48px;
     position: relative;
     width: 210px;
@@ -2821,6 +2900,335 @@
     font-size: 11px;
     margin: 0;
     padding: 0 16px 12px;
+}
+
+/* VIEWER VISUAL REFRESH (2026-09-18)
+ * Presentation only. Existing viewer markup, IDs, JS actions, zoom, drag,
+ * page navigation and vertical-scroll behavior remain unchanged. */
+@media (min-width: 769px) {
+    .unified-viewer {
+        background: rgba(5, 45, 34, .72);
+        padding: 18px;
+    }
+
+    .unified-viewer-card {
+        background: #f8fcfa;
+        border: 1px solid rgba(8, 122, 88, .22);
+        border-radius: 10px;
+        box-shadow: 0 28px 90px rgba(0, 0, 0, .48);
+        height: min(88dvh, 820px);
+        position: relative;
+        max-height: min(88dvh, 820px);
+        width: min(1240px, calc(100vw - 64px));
+    }
+
+    .unified-viewer-head {
+        background: linear-gradient(110deg, #086b50, #078c66);
+        border-bottom: 1px solid #08785a;
+        min-height: 72px;
+        padding: 12px 18px;
+    }
+
+    .unified-viewer-head h3 {
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .unified-viewer-heading small {
+        color: rgba(255, 255, 255, .68);
+    }
+
+    .unified-viewer-close {
+        background: transparent;
+        border-color: transparent;
+        color: #e9eeee;
+        font-size: 25px;
+        height: 25px;
+        position: absolute;
+        right: 0;
+        top: 6px;
+        width: 25px;
+        z-index: 10005;
+    }
+
+    .unified-viewer-head-actions {
+        gap: 6px;
+        padding-right: 42px;
+    }
+
+    .unified-viewer.actions-at-top .unified-viewer-head-actions {
+        margin-left: 0;
+    }
+
+    .unified-viewer.actions-at-top .unified-actions-position {
+        margin-left: 4px;
+        position: fixed;
+        z-index: 10020;
+    }
+
+    .unified-viewer.actions-at-top .unified-actions-position > button {
+        white-space: nowrap;
+        width: 86px;
+    }
+
+    .unified-viewer-close:hover,
+    .unified-viewer-close:focus {
+        background: rgba(255, 255, 255, .10);
+        border-color: rgba(255, 255, 255, .10);
+        color: #fff;
+    }
+
+    .unified-viewer-sidebar {
+        background: #ffffff;
+        border-right-color: #dcebe5;
+        color: #23483d;
+        flex-basis: 250px;
+        min-width: 190px;
+        max-width: 420px;
+        overflow-x: hidden;
+        padding: 16px 14px 48px;
+        width: 250px;
+    }
+
+    .unified-viewer-sidebar-resizer {
+        background: transparent;
+        right: 0;
+        width: 8px;
+    }
+
+    .unified-viewer-sidebar-resizer:hover,
+    .unified-viewer-sidebar.is-resizing .unified-viewer-sidebar-resizer {
+        background: rgba(8, 122, 88, .16);
+    }
+
+    .unified-viewer-side-section {
+        border-bottom-color: #e2eee9;
+    }
+
+    .unified-viewer-side-label {
+        color: #71837d;
+    }
+
+    .unified-viewer-sidebar button,
+    .unified-viewer-sidebar a {
+        color: #29483e;
+    }
+
+    .unified-viewer-sidebar button:hover,
+    .unified-viewer-sidebar a:hover {
+        background: #edf7f3;
+        color: #087a58;
+    }
+
+    .unified-viewer-sidebar .danger {
+        color: #c93838;
+    }
+
+    .unified-viewer-side-zoom {
+        color: #71837d;
+    }
+
+    .unified-viewer-zoom {
+        color: #087a58;
+    }
+
+    .unified-viewer-body {
+        padding: 18px 72px;
+    }
+
+    .unified-viewer-body > #unified-file-image {
+        border-radius: 3px;
+        box-shadow: 0 12px 42px rgba(0, 0, 0, .42);
+        max-height: calc(100dvh - 150px);
+        max-width: calc(100% - 28px);
+    }
+
+    .unified-viewer-body > #unified-file-frame {
+        border-radius: 3px;
+        box-shadow: 0 12px 42px rgba(0, 0, 0, .42);
+        max-height: calc(100dvh - 150px);
+        max-width: calc(100% - 28px);
+    }
+
+    .unified-canvas-nav {
+        background: rgba(7, 93, 68, .90);
+        border-color: rgba(255, 255, 255, .85);
+        height: 52px;
+        width: 52px;
+    }
+
+    .unified-canvas-nav.previous { left: 20px; }
+    .unified-canvas-nav.next { right: 20px; }
+
+    /* Vertical mode still owns its full stage; don't apply page-mode padding. */
+    .unified-viewer.is-vertical .unified-viewer-body {
+        padding: 0;
+    }
+}
+
+/* Compact viewer dropdown triggers in BOTH Side and Top layouts. */
+.unified-viewer-sidebar #unified-file-actions-toggle,
+.unified-viewer-sidebar #unified-zoom-actions-toggle,
+.unified-viewer-sidebar #unified-view-mode-toggle {
+    border-radius: 6px;
+    font-size: 10px;
+    gap: 4px;
+    height: 26px;
+    min-height: 26px;
+    padding: 3px 6px;
+}
+
+.unified-viewer.actions-at-side .unified-viewer-side-section {
+    padding-bottom: 7px;
+    padding-top: 7px;
+}
+
+.unified-viewer.actions-at-side .unified-viewer-side-label {
+    font-size: 8px;
+    margin-bottom: 4px;
+}
+
+/* Optional top placement for the existing viewer controls. No action markup
+ * or IDs are duplicated, so all existing JS behavior remains attached. */
+@media (min-width: 769px) {
+    .unified-viewer.actions-at-top .unified-viewer-card {
+        overflow: visible;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-head {
+        align-items: center;
+        flex-wrap: nowrap;
+        min-height: 68px;
+        overflow: visible;
+        padding: 7px 18px;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-heading {
+        flex: 1 1 auto;
+        max-width: 48%;
+        min-width: 360px;
+        padding-right: 14px;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-heading h3,
+    .unified-viewer.actions-at-top .unified-viewer-heading small,
+    .unified-viewer.actions-at-top .unified-viewer-comment {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-workspace {
+        display: block;
+        min-height: 0;
+        position: relative;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-sidebar {
+        align-items: center;
+        background: transparent;
+        border: 0;
+        display: flex;
+        flex-basis: auto !important;
+        gap: 4px;
+        left: auto;
+        max-width: none;
+        min-height: 0;
+        min-width: 0;
+        overflow: visible;
+        padding: 0;
+        position: fixed;
+        top: auto;
+        width: auto !important;
+        z-index: 10003;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-sidebar-resizer { display: none; }
+    .unified-viewer.actions-at-top .unified-viewer-side-section {
+        border-bottom: 0;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        width: min(220px, 31%);
+    }
+    .unified-viewer.actions-at-top .unified-viewer-side-label { display: none; }
+    .unified-viewer.actions-at-top .unified-file-actions-dropdown,
+    .unified-viewer.actions-at-top .unified-zoom-actions-dropdown,
+    .unified-viewer.actions-at-top .unified-view-mode-menu {
+        left: 0;
+        position: absolute;
+        top: calc(100% + 5px);
+        width: 220px;
+        z-index: 10010;
+    }
+
+    /* Keep whichever Top-mode dropdown is open above its neighboring controls. */
+    .unified-viewer.actions-at-top .unified-viewer-side-section:has(> button[aria-expanded="true"]),
+    .unified-viewer.actions-at-top .unified-actions-position:has(> button[aria-expanded="true"]) {
+        z-index: 10030;
+    }
+
+    .unified-viewer.actions-at-top .unified-viewer-body {
+        height: 100%;
+        min-height: 0;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-side-section {
+        flex: 0 0 104px;
+        width: 104px;
+    }
+    .unified-viewer.actions-at-top .unified-zoom-menu {
+        flex-basis: 96px;
+        width: 96px;
+    }
+    .unified-viewer.actions-at-top .unified-view-mode {
+        flex-basis: 132px;
+        width: 132px;
+    }
+
+    .unified-viewer.actions-at-top .unified-viewer-side-section > button {
+        flex-wrap: nowrap;
+        line-height: 1;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .unified-viewer.actions-at-top .unified-viewer-side-section > button span,
+    .unified-viewer.actions-at-top #unified-view-mode-label {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .unified-viewer.actions-at-top #unified-file-actions-toggle > span,
+    .unified-viewer.actions-at-top #unified-view-mode-label {
+        flex: 1 1 auto;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-side-section > button {
+        border-radius: 6px;
+        font-size: 10px;
+        gap: 4px;
+        height: 26px;
+        min-height: 26px;
+        padding: 3px 6px;
+    }
+    .unified-viewer.actions-at-top .unified-file-actions-dropdown,
+    .unified-viewer.actions-at-top .unified-zoom-actions-dropdown,
+    .unified-viewer.actions-at-top .unified-view-mode-menu {
+        width: 200px;
+    }
+    .unified-viewer.actions-at-top .unified-actions-position > button {
+        border-radius: 6px;
+        font-size: 10px;
+        gap: 4px;
+        height: 26px;
+        min-height: 26px;
+        padding: 3px 6px;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-side-section > button {
+        background: rgba(255,255,255,.12);
+        border-color: rgba(255,255,255,.30);
+        color: #fff;
+    }
+    .unified-viewer.actions-at-top .unified-viewer-side-section > button:hover {
+        background: rgba(255,255,255,.20);
+        color: #fff;
+    }
 }
 
 /* Documents-only compact directory header; shared modules are untouched. */

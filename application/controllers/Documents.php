@@ -3044,7 +3044,7 @@ class Documents extends CI_Controller
         $duplicates = array();
 
         foreach ($names as $name) {
-            $name = basename(trim((string) $name));
+            $name = $this->safe_upload_filename(basename(trim((string) $name)));
             if ($name !== '' && $this->Documents_model->uploaded_document_exists($name, $path_ids)) {
                 $duplicates[] = $name;
             }
@@ -3215,6 +3215,25 @@ class Documents extends CI_Controller
         }
 
         $path_ids = $this->build_upload_path_ids($path);
+        $allow_duplicates = (int) $this->input->post('allow_duplicates', TRUE) === 1;
+        $duplicate_names = array();
+
+        foreach ($original_files as $original_file) {
+            $candidate_name = $this->safe_upload_filename($original_file['name']);
+            if ($this->Documents_model->uploaded_document_exists($candidate_name, $path_ids)) {
+                $duplicate_names[] = $candidate_name;
+            }
+        }
+
+        /* The browser asks for confirmation first, but keep the same validation
+         * server-side so a direct request cannot silently create a duplicate. */
+        if (!empty($duplicate_names) && !$allow_duplicates) {
+            return $this->upload_response(
+                FALSE,
+                'One or more selected documents already exist in this folder. Please confirm before uploading duplicates.'
+            );
+        }
+
         $stored_files = array();
         $page_offset = max(0, (int) $this->input->post('page_offset', TRUE));
 
@@ -3238,6 +3257,13 @@ class Documents extends CI_Controller
             $original_name = $this->safe_upload_filename(
                 $original_file['name']
             );
+
+            if ($allow_duplicates) {
+                $original_name = $this->unique_database_upload_filename(
+                    $original_name,
+                    $path_ids
+                );
+            }
 
             $original_name = $this->unique_upload_filename(
                 $original_directory,
@@ -4168,6 +4194,25 @@ class Documents extends CI_Controller
         }
 
         return $this->join_storage_path($directory, $encrypted_name);
+    }
+
+    /**
+     * Return the next available display filename at the exact database path.
+     * Example: sample.pdf -> sample_1.pdf -> sample_2.pdf.
+     */
+    private function unique_database_upload_filename($filename, $path_ids)
+    {
+        $candidate = $filename;
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $name = pathinfo($filename, PATHINFO_FILENAME);
+        $counter = 1;
+
+        while ($this->Documents_model->uploaded_document_exists($candidate, $path_ids)) {
+            $candidate = $name . '_' . $counter . ($extension !== '' ? '.' . $extension : '');
+            $counter++;
+        }
+
+        return $candidate;
     }
 
     /**

@@ -506,13 +506,13 @@
                 footer = '<span class="documents-grid-badge documents-grid-badge--status">' + (Number(row.publish_status) === 1 ? 'Published' : 'Unpublished') + '</span>';
             }
 
-            return '<article class="documents-grid-card' + (isPinned ? ' is-pinned' : '') + '" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '">' +
+            return '<article class="documents-grid-card' + (isPinned ? ' is-pinned' : '') + '" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '" data-next-url="' + escapeHtml(row.next_url || '') + '">' +
                 '<div class="documents-grid-card-top">' +
                 '<input type="checkbox" class="documents-grid-check" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="Select ' + escapeHtml(row.record_name) + '">' +
                 (isPinned ? '<span class="documents-grid-pin" title="Pinned" aria-label="Pinned"><i class="bi bi-pin-angle-fill"></i></span>' : '') +
                 '<button type="button" class="documents-grid-more" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" aria-label="More actions"><i class="bi bi-three-dots-vertical"></i></button>' +
                 '</div>' +
-                '<button type="button" class="documents-grid-open" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '">' +
+                '<button type="button" class="documents-grid-open" data-grid-id="' + escapeHtml(itemId) + '" data-item-type="' + escapeHtml(itemType) + '" data-next-url="' + escapeHtml(row.next_url || '') + '">' +
                 (isFile
                     ? (function () {
                         var extension = String(row.record_name || '').split('.').pop().toLowerCase();
@@ -3289,29 +3289,69 @@ showCurrentFolderRenameModal();
         );
     });
 
-    $(document).on('click', '.documents-grid-open', function () {
-        var $card = $(this).closest('.documents-grid-card');
-        $('.documents-grid-card').removeClass('is-active');
-        $card.addClass('is-active');
-    });
+    function openDocumentsGridItem($card) {
+        if (!$card || !$card.length) return;
 
-    $(document).on('dblclick', '.documents-grid-open', function (event) {
-        event.preventDefault();
-        var id = String($(this).attr('data-grid-id'));
-        var itemType = $(this).attr('data-item-type');
+        var id = String($card.attr('data-grid-id'));
+        var itemType = String($card.attr('data-item-type') || 'folder');
+        var $open = $card.find('.documents-grid-open').first();
+        var nextUrl = String($open.attr('data-next-url') || '');
         var rowData = null;
+
         table.rows({ page: 'current' }).every(function () {
             var row = this.data();
             var rowId = String(itemType === 'file' ? row.data_id : row.record_id);
-            if (!rowData && row.item_type === itemType && rowId === id) rowData = row;
+            if (!rowData && String(row.item_type || 'folder') === itemType && rowId === id) {
+                rowData = row;
+            }
         });
-        if (!rowData) return;
+
         if (itemType === 'file') {
-            openUnifiedFileViewer(rowData);
-        } else if (rowData.next_url) {
-            saveManageTableState();
-            window.location.href = rowData.next_url;
+            if (rowData) openUnifiedFileViewer(rowData);
+            return;
         }
+
+        if (!nextUrl && rowData && rowData.next_url) {
+            nextUrl = String(rowData.next_url);
+        }
+        if (nextUrl) {
+            saveManageTableState();
+            window.location.href = nextUrl;
+        }
+    }
+
+    /* Browser-independent grid double-click detection. Keep this local to
+     * grid cards so List View and the rest of Documents are untouched. */
+    var gridLastClickKey = '';
+    var gridLastClickAt = 0;
+    var gridDoubleClickDelay = 450;
+
+    $(document).on('click', '.documents-grid-card', function (event) {
+        if ($(event.target).closest('.documents-grid-check, .documents-grid-more, .documents-grid-pin').length) {
+            return;
+        }
+
+        var $card = $(this);
+        var itemType = String($card.attr('data-item-type') || 'folder');
+        var itemId = String($card.attr('data-grid-id') || '');
+        var clickKey = itemType + ':' + itemId;
+        var now = Date.now();
+        var isSecondClick = gridLastClickKey === clickKey && (now - gridLastClickAt) <= gridDoubleClickDelay;
+
+        $('.documents-grid-card').removeClass('is-active');
+        $card.addClass('is-active');
+
+        if (!isSecondClick) {
+            gridLastClickKey = clickKey;
+            gridLastClickAt = now;
+            return;
+        }
+
+        gridLastClickKey = '';
+        gridLastClickAt = 0;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openDocumentsGridItem($card);
     });
 
     $(document).on('click', '.documents-grid-more', function (event) {
@@ -3457,7 +3497,9 @@ showCurrentFolderRenameModal();
                     Number(file.has_watermark) === 1
                         ? 'Watermarked preview'
                         : 'Watermarked preview unavailable'
-                )
+                ),
+            subsidiary: file.subsidiary || config.currentSubsidiary || '',
+            department: file.department || config.currentDepartment || ''
         };
     }
 
@@ -3527,7 +3569,7 @@ showCurrentFolderRenameModal();
         for (var i = 0; i < nodes.length; i++) {
             var img = nodes[i];
             if (!img.naturalWidth) continue;
-            var s = availableWidth / img.naturalWidth;
+            var s = (availableWidth * 0.70) / img.naturalWidth;
             if (bestScale === null || s < bestScale) bestScale = s;
         }
         if (bestScale === null) return;
@@ -3735,6 +3777,17 @@ showCurrentFolderRenameModal();
         var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
         $('#unified-file-title').text(file.record_name);
         $('#unified-file-position').text('File ' + (unifiedFileIndex + 1) + ' of ' + unifiedFiles.length);
+        var viewerPathParts = [];
+        if (file.subsidiary) viewerPathParts.push(String(file.subsidiary));
+        if (file.department) viewerPathParts.push(String(file.department));
+        if (config.currentPath && $.isArray(config.currentPath)) {
+            $.each(config.currentPath, function (_, label) {
+                if (label) viewerPathParts.push(String(label));
+            });
+        }
+        viewerPathParts.push(String(file.record_name || 'Document'));
+        var viewerFullPath = viewerPathParts.join(' / ');
+        $('#unified-file-comment').text(viewerFullPath).attr('title', viewerFullPath);
         $('#unified-file-download').attr('href', file.download_url);
         $('#unified-previous-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex <= 0);
         $('#unified-next-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex >= unifiedFiles.length - 1);
@@ -3766,6 +3819,16 @@ showCurrentFolderRenameModal();
         /* VIEWER FIX: lock the background as soon as the viewer opens. */
         lockUnifiedViewerBackground();
         displayUnifiedFile(0);
+
+        /* Re-apply the saved action placement only after the viewer is visible.
+         * Top mode needs the final card/sidebar dimensions; applying it during
+         * page initialization measures the hidden viewer and misaligns it until
+         * the user switches Side -> Top. */
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+                setUnifiedActionsPosition(initialUnifiedActionsPosition);
+            });
+        });
 
         /* Load every direct file so Next/Previous is independent of paging. */
         /* Load files from the exact folder currently open in Manage Documents.
@@ -3881,12 +3944,96 @@ showCurrentFolderRenameModal();
             $.post(config.deleteUploadedUrl, request, function (response) { updateCsrf(response); if (!response || response.success !== true) { documentsAlert('Delete failed', response && response.message ? response.message : 'The file could not be deleted.', 'error'); return; } closeUnifiedViewer(); table.ajax.reload(null, false); showMessage('success', response.message); }, 'json').fail(function () { documentsAlert('Delete failed', 'The server could not delete the file.', 'error'); });
         });
     });
+    function setUnifiedActionsPosition(position) {
+        position = position === 'top' ? 'top' : 'side';
+        $('#unified-file-viewer')
+            .toggleClass('actions-at-top', position === 'top')
+            .toggleClass('actions-at-side', position === 'side');
+        if (position === 'top') {
+            var viewerCard = $('#unified-file-viewer .unified-viewer-card').get(0);
+            var viewerSidebar = $('#unified-file-viewer .unified-viewer-sidebar').get(0);
+            if (viewerCard && viewerSidebar) {
+                var cardRect = viewerCard.getBoundingClientRect();
+                var heading = $('#unified-file-viewer .unified-viewer-heading').get(0);
+                var pathLine = $('#unified-file-comment').get(0);
+                var headingRect = heading ? heading.getBoundingClientRect() : null;
+                var pathRect = pathLine ? pathLine.getBoundingClientRect() : null;
+                var actionsWidth = viewerSidebar.offsetWidth || 334;
+                var actionsPosition = $('#unified-file-viewer .unified-actions-position').get(0);
+                var actionsButtonWidth = actionsPosition ? (actionsPosition.offsetWidth || 86) : 86;
+                /* Reserve the Actions button, its 4px gap, and the close area.
+                 * This keeps the complete four-button group inside the header. */
+                var rightReserve = actionsButtonWidth + 4 + 50;
+                var maxLeft = cardRect.right - actionsWidth - rightReserve;
+                /* Align the four compact controls on the same horizontal row
+                 * as the full destination path while keeping them right-aligned. */
+                viewerSidebar.style.left = Math.max(cardRect.left + 500, maxLeft) + 'px';
+                /* Keep the four controls on the upper header row, aligned
+                 * beside the filename/file-count area instead of the path. */
+                viewerSidebar.style.top = Math.round(
+                    headingRect ? headingRect.top + 12 : cardRect.top + 12
+                ) + 'px';
+
+                /* Keep Actions on the exact same row, immediately after the
+                 * three viewer dropdowns. X stays independently at far right. */
+                if (actionsPosition) {
+                    var sidebarRect = viewerSidebar.getBoundingClientRect();
+                    actionsPosition.style.left = Math.round(sidebarRect.right + 4) + 'px';
+                    actionsPosition.style.top = Math.round(sidebarRect.top) + 'px';
+                }
+            }
+        } else {
+            $('#unified-file-viewer .unified-viewer-sidebar').css({ left: '', top: '' });
+            $('#unified-file-viewer .unified-actions-position').css({ left: '', top: '' });
+        }
+        $('#unified-actions-position-menu [data-actions-position]')
+            .removeClass('is-active')
+            .filter('[data-actions-position="' + position + '"]').addClass('is-active');
+        try { window.localStorage.setItem('rmsViewerActionsPosition', position); } catch (ignore) {}
+        window.setTimeout(function () {
+            if (unifiedViewMode === 'vertical') fitUnifiedVertical();
+            else if ($('#unified-file-image').is(':visible')) fitUnifiedImage();
+        }, 0);
+    }
+
+    var initialUnifiedActionsPosition = 'side';
+    try { initialUnifiedActionsPosition = window.localStorage.getItem('rmsViewerActionsPosition') || 'side'; } catch (ignore) {}
+    setUnifiedActionsPosition(initialUnifiedActionsPosition);
+
+    function closeUnifiedViewerDropdowns(exceptMenu) {
+        var menus = {
+            actions: ['#unified-actions-position-menu', '#unified-actions-position-toggle'],
+            file: ['#unified-file-actions-dropdown', '#unified-file-actions-toggle'],
+            zoom: ['#unified-zoom-actions-dropdown', '#unified-zoom-actions-toggle'],
+            view: ['#unified-view-mode-menu', '#unified-view-mode-toggle']
+        };
+        $.each(menus, function (key, selectors) {
+            if (key === exceptMenu) return;
+            $(selectors[0]).prop('hidden', true);
+            $(selectors[1]).attr('aria-expanded', 'false');
+        });
+    }
+
+    $('#unified-actions-position-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $menu = $('#unified-actions-position-menu');
+        var open = $menu.prop('hidden');
+        closeUnifiedViewerDropdowns('actions');
+        $menu.prop('hidden', !open);
+        $(this).attr('aria-expanded', open ? 'true' : 'false');
+    });
+    $('#unified-actions-position-menu').on('click', '[data-actions-position]', function (event) {
+        event.stopPropagation();
+        setUnifiedActionsPosition($(this).attr('data-actions-position'));
+        $('#unified-actions-position-menu').prop('hidden', true);
+        $('#unified-actions-position-toggle').attr('aria-expanded', 'false');
+    });
+
     $('#unified-file-actions-toggle').on('click', function (event) {
         event.stopPropagation();
         var $menu = $('#unified-file-actions-dropdown');
         var open = $menu.prop('hidden');
-        $('#unified-zoom-actions-dropdown, #unified-view-mode-menu').prop('hidden', true);
-        $('#unified-zoom-actions-toggle, #unified-view-mode-toggle').attr('aria-expanded', 'false');
+        closeUnifiedViewerDropdowns('file');
         $menu.prop('hidden', !open);
         $(this).attr('aria-expanded', open ? 'true' : 'false');
     });
@@ -3894,8 +4041,7 @@ showCurrentFolderRenameModal();
         event.stopPropagation();
         var $menu = $('#unified-zoom-actions-dropdown');
         var open = $menu.prop('hidden');
-        $('#unified-file-actions-dropdown, #unified-view-mode-menu').prop('hidden', true);
-        $('#unified-file-actions-toggle, #unified-view-mode-toggle').attr('aria-expanded', 'false');
+        closeUnifiedViewerDropdowns('zoom');
         $menu.prop('hidden', !open);
         $(this).attr('aria-expanded', open ? 'true' : 'false');
     });
@@ -3903,8 +4049,7 @@ showCurrentFolderRenameModal();
         event.stopPropagation();
         var $menu = $('#unified-view-mode-menu');
         var open = $menu.prop('hidden');
-        $('#unified-file-actions-dropdown, #unified-zoom-actions-dropdown').prop('hidden', true);
-        $('#unified-file-actions-toggle, #unified-zoom-actions-toggle').attr('aria-expanded', 'false');
+        closeUnifiedViewerDropdowns('view');
         $menu.prop('hidden', !open);
         $(this).attr('aria-expanded', open ? 'true' : 'false');
     });
@@ -3913,6 +4058,10 @@ showCurrentFolderRenameModal();
         setUnifiedViewMode($(this).attr('data-view-mode'));
     });
     $(document).on('click', function (event) {
+        if (!$(event.target).closest('.unified-actions-position').length) {
+            $('#unified-actions-position-menu').prop('hidden', true);
+            $('#unified-actions-position-toggle').attr('aria-expanded', 'false');
+        }
         if (!$(event.target).closest('.unified-file-actions-menu').length) {
             $('#unified-file-actions-dropdown').prop('hidden', true);
             $('#unified-file-actions-toggle').attr('aria-expanded', 'false');
@@ -3966,7 +4115,7 @@ showCurrentFolderRenameModal();
 
         $(document).on('mousemove.unifiedSidebar', function (event) {
             if (!resizingSidebar) return;
-            var width = Math.max(170, Math.min(360, sidebarStartWidth + (event.clientX - sidebarStartX)));
+            var width = Math.max(190, Math.min(420, sidebarStartWidth + (event.clientX - sidebarStartX)));
             $sidebar.css({ width: width + 'px', flexBasis: width + 'px' });
         }).on('mouseup.unifiedSidebar', function () {
             if (!resizingSidebar) return;
@@ -5732,6 +5881,9 @@ showCurrentFolderRenameModal();
         appendUploadFiles('watermark', this.files);
     });
 
+    var uploadDuplicateApproved = false;
+    var uploadDuplicateAllowed = false;
+
     $uploadForm.on('submit', function (event) {
         event.preventDefault();
 
@@ -5790,6 +5942,63 @@ showCurrentFolderRenameModal();
             return;
         }
 
+        /* Before uploading, ask the server whether any original filename is
+         * already present at this exact destination. The user explicitly
+         * chooses whether a duplicate should be uploaded again. */
+        if (!uploadDuplicateApproved && config.checkUploadDuplicatesUrl) {
+            var duplicateRequest = {
+                record_level: $('#modal-record-level').val(),
+                record_id: $uploadPath.val(),
+                file_names: $.map(originalFiles, function (file) { return file.name; })
+            };
+            duplicateRequest[config.csrfName] = config.csrfHash;
+
+            $.ajax({
+                url: config.checkUploadDuplicatesUrl,
+                type: 'POST',
+                dataType: 'json',
+                data: duplicateRequest
+            }).done(function (response) {
+                updateUploadCsrf(response);
+                if (!response || response.success !== true) {
+                    showUploadMessage('error', response && response.message ? response.message : 'Duplicate validation could not be completed.');
+                    return;
+                }
+
+                var duplicates = $.isArray(response.duplicates) ? response.duplicates : [];
+                if (!duplicates.length) {
+                    uploadDuplicateApproved = true;
+                    uploadDuplicateAllowed = false;
+                    $uploadForm.trigger('submit');
+                    return;
+                }
+
+                var duplicateText = duplicates.length === 1
+                    ? '"' + duplicates[0] + '" already exists in this folder. Upload it again? The new copy will be renamed automatically (for example, sample_1).'
+                    : duplicates.length + ' selected documents already exist in this folder: ' + duplicates.join(', ') + '. Upload them again? Duplicate names will be incremented automatically.';
+
+                documentsSwal({
+                    title: 'Document already exists',
+                    text: duplicateText,
+                    icon: 'warning',
+                    showCancel: true,
+                    confirmText: 'Upload Again',
+                    cancelText: 'Do Not Upload'
+                }).then(function (result) {
+                    if (!result || !result.confirmed) return;
+                    uploadDuplicateApproved = true;
+                    uploadDuplicateAllowed = true;
+                    $uploadForm.trigger('submit');
+                });
+            }).fail(function () {
+                showUploadMessage('error', 'The server could not check for existing documents.');
+            });
+            return;
+        }
+
+        var allowDuplicateUpload = uploadDuplicateAllowed;
+        uploadDuplicateApproved = false;
+        uploadDuplicateAllowed = false;
         clearUploadMessage();
         showUploadProgressToast(originalFiles.length + watermarkFiles.length);
         setUploadProgress(1);
@@ -5891,6 +6100,7 @@ showCurrentFolderRenameModal();
 
             /* Continue legacy page numbering across sequential batches. */
             formData.append('page_offset', start);
+            formData.append('allow_duplicates', allowDuplicateUpload ? '1' : '0');
 
             $.each(
                 originalFiles.slice(start, end),
