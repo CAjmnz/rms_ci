@@ -333,7 +333,11 @@ $build_subfolder_parent_label = function ($path) {
                     'header_kicker' => 'DOCUMENTS DIRECTORY',
                     'header_title' => 'Documents',
                     'header_stat_label' => 'Total documents',
-                    'header_stat_value' => number_format($total),
+                    /* Inside a folder the topbar must count the actual documents
+                     * in that folder, not the number of child folder records. */
+                    'header_stat_value' => number_format(
+                        $active_level > 0 ? $current_document_count : $total
+                    ),
                     'header_stat_id' => 'documents-matching-total',
                     'header_stat_icon' => 'documents',
                     'header_logout_url' => $route_url(
@@ -393,6 +397,15 @@ $build_subfolder_parent_label = function ($path) {
                                 ? (int) $current_folder['child_count'] : 0;
                             $current_record_id = isset($current_folder['record_id'])
                                 ? (int) $current_folder['record_id'] : $active_parent_id;
+                            /* Use the same exact folder row as the table information drawer.
+                             * This avoids stale/partial current-folder metadata. */
+                            $current_info_folder = $this->Documents_model->find(
+                                $current_record_level,
+                                $current_record_id
+                            );
+                            if (!is_array($current_info_folder)) {
+                                $current_info_folder = $current_folder;
+                            }
                             $context_path = !empty($current_path_labels)
                                 ? end($current_path_labels)
                                 : '';
@@ -467,7 +480,7 @@ $build_subfolder_parent_label = function ($path) {
                                                 id="documents-context-rename"
                                                 data-action="rename-current-folder">
                                                 <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                Rename
+                                                Edit
                                             </button>
                                             <!-- Folder information -->
                                             <button type="button"
@@ -478,6 +491,9 @@ $build_subfolder_parent_label = function ($path) {
                                                 data-status="<?php echo $current_status; ?>"
                                                 data-child-count="<?php echo $current_child_count; ?>"
                                                 data-file-count="<?php echo $current_document_count; ?>"
+                                                data-created-by="Admin"
+                                                data-date-created="<?php echo html_escape(isset($current_info_folder['date_created']) ? $current_info_folder['date_created'] : ''); ?>"
+                                                data-date-modified="<?php echo html_escape(isset($current_info_folder['date_modified']) ? $current_info_folder['date_modified'] : ''); ?>"
                                                 data-name="<?php echo html_escape($context_path); ?>">
                                                 <i class="bi bi-info-circle" aria-hidden="true"></i>
                                                 <span>Folder information</span>
@@ -591,6 +607,10 @@ $build_subfolder_parent_label = function ($path) {
                                 <span>Bulk actions</span><i class="bi bi-chevron-down"></i>
                             </button>
                             <div class="documents-bulk-menu" id="documents-bulk-menu" hidden>
+                                <div class="documents-bulk-empty" id="documents-bulk-empty">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Select a filename, folder, or document to view available bulk actions.</span>
+                                </div>
                                 <button type="button" id="documents-publish" disabled>
                                     <svg class="document-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
@@ -1371,11 +1391,9 @@ $build_subfolder_parent_label = function ($path) {
                 </div>
                 <div class="unified-viewer-head-actions">
                     <div class="unified-actions-position" aria-label="Actions position">
-                        <button type="button" id="unified-actions-position-toggle" aria-expanded="false" aria-haspopup="true"><i class="bi bi-layout-sidebar-inset"></i><span>Actions</span><i class="bi bi-chevron-down"></i></button>
-                        <div class="unified-actions-position-menu" id="unified-actions-position-menu" hidden>
-                            <button type="button" data-actions-position="side"><i class="bi bi-layout-sidebar-inset"></i><span>Side</span></button>
-                            <button type="button" data-actions-position="top"><i class="bi bi-layout-text-sidebar-reverse"></i><span>Top</span></button>
-                        </div>
+                        <button type="button" id="unified-actions-position-toggle" aria-label="Switch actions position">
+                            <i class="bi bi-layout-sidebar-inset"></i><span>Side</span>
+                        </button>
                     </div>
                     <button type="button" class="unified-viewer-close" data-close-unified-viewer aria-label="Close document viewer">&times;</button>
                 </div>
@@ -1401,11 +1419,22 @@ $build_subfolder_parent_label = function ($path) {
                             <i class="bi bi-search"></i><span>Zoom</span><i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="unified-zoom-actions-dropdown" id="unified-zoom-actions-dropdown" hidden>
-                            <button type="button" id="unified-zoom-in"><i class="bi bi-zoom-in"></i><span>Zoom In</span></button>
-                            <button type="button" id="unified-zoom-out"><i class="bi bi-zoom-out"></i><span>Zoom Out</span></button>
-                            <button type="button" id="unified-fit-file"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
-                            <button type="button" id="unified-actual-file"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
-                            <div class="unified-viewer-side-zoom"><span>Zoom level</span><strong class="unified-viewer-zoom" id="unified-file-zoom">100%</strong></div>
+                            <div class="unified-zoom-stepper" aria-label="Zoom controls">
+                                <button type="button" id="unified-zoom-out" aria-label="Zoom out"><i class="bi bi-dash-lg"></i></button>
+                                <strong class="unified-viewer-zoom" id="unified-file-zoom">100%</strong>
+                                <button type="button" id="unified-zoom-in" aria-label="Zoom in"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <div class="unified-zoom-size-control">
+                                <button type="button" id="unified-zoom-size-toggle" aria-expanded="false" aria-haspopup="true">
+                                    <i class="bi bi-arrows-fullscreen" id="unified-zoom-size-icon"></i>
+                                    <span id="unified-zoom-size-label">Fit to Screen</span>
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                                <div class="unified-zoom-size-menu" id="unified-zoom-size-menu" hidden>
+                                    <button type="button" id="unified-fit-file"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
+                                    <button type="button" id="unified-actual-file"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="unified-viewer-side-section unified-view-mode">

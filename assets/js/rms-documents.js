@@ -1197,6 +1197,20 @@
         $downloadSelected.prop('disabled', selectedFiles === 0 || selectedFolders > 0);
         $transferSelected.prop('disabled', selectedFiles === 0 || selectedFolders > 0);
         $deleteFiles.prop('disabled', selected === 0);
+
+        /* Context-aware bulk menu: unavailable actions are hidden rather than
+         * shown disabled. No selection displays only the guidance message. */
+        var onlyFiles = selected > 0 && selectedFiles === selected;
+        var onlyFolders = selected > 0 && selectedFolders === selected;
+        $('#documents-bulk-empty').prop('hidden', selected > 0);
+        $publishButton.toggle(onlyFolders);
+        $unpublishButton.toggle(onlyFolders);
+        $downloadSelected.toggle(onlyFiles);
+        $transferSelected.toggle(onlyFiles);
+        $pinSelected.toggle(selected > 0);
+        $unpinSelected.toggle(selected > 0);
+        $deleteFiles.toggle(selected > 0);
+
         currentChecks().each(function () {
             $(this).closest('tr').toggleClass('is-selected', this.checked);
             var id = String($(this).attr('data-record-id'));
@@ -1603,11 +1617,10 @@
             (Number(row.is_pinned) === 1 ? 'Unpin' : 'Pin') + '</button>';
 
         if (!published && ownedByCurrentUser) {
-            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="fa fa-edit"></i>Edit</button>';
-            items += '<button type="button" class="doc-action-item danger" data-action="delete" data-id="' + id + '"><i class="fa fa-trash"></i>Delete</button>';
+            items += '<button type="button" class="doc-action-item" data-action="edit" data-id="' + id + '"><i class="bi bi-pencil-square"></i>Edit</button>';
+            items += '<button type="button" class="doc-action-item danger" data-action="delete" data-id="' + id + '"><i class="bi bi-trash"></i>Delete</button>';
         }
 
-        items += '<button type="button" class="doc-action-item" data-action="view" data-id="' + id + '"><i class="fa fa-search"></i>View</button>';
         items += '<button type="button" class="doc-action-item" data-action="folder-information" data-id="' + id + '"><i class="bi bi-info-circle"></i>Folder information</button>';
         items += '<span class="doc-action-heading">PERMISSIONS</span>';
 
@@ -1620,12 +1633,12 @@
             items +=
                 '<button type="button" class="doc-action-item" ' +
                 'data-action="unpublish" data-id="' + id + '">' +
-                '<i class="fa fa-ban"></i>Unpublish</button>';
+                '<i class="bi bi-eye-slash"></i>Unpublish</button>';
         } else {
             items +=
                 '<button type="button" class="doc-action-item" ' +
                 'data-action="publish" data-id="' + id + '">' +
-                '<i class="fa fa-check"></i>Publish</button>';
+                '<i class="bi bi-upload"></i>Publish</button>';
         }
 
         return (
@@ -2229,7 +2242,9 @@ function loadRecord(recordId, done, requestedLevel) {
             item_type: 'folder',
             record_id: Number($button.data('record-id') || 0),
             record_name: pathName,
-            created_by: 'Admin',
+            created_by: documentsInfoValue($button.data('created-by')),
+            date_created: documentsInfoValue($button.data('date-created')),
+            date_modified: documentsInfoValue($button.data('date-modified')),
             access_token: currentIds.length ? (currentIds.length - 1) + ':' + currentIds.join('/') : ''
         };
         var status = Number($button.data('status')) === 1 ? 'Published' : 'Unpublished';
@@ -2240,7 +2255,9 @@ function loadRecord(recordId, done, requestedLevel) {
         $('#documents-info-location').text(documentsInfoPath(documentsInfoSelected, true));
         $('#documents-info-subfolders').text(documentsInfoValue($button.data('child-count')));
         $('#documents-info-files').text(documentsInfoValue($button.data('file-count')));
-        $('#documents-info-owner, #documents-info-created, #documents-info-modified').text('—');
+        $('#documents-info-owner').text(documentsInfoValue(documentsInfoSelected.created_by));
+        $('#documents-info-created').text(documentsInfoValue(documentsInfoSelected.date_created));
+        $('#documents-info-modified').text(documentsInfoValue(documentsInfoSelected.date_modified));
         $('#documents-info-status').text(status);
         $('#documents-info-subfolders-row, #documents-info-files-row').show();
         $('#documents-info-size-row').hide();
@@ -2730,6 +2747,13 @@ function loadRecord(recordId, done, requestedLevel) {
                         ? response.folderPins
                         : {};
                     updateHierarchyPinMarkers();
+
+                    /* Keep the topbar document count synchronized with the
+                     * exact folder currently being browsed. Folder hierarchy
+                     * responses may provide a dedicated document count. */
+                    if (response && response.currentDocumentCount !== undefined) {
+                        $('#documents-matching-total').text(Number(response.currentDocumentCount) || 0);
+                    }
                     if (response && response.error) {
                         showMessage(
                             'error',
@@ -3436,6 +3460,9 @@ showCurrentFolderRenameModal();
     var unifiedFiles = [];
     var unifiedFileIndex = 0;
     var unifiedScale = 1;
+    /* Page Navigation uses one shared zoom level for every image in the
+     * currently opened folder. Moving Next/Previous must not refit each page. */
+    var unifiedPageScaleLocked = false;
     var unifiedOffsetX = 0;
     var unifiedOffsetY = 0;
     var unifiedDragging = false;
@@ -3562,6 +3589,56 @@ showCurrentFolderRenameModal();
      * Fit to screen: page width fills most of the dark canvas.
      * Scale = availableWidth / naturalWidth (can be >1 for small images).
      */
+    /* Preserve the exact selected page and viewport point while a Vertical
+     * Scroll zoom operation changes every page's rendered dimensions. */
+    function withUnifiedVerticalPageAnchor(callback) {
+        var scrollEl = document.getElementById('unified-vertical-scroll');
+        if (!scrollEl || unifiedViewMode !== 'vertical') {
+            callback();
+            return;
+        }
+
+        /* Vertical scrolling does not use Previous/Next to update
+         * unifiedFileIndex. Anchor to the page the user is actually viewing,
+         * not the page that was selected before they scrolled. */
+        var scrollRect = scrollEl.getBoundingClientRect();
+        var viewportY = scrollRect.top + (scrollRect.height / 2);
+        var pages = scrollEl.querySelectorAll('.unified-vertical-page');
+        var page = null;
+        var nearestDistance = Infinity;
+        for (var pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+            var candidateRect = pages[pageIndex].getBoundingClientRect();
+            var distance = viewportY < candidateRect.top
+                ? candidateRect.top - viewportY
+                : (viewportY > candidateRect.bottom ? viewportY - candidateRect.bottom : 0);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                page = pages[pageIndex];
+                if (distance === 0) break;
+            }
+        }
+        if (!page) {
+            callback();
+            return;
+        }
+
+        var visibleIndex = Number(page.getAttribute('data-file-index'));
+        if (!isNaN(visibleIndex)) unifiedFileIndex = visibleIndex;
+        var pageRect = page.getBoundingClientRect();
+        var ratio = pageRect.height > 0
+            ? Math.max(0, Math.min(1, (viewportY - pageRect.top) / pageRect.height))
+            : 0;
+        var previousBehavior = scrollEl.style.scrollBehavior;
+        scrollEl.style.scrollBehavior = 'auto';
+
+        callback();
+
+        var resizedRect = page.getBoundingClientRect();
+        var resizedY = resizedRect.top + (resizedRect.height * ratio);
+        scrollEl.scrollTop += resizedY - viewportY;
+        scrollEl.style.scrollBehavior = previousBehavior;
+    }
+
     function fitUnifiedVertical() {
         var availableWidth = getUnifiedVerticalAvailableWidth();
         var bestScale = null;
@@ -3573,11 +3650,13 @@ showCurrentFolderRenameModal();
             if (bestScale === null || s < bestScale) bestScale = s;
         }
         if (bestScale === null) return;
-        unifiedScale = Math.max(0.05, Math.min(5, bestScale));
-        unifiedOffsetX = 0;
-        unifiedOffsetY = 0;
-        applyUnifiedVerticalZoom();
-        $('#unified-file-zoom').text(Math.round(unifiedScale * 100) + '%');
+        withUnifiedVerticalPageAnchor(function () {
+            unifiedScale = Math.max(0.05, Math.min(5, bestScale));
+            unifiedOffsetX = 0;
+            unifiedOffsetY = 0;
+            applyUnifiedVerticalZoom();
+            $('#unified-file-zoom').text(Math.round(unifiedScale * 100) + '%');
+        });
     }
 
     /**
@@ -3729,6 +3808,7 @@ showCurrentFolderRenameModal();
             (stage.clientHeight - 28) / image.naturalHeight,
             1
         );
+        unifiedPageScaleLocked = true;
         unifiedOffsetX = 0;
         unifiedOffsetY = 0;
         renderUnifiedTransform();
@@ -3736,7 +3816,15 @@ showCurrentFolderRenameModal();
 
     function changeUnifiedZoom(delta) {
         markUnifiedInspecting(true);
+        if (unifiedViewMode === 'vertical') {
+            withUnifiedVerticalPageAnchor(function () {
+                unifiedScale = Math.max(0.1, Math.min(5, unifiedScale + delta));
+                renderUnifiedTransform();
+            });
+            return;
+        }
         unifiedScale = Math.max(0.1, Math.min(5, unifiedScale + delta));
+        unifiedPageScaleLocked = true;
         renderUnifiedTransform();
     }
 
@@ -3767,16 +3855,12 @@ showCurrentFolderRenameModal();
         window.scrollTo(0, unifiedViewerScrollY);
     }
 
-    function displayUnifiedFile(index) {
+    function updateUnifiedViewerHeader(index) {
         if (!unifiedFiles.length) return;
-        /* VIEWER FIX: cancel any active drag before switching to another file. */
-        stopUnifiedDrag();
-        unifiedFileIndex = (index + unifiedFiles.length) % unifiedFiles.length;
-        var file = unifiedFiles[unifiedFileIndex];
-        var extension = String(file.record_name).split('.').pop().toLowerCase();
-        var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
+        index = Math.max(0, Math.min(unifiedFiles.length - 1, Number(index) || 0));
+        var file = unifiedFiles[index];
         $('#unified-file-title').text(file.record_name);
-        $('#unified-file-position').text('File ' + (unifiedFileIndex + 1) + ' of ' + unifiedFiles.length);
+        $('#unified-file-position').text('File ' + (index + 1) + ' of ' + unifiedFiles.length);
         var viewerPathParts = [];
         if (file.subsidiary) viewerPathParts.push(String(file.subsidiary));
         if (file.department) viewerPathParts.push(String(file.department));
@@ -3788,14 +3872,34 @@ showCurrentFolderRenameModal();
         viewerPathParts.push(String(file.record_name || 'Document'));
         var viewerFullPath = viewerPathParts.join(' / ');
         $('#unified-file-comment').text(viewerFullPath).attr('title', viewerFullPath);
+    }
+
+    function displayUnifiedFile(index) {
+        if (!unifiedFiles.length) return;
+        /* VIEWER FIX: cancel any active drag before switching to another file. */
+        stopUnifiedDrag();
+        unifiedFileIndex = (index + unifiedFiles.length) % unifiedFiles.length;
+        var file = unifiedFiles[unifiedFileIndex];
+        var extension = String(file.record_name).split('.').pop().toLowerCase();
+        var isImage = /^(jpg|jpeg|png|gif|webp|bmp)$/.test(extension);
+        updateUnifiedViewerHeader(unifiedFileIndex);
         $('#unified-file-download').attr('href', file.download_url);
         $('#unified-previous-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex <= 0);
         $('#unified-next-file').prop('disabled', unifiedFiles.length < 2 || unifiedFileIndex >= unifiedFiles.length - 1);
         $('#unified-zoom-out, #unified-zoom-in, #unified-fit-file, #unified-actual-file').prop('disabled', !isImage);
-        unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0;
+        /* Keep the current Page Navigation scale when moving between files.
+         * Only the first image opened in the viewer is auto-fitted. */
+        unifiedOffsetX = 0; unifiedOffsetY = 0;
         if (isImage) {
             $('#unified-file-frame').prop('hidden', true).attr('src', '');
-            $('#unified-file-image').prop('hidden', false).one('load', fitUnifiedImage).attr('src', file.view_url);
+            var $viewerImage = $('#unified-file-image').prop('hidden', false);
+            if (unifiedViewMode === 'page' && unifiedPageScaleLocked) {
+                $viewerImage.one('load', function () {
+                    renderUnifiedTransform();
+                }).attr('src', file.view_url);
+            } else {
+                $viewerImage.one('load', fitUnifiedImage).attr('src', file.view_url);
+            }
         } else {
             $('#unified-file-image').prop('hidden', true).attr('src', '');
             $('#unified-file-frame').prop('hidden', false).attr('src', file.view_url);
@@ -3815,6 +3919,8 @@ showCurrentFolderRenameModal();
             return;
         }
         unifiedFiles = [initial];
+        unifiedPageScaleLocked = false;
+        unifiedScale = 1;
         $('#unified-file-viewer').addClass('show').attr('aria-hidden', 'false');
         /* VIEWER FIX: lock the background as soon as the viewer opens. */
         lockUnifiedViewerBackground();
@@ -3986,9 +4092,15 @@ showCurrentFolderRenameModal();
             $('#unified-file-viewer .unified-viewer-sidebar').css({ left: '', top: '' });
             $('#unified-file-viewer .unified-actions-position').css({ left: '', top: '' });
         }
-        $('#unified-actions-position-menu [data-actions-position]')
-            .removeClass('is-active')
-            .filter('[data-actions-position="' + position + '"]').addClass('is-active');
+        /* The position control is a direct toggle. Its label shows the
+         * currently selected placement; no extra Side/Top dropdown is needed. */
+        var $positionToggle = $('#unified-actions-position-toggle');
+        $positionToggle.find('span').text(position === 'top' ? 'Top' : 'Side');
+        $positionToggle.find('i').attr(
+            'class',
+            position === 'top' ? 'bi bi-layout-text-sidebar-reverse' : 'bi bi-layout-sidebar-inset'
+        );
+        $positionToggle.attr('data-current-position', position);
         try { window.localStorage.setItem('rmsViewerActionsPosition', position); } catch (ignore) {}
         window.setTimeout(function () {
             if (unifiedViewMode === 'vertical') fitUnifiedVertical();
@@ -4002,7 +4114,6 @@ showCurrentFolderRenameModal();
 
     function closeUnifiedViewerDropdowns(exceptMenu) {
         var menus = {
-            actions: ['#unified-actions-position-menu', '#unified-actions-position-toggle'],
             file: ['#unified-file-actions-dropdown', '#unified-file-actions-toggle'],
             zoom: ['#unified-zoom-actions-dropdown', '#unified-zoom-actions-toggle'],
             view: ['#unified-view-mode-menu', '#unified-view-mode-toggle']
@@ -4016,17 +4127,9 @@ showCurrentFolderRenameModal();
 
     $('#unified-actions-position-toggle').on('click', function (event) {
         event.stopPropagation();
-        var $menu = $('#unified-actions-position-menu');
-        var open = $menu.prop('hidden');
-        closeUnifiedViewerDropdowns('actions');
-        $menu.prop('hidden', !open);
-        $(this).attr('aria-expanded', open ? 'true' : 'false');
-    });
-    $('#unified-actions-position-menu').on('click', '[data-actions-position]', function (event) {
-        event.stopPropagation();
-        setUnifiedActionsPosition($(this).attr('data-actions-position'));
-        $('#unified-actions-position-menu').prop('hidden', true);
-        $('#unified-actions-position-toggle').attr('aria-expanded', 'false');
+        closeUnifiedViewerDropdowns();
+        var current = String($(this).attr('data-current-position') || 'side');
+        setUnifiedActionsPosition(current === 'side' ? 'top' : 'side');
     });
 
     $('#unified-file-actions-toggle').on('click', function (event) {
@@ -4058,10 +4161,6 @@ showCurrentFolderRenameModal();
         setUnifiedViewMode($(this).attr('data-view-mode'));
     });
     $(document).on('click', function (event) {
-        if (!$(event.target).closest('.unified-actions-position').length) {
-            $('#unified-actions-position-menu').prop('hidden', true);
-            $('#unified-actions-position-toggle').attr('aria-expanded', 'false');
-        }
         if (!$(event.target).closest('.unified-file-actions-menu').length) {
             $('#unified-file-actions-dropdown').prop('hidden', true);
             $('#unified-file-actions-toggle').attr('aria-expanded', 'false');
@@ -4137,8 +4236,41 @@ showCurrentFolderRenameModal();
     });
     $('#unified-zoom-in').on('click', function () { changeUnifiedZoom(.1); });
     $('#unified-zoom-out').on('click', function () { changeUnifiedZoom(-.1); });
-    $('#unified-fit-file').on('click', fitUnifiedImage);
-    $('#unified-actual-file').on('click', function () { markUnifiedInspecting(true); unifiedScale = 1; unifiedOffsetX = 0; unifiedOffsetY = 0; renderUnifiedTransform(); });
+    $('#unified-zoom-size-toggle').on('click', function (event) {
+        event.stopPropagation();
+        var $menu = $('#unified-zoom-size-menu');
+        var open = $menu.prop('hidden');
+        $menu.prop('hidden', !open);
+        $(this).attr('aria-expanded', open ? 'true' : 'false');
+    });
+    $('#unified-fit-file').on('click', function () {
+        fitUnifiedImage();
+        $('#unified-zoom-size-label').text('Fit to Screen');
+        $('#unified-zoom-size-icon').attr('class', 'bi bi-arrows-fullscreen');
+        $('#unified-zoom-size-menu').prop('hidden', true);
+        $('#unified-zoom-size-toggle').attr('aria-expanded', 'false');
+    });
+    $('#unified-actual-file').on('click', function () {
+        markUnifiedInspecting(true);
+        if (unifiedViewMode === 'vertical') {
+            withUnifiedVerticalPageAnchor(function () {
+                unifiedScale = 1;
+                unifiedOffsetX = 0;
+                unifiedOffsetY = 0;
+                renderUnifiedTransform();
+            });
+        } else {
+            unifiedScale = 1;
+            unifiedPageScaleLocked = true;
+            unifiedOffsetX = 0;
+            unifiedOffsetY = 0;
+            renderUnifiedTransform();
+        }
+        $('#unified-zoom-size-label').text('Actual Size');
+        $('#unified-zoom-size-icon').attr('class', 'bi bi-aspect-ratio');
+        $('#unified-zoom-size-menu').prop('hidden', true);
+        $('#unified-zoom-size-toggle').attr('aria-expanded', 'false');
+    });
     /* Page Navigation swipe: a normal left-button horizontal drag changes
        files. Ctrl+drag keeps the existing document-pan behavior. */
     var unifiedSwipeStartX = 0;
@@ -4247,48 +4379,40 @@ showCurrentFolderRenameModal();
                 return;
             }
 
-            var verticalScroll = document.getElementById('unified-vertical-scroll');
-            if (!verticalScroll) return;
-
-            /* Anchor zoom to the page currently at the center of the viewport.
-             * Page labels/gaps have fixed heights, so scaling scrollTop itself
-             * can jump to another page. Preserve the same point in the same page. */
-            var scrollRect = verticalScroll.getBoundingClientRect();
-            var anchorY = scrollRect.top + (scrollRect.height / 2);
-            var pages = verticalScroll.querySelectorAll('.unified-vertical-page');
-            var anchorPage = null;
-            var anchorRatio = 0;
-            var nearestDistance = Infinity;
-
-            for (var pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-                var pageRect = pages[pageIndex].getBoundingClientRect();
-                var distance = anchorY < pageRect.top
-                    ? pageRect.top - anchorY
-                    : (anchorY > pageRect.bottom ? anchorY - pageRect.bottom : 0);
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                    anchorPage = pages[pageIndex];
-                    anchorRatio = pageRect.height > 0
-                        ? Math.max(0, Math.min(1, (anchorY - pageRect.top) / pageRect.height))
-                        : 0;
-                    if (distance === 0) break;
-                }
-            }
-
+            /* changeUnifiedZoom preserves unifiedFileIndex and the same point
+             * within that selected page while Vertical Scroll dimensions change. */
             changeUnifiedZoom(event.deltaY < 0 ? .1 : -.1);
-
-            if (anchorPage) {
-                var previousScrollBehavior = verticalScroll.style.scrollBehavior;
-                verticalScroll.style.scrollBehavior = 'auto';
-                var resizedPageRect = anchorPage.getBoundingClientRect();
-                var resizedAnchorY = resizedPageRect.top + (resizedPageRect.height * anchorRatio);
-                verticalScroll.scrollTop += resizedAnchorY - anchorY;
-                verticalScroll.style.scrollBehavior = previousScrollBehavior;
-            }
         }, { passive: false });
     }
 
     $('#unified-vertical-scroll')
+        .on('scroll.unifiedViewerHeader', function () {
+            if (unifiedViewMode !== 'vertical' || !unifiedFiles.length) return;
+            var scrollEl = this;
+            var scrollRect = scrollEl.getBoundingClientRect();
+            var viewportY = scrollRect.top + (scrollRect.height / 2);
+            var pages = scrollEl.querySelectorAll('.unified-vertical-page');
+            var visiblePage = null;
+            var nearestDistance = Infinity;
+
+            for (var i = 0; i < pages.length; i++) {
+                var rect = pages[i].getBoundingClientRect();
+                var distance = viewportY < rect.top
+                    ? rect.top - viewportY
+                    : (viewportY > rect.bottom ? viewportY - rect.bottom : 0);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    visiblePage = pages[i];
+                    if (distance === 0) break;
+                }
+            }
+
+            if (!visiblePage) return;
+            var visibleIndex = Number(visiblePage.getAttribute('data-file-index'));
+            if (isNaN(visibleIndex) || visibleIndex === unifiedFileIndex) return;
+            unifiedFileIndex = visibleIndex;
+            updateUnifiedViewerHeader(unifiedFileIndex);
+        })
         .on('dragstart.unifiedViewer', 'img', function (event) {
             event.preventDefault();
         })

@@ -2285,6 +2285,10 @@ class Documents extends CI_Controller
                 'draw' => $draw,
                 'recordsTotal' => $records_total,
                 'recordsFiltered' => $records_filtered,
+                /* Topbar count follows the exact folder currently open. */
+                'currentDocumentCount' => $level > 0
+                    ? $this->Documents_model->count_documents($level - 1, $parent_id)
+                    : $records_total,
                 'groupCounts' => $group_counts,
                 'folderPins' =>
                 $this->Documents_model->get_user_folder_pins($pin_user_id),
