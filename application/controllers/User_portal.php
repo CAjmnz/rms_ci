@@ -280,10 +280,10 @@ class User_portal extends CI_Controller
             return;
         }
 
-        /* Limit one archive request to a practical number of selected files. */
+        /* Each generated ZIP is capped at 100 documents. Larger selections are split client-side into sequential batches. */
         $tokens = array_values(array_unique(array_filter(array_map('strval', $tokens))));
-        if (count($tokens) === 0 || count($tokens) > 50) {
-            show_error('Select between 1 and 50 documents for one download.', 400);
+        if (count($tokens) === 0 || count($tokens) > 100) {
+            show_error('Each download batch may contain between 1 and 100 documents.', 400);
             return;
         }
         if (!class_exists('ZipArchive')) {
@@ -340,7 +340,10 @@ class User_portal extends CI_Controller
         }
 
         $zip->close();
-        $download_name = 'RMS-selected-documents-' . date('Y-m-d-His') . '.zip';
+        $batch_number = max(1, (int) $this->input->post('batch_number'));
+        $batch_count = max(1, (int) $this->input->post('batch_count'));
+        $batch_suffix = $batch_count > 1 ? '-Batch-' . $batch_number : '';
+        $download_name = 'RMS-selected-documents-' . date('Y-m-d-His') . $batch_suffix . '.zip';
 
         /*
          * ACTIVITY LOG - SUCCESSFUL SELECTED DOWNLOAD

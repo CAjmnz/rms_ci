@@ -966,7 +966,7 @@ class Documents extends CI_Controller
         $start = max(0, (int) $this->input->get('start', TRUE));
         $length = (int) $this->input->get('length', TRUE);
 
-        if (!in_array($length, array(10, 25, 50, 100), TRUE)) {
+        if (!in_array($length, array(10, 25, 50, 100, 200), TRUE)) {
             $length = 10;
         }
 
@@ -1241,6 +1241,12 @@ class Documents extends CI_Controller
             return;
         }
 
+        $tokens = array_values(array_unique(array_filter(array_map('strval', $tokens))));
+        if (count($tokens) > 100) {
+            show_error('Each download batch may contain a maximum of 100 documents.', 400);
+            return;
+        }
+
         if (!class_exists('ZipArchive')) {
             show_error('ZIP downloads are not available on this server.', 500);
             return;
@@ -1343,7 +1349,10 @@ class Documents extends CI_Controller
             @header_remove('Content-Length');
         }
 
-        $archive_name = 'RMS_Selected_Documents_' . date('Ymd_His') . '.zip';
+        $batch_number = max(1, (int) $this->input->post('batch_number'));
+        $batch_count = max(1, (int) $this->input->post('batch_count'));
+        $batch_suffix = $batch_count > 1 ? '_Batch_' . $batch_number : '';
+        $archive_name = 'RMS_Selected_Documents_' . date('Ymd_His') . $batch_suffix . '.zip';
         header('X-Content-Type-Options: nosniff');
         header('Content-Type: application/zip');
         header('Content-Length: ' . filesize($zip_path));
@@ -1568,9 +1577,12 @@ class Documents extends CI_Controller
         $data_ids = $this->input->post('data_ids', TRUE);
         if (
             !is_array($data_ids) || empty($data_ids) ||
+            count($data_ids) > 100 ||
             !$this->can_manage_unpublished_records($level, array($record_id))
         ) {
-            return $this->json(FALSE, 'Please select files from an allowed Unpublished folder.');
+            return $this->json(FALSE, count((array) $data_ids) > 100
+                ? 'Each transfer batch may contain a maximum of 100 files.'
+                : 'Please select files from an allowed Unpublished folder.');
         }
         $target = $this->Documents_model->get_upload_path(
             $target_level,
@@ -1938,7 +1950,7 @@ class Documents extends CI_Controller
 
         $length = (int) $this->input->get('length', TRUE);
 
-        if (!in_array($length, array(10, 25, 50, 100), TRUE)) {
+        if (!in_array($length, array(10, 25, 50, 100, 200), TRUE)) {
             $length = 10;
         }
 
@@ -3123,17 +3135,17 @@ class Documents extends CI_Controller
             );
         }
 
-        if (count($original_files) > 150) {
+        if (count($original_files) > 100) {
             return $this->upload_response(
                 FALSE,
-                'A maximum of 150 original files may be uploaded at one time.'
+                'A maximum of 100 original files may be uploaded at one time.'
             );
         }
 
-        if (count($watermark_files) > 150) {
+        if (count($watermark_files) > 100) {
             return $this->upload_response(
                 FALSE,
-                'A maximum of 150 watermark files may be uploaded at one time.'
+                'A maximum of 100 watermark files may be uploaded at one time.'
             );
         }
 

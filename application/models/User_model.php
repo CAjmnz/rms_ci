@@ -966,7 +966,7 @@ class User_model extends CI_Model
         $users = $this->db
             ->select('user_id, username, emp_name, role_id, stat')
             ->from('users')
-            ->where('stat', 0)
+            ->where_in('stat', array(0, 1))
             ->order_by('emp_name', 'ASC')
             ->order_by('username', 'ASC')
             ->get()
@@ -1022,7 +1022,7 @@ class User_model extends CI_Model
         $users = $this->db
             ->select('user_id')
             ->from('users')
-            ->where('stat', 0)
+            ->where_in('stat', array(0, 1))
             ->get()
             ->result_array();
 
@@ -1092,7 +1092,7 @@ class User_model extends CI_Model
         $valid_users = $this->db
             ->select('user_id')
             ->from('users')
-            ->where('stat', 0)
+            ->where_in('stat', array(0, 1))
             ->where_in('user_id', array_keys($selected))
             ->get()
             ->result_array();

@@ -2689,7 +2689,7 @@ function loadRecord(recordId, done, requestedLevel) {
             deferRender: true,
             autoWidth: false,
             pageLength: 10,
-            lengthMenu: [10, 25, 50, 100],
+            lengthMenu: [10, 25, 50, 100, 200],
             searchDelay: 350,
             order: [[1, 'asc']],
             stateSave: true,
@@ -3686,9 +3686,13 @@ showCurrentFolderRenameModal();
         var pending = 0;
         var done = 0;
         var fitted = false;
+        /* Capture the page that was open before async image loading starts.
+         * Scroll/header events must not replace it with Page 1 while the
+         * vertical stack is still being built. */
+        var openedVerticalIndex = unifiedFileIndex;
 
         function showOpenedVerticalPage() {
-            var activePage = scrollEl.querySelector('.unified-vertical-page[data-file-index="' + unifiedFileIndex + '"]');
+            var activePage = scrollEl.querySelector('.unified-vertical-page[data-file-index="' + openedVerticalIndex + '"]');
             if (activePage) {
                 if (unifiedViewMode === 'horizontal') {
                     scrollEl.scrollLeft = Math.max(0, activePage.offsetLeft - ((scrollEl.clientWidth - activePage.offsetWidth) / 2));
@@ -4387,7 +4391,7 @@ showCurrentFolderRenameModal();
 
     $('#unified-vertical-scroll')
         .on('scroll.unifiedViewerHeader', function () {
-            if (unifiedViewMode !== 'vertical' || !unifiedFiles.length) return;
+            if (unifiedViewMode !== 'vertical' || !unifiedFiles.length || this.style.visibility === 'hidden') return;
             var scrollEl = this;
             var scrollRect = scrollEl.getBoundingClientRect();
             var viewportY = scrollRect.top + (scrollRect.height / 2);
@@ -4773,14 +4777,80 @@ showCurrentFolderRenameModal();
             sourceLevel = Math.max(0, Number(config.level || 0) - 1);
             sourceId = Number(config.parentId || 0);
         }
-        var request = { level: sourceLevel, record_id: sourceId, target_level: Number(level), target_id: Number(id), data_ids: $.map(files, function (file) { return file.data_id; }) };
-        request[config.csrfName] = config.csrfHash;
-        $.post(config.transferUploadedUrl, request, function (response) {
-            updateCsrf(response);
-            if (!response || response.success !== true) { $('#documents-transfer-message').addClass('error').text(response && response.message ? response.message : 'The files could not be transferred.').show(); return; }
-            closeTransferModal(); if (closeViewerAfter) closeUnifiedViewer();
-            currentChecks().prop('checked', false); updateSelection(); table.ajax.reload(null, false); showMessage('success', response.message);
-        }, 'json').fail(function () { $('#documents-transfer-message').addClass('error').text('The server could not transfer the selected files.').show(); });
+        var batchSize = 100;
+        var batchCount = Math.ceil(files.length / batchSize);
+
+        function transferBatch(batchIndex) {
+            if (batchIndex >= batchCount) return;
+
+            var batch = files.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+            var request = {
+                level: sourceLevel,
+                record_id: sourceId,
+                target_level: Number(level),
+                target_id: Number(id),
+                data_ids: $.map(batch, function (file) { return file.data_id; })
+            };
+            request[config.csrfName] = config.csrfHash;
+
+            $.post(config.transferUploadedUrl, request, function (response) {
+                updateCsrf(response);
+                if (!response || response.success !== true) {
+                    $('#documents-transfer-message').addClass('error').text(
+                        response && response.message ? response.message : 'The files could not be transferred.'
+                    ).show();
+                    return;
+                }
+
+                if (batchIndex + 1 < batchCount) {
+                    var nextBatchNumber = batchIndex + 2;
+                    var nextBatchStart = (batchIndex + 1) * batchSize + 1;
+                    var nextBatchEnd = Math.min((batchIndex + 2) * batchSize, files.length);
+                    closeTransferModal();
+
+                    documentsSwal({
+                        title: 'Continue to Transfer Batch ' + nextBatchNumber + '?',
+                        text: 'Batch ' + (batchIndex + 1) + ' transferred successfully. Continue with files ' +
+                            nextBatchStart + '-' + nextBatchEnd + ' of ' + files.length + '?',
+                        icon: 'question',
+                        confirmText: 'Continue transferring',
+                        cancelText: 'Cancel remaining batches'
+                    }).done(function (result) {
+                        if (result.confirmed) {
+                            transferBatch(batchIndex + 1);
+                        } else {
+                            currentChecks().prop('checked', false);
+                            updateSelection();
+                            table.ajax.reload(null, false);
+                            showMessage('success', 'Transfer stopped after Batch ' + (batchIndex + 1) + '.');
+                        }
+                    });
+                    return;
+                }
+
+                closeTransferModal();
+                if (closeViewerAfter) closeUnifiedViewer();
+                currentChecks().prop('checked', false);
+                updateSelection();
+                table.ajax.reload(null, false);
+
+                if (batchCount > 1) {
+                    documentsAlert(
+                        'Transfer complete',
+                        'All ' + batchCount + ' transfer batches completed successfully.',
+                        'success'
+                    );
+                } else {
+                    showMessage('success', response.message);
+                }
+            }, 'json').fail(function () {
+                $('#documents-transfer-message').addClass('error').text(
+                    'The server could not transfer Batch ' + (batchIndex + 1) + '.'
+                ).show();
+            });
+        }
+
+        transferBatch(0);
     }
     $transferSelected.on('click', function () {
         var files = selectedFileRows();
@@ -4976,21 +5046,110 @@ showCurrentFolderRenameModal();
             return;
         }
 
-        var $form = $('<form>', {
-            method: 'post',
-            action: config.downloadSelectedUrl,
-            style: 'display:none'
-        });
+        var batchSize = 100;
+        var batchCount = Math.ceil(files.length / batchSize);
 
-        $.each(files, function (_, file) {
-            $('<input>', {
-                type: 'hidden',
-                name: 'tokens[]',
-                value: file.data_id
-            }).appendTo($form);
-        });
+        function downloadBatch(batchIndex) {
+            if (batchIndex >= batchCount) return;
 
-        $form.appendTo(document.body).trigger('submit').remove();
+            var batch = files.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize);
+            var formData = new FormData();
+
+            $.each(batch, function (_, file) {
+                formData.append('tokens[]', file.data_id);
+            });
+            formData.append('batch_number', batchIndex + 1);
+            formData.append('batch_count', batchCount);
+
+            fetch(config.downloadSelectedUrl, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            }).then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Batch ' + (batchIndex + 1) + ' could not be prepared.');
+                }
+
+                var disposition = response.headers.get('Content-Disposition') || '';
+                var match = disposition.match(/filename="?([^";]+)"?/i);
+                var filename = match && match[1]
+                    ? match[1]
+                    : 'RMS_Selected_Documents_Batch_' + (batchIndex + 1) + '.zip';
+
+                return response.blob().then(function (blob) {
+                    return { blob: blob, filename: filename };
+                });
+            }).then(function (download) {
+                var url = window.URL.createObjectURL(download.blob);
+                var anchor = document.createElement('a');
+                anchor.href = url;
+                anchor.download = download.filename;
+                anchor.style.display = 'none';
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+                window.setTimeout(function () {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+
+                /* Ask before preparing each remaining ZIP batch. */
+                if (batchIndex + 1 < batchCount) {
+                    var nextBatchNumber = batchIndex + 2;
+                    var nextBatchStart = (batchIndex + 1) * batchSize + 1;
+                    var nextBatchEnd = Math.min((batchIndex + 2) * batchSize, files.length);
+
+                    var askForNextBatch = function () {
+                        documentsSwal({
+                            title: 'Continue to Batch ' + nextBatchNumber + '?',
+                            text: 'Batch ' + (batchIndex + 1) + ' has been downloaded. Continue with Batch ' +
+                                nextBatchNumber + ' (' + nextBatchStart + '-' + nextBatchEnd + ' of ' + files.length + ' documents)?',
+                            icon: 'question',
+                            confirmText: 'Continue downloading',
+                            cancelText: 'Cancel remaining batches'
+                        }).done(function (result) {
+                            if (result.confirmed) {
+                                downloadBatch(batchIndex + 1);
+                            }
+                        });
+                    };
+
+                    /*
+                     * The browser's native Save dialog is outside JavaScript's
+                     * control. Wait until the RMS window receives focus again
+                     * so this confirmation does not appear behind that dialog.
+                     */
+                    var focusHandled = false;
+                    var onDownloadDialogClosed = function () {
+                        if (focusHandled) return;
+                        focusHandled = true;
+                        window.removeEventListener('focus', onDownloadDialogClosed);
+                        window.setTimeout(askForNextBatch, 250);
+                    };
+                    window.addEventListener('focus', onDownloadDialogClosed);
+
+                    /* If no native Save dialog opens, continue with the prompt. */
+                    window.setTimeout(function () {
+                        if (document.hasFocus()) {
+                            onDownloadDialogClosed();
+                        }
+                    }, 1500);
+                } else if (batchCount > 1) {
+                    documentsAlert(
+                        'Download complete',
+                        'All ' + batchCount + ' batches have finished downloading.',
+                        'success'
+                    );
+                }
+            }).catch(function (error) {
+                documentsAlert(
+                    'Download could not be completed',
+                    error.message || 'One of the download batches failed.',
+                    'error'
+                );
+            });
+        }
+
+        downloadBatch(0);
     });
     $deleteFiles.on('click', function () {
         var files = selectedFileRows();
@@ -5565,8 +5724,8 @@ showCurrentFolderRenameModal();
         var maximumSize = 15 * 1024 * 1024;
         var index;
 
-        if (files.length > 250) {
-            return 'A maximum of 250 ' + label +
+        if (files.length > 100) {
+            return 'A maximum of 100 ' + label +
                 ' files may be uploaded at one time.';
         }
 
@@ -6641,7 +6800,7 @@ showCurrentFolderRenameModal();
             processing: true,
             serverSide: true,
             pagingType: 'simple',
-            lengthMenu: [10, 25, 50, 100],
+            lengthMenu: [10, 25, 50, 100, 200],
             pageLength: 50,
             stateSave: true,
             stateDuration: -1,

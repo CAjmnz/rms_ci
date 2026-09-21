@@ -376,9 +376,65 @@
 
     if (batchForm) {
         batchForm.addEventListener('submit', function (event) {
-            if (document.querySelectorAll('.document-selector:checked').length === 0) {
+            var checkedSelectors = Array.prototype.slice.call(
+                document.querySelectorAll('.document-selector:checked')
+            );
+
+            if (checkedSelectors.length === 0) {
                 event.preventDefault();
                 return;
+            }
+
+            if (checkedSelectors.length > 100) {
+                event.preventDefault();
+                var batchSize = 100;
+                var batchCount = Math.ceil(checkedSelectors.length / batchSize);
+
+                for (var batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+                    (function (index) {
+                        var form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = batchForm.action;
+                        form.target = '_blank';
+                        form.style.display = 'none';
+
+                        Array.prototype.slice.call(batchForm.elements).forEach(function (element) {
+                            if (element.name && element.type === 'hidden' && element.name !== 'document_tokens[]') {
+                                var hidden = document.createElement('input');
+                                hidden.type = 'hidden';
+                                hidden.name = element.name;
+                                hidden.value = element.value;
+                                form.appendChild(hidden);
+                            }
+                        });
+
+                        checkedSelectors.slice(index * batchSize, (index + 1) * batchSize).forEach(function (selector) {
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'document_tokens[]';
+                            input.value = selector.value;
+                            form.appendChild(input);
+                        });
+
+                        var batchNumber = document.createElement('input');
+                        batchNumber.type = 'hidden';
+                        batchNumber.name = 'batch_number';
+                        batchNumber.value = index + 1;
+                        form.appendChild(batchNumber);
+
+                        var totalBatches = document.createElement('input');
+                        totalBatches.type = 'hidden';
+                        totalBatches.name = 'batch_count';
+                        totalBatches.value = batchCount;
+                        form.appendChild(totalBatches);
+
+                        window.setTimeout(function () {
+                            document.body.appendChild(form);
+                            form.submit();
+                            document.body.removeChild(form);
+                        }, index * 500);
+                    })(batchIndex);
+                }
             }
 
             if (downloadButton) {
