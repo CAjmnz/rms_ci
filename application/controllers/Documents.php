@@ -1220,6 +1220,94 @@ class Documents extends CI_Controller
     }
 
     /**
+     * Validate whether a Manage Documents hierarchy is fully unpublished
+     * before an action that requires an unpublished path.
+     */
+    public function validate_unpublished_path()
+    {
+        if (!$this->require_manager()) {
+            return;
+        }
+
+        if (strtoupper($this->input->method()) !== 'POST') {
+            show_404();
+            return;
+        }
+
+        $level = $this->normalize_level($this->input->post('level', TRUE));
+        $record_id = (int) $this->input->post('record_id', TRUE);
+
+        if ($record_id <= 0) {
+            return $this->json(TRUE, 'The current path does not require an unpublished-folder check.', array(
+                'blockers' => array()
+            ));
+        }
+
+        $blockers = $this->published_path_blockers($level, $record_id);
+        if ($blockers === FALSE) {
+            return $this->json(FALSE, 'The selected document path could not be identified.');
+        }
+
+        return $this->json(TRUE, empty($blockers)
+            ? 'The document path is unpublished and available for this action.'
+            : 'The selected path contains published folders.', array(
+                'blockers' => $blockers
+            ));
+    }
+
+    /**
+     * Return every published filename/subfolder in the selected hierarchy.
+     * This is read-only and is used only to explain why an action is blocked.
+     */
+    private function published_path_blockers($level, $record_id)
+    {
+        $level = $this->normalize_level($level);
+        $record_id = (int) $record_id;
+        $record = $this->Documents_model->find($level, $record_id);
+
+        if (!$record) {
+            return FALSE;
+        }
+
+        $blockers = array();
+
+        $filename_publish_status = isset($record['filename_publish_status'])
+            ? (int) $record['filename_publish_status']
+            : 0;
+        if ($filename_publish_status === 1) {
+            $blockers[] = array(
+                'type' => 'Filename',
+                'name' => isset($record['filename'])
+                    ? (string) $record['filename']
+                    : 'Unnamed Filename'
+            );
+        }
+
+        for ($current = 1; $current <= $level; $current++) {
+            $name_key = 'subfolder' . $current . '_name';
+            $status_key = $current === $level
+                ? 'publish_status'
+                : 'subfolder' . $current . '_publish_status';
+            $publish_status = isset($record[$status_key])
+                ? (int) $record[$status_key]
+                : 0;
+
+            if ($publish_status !== 1) {
+                continue;
+            }
+
+            $blockers[] = array(
+                'type' => 'Subfolder' . $current,
+                'name' => isset($record[$name_key])
+                    ? (string) $record[$name_key]
+                    : 'Unnamed Subfolder'
+            );
+        }
+
+        return $blockers;
+    }
+
+    /**
      * Download the selected Manage Documents files as one ZIP archive.
      * Even a single selected file is wrapped in a ZIP so batch-download
      * behavior is consistent and physical storage names remain private.
@@ -1252,14 +1340,18 @@ class Documents extends CI_Controller
             return;
         }
 
-        $documents = array();
-        foreach (array_unique($tokens) as $token) {
-            $data_id = $this->decrypt_document_id_token((string) $token, 'document');
-            if ($data_id === FALSE || $data_id <= 0) {
-                show_error('One or more selected documents are invalid.', 400);
-                return;
-            }
+        /* The browser sends the opaque data_id token used by the table rows.
+         * Resolve the whole submitted set through the shared resolver so
+         * every selected token is converted to its internal data_id before
+         * the ZIP is built. Legacy numeric IDs remain supported as well. */
+        $resolved_ids = $this->resolve_document_ids($tokens, 'document');
+        if (count($resolved_ids) !== count($tokens)) {
+            show_error('One or more selected documents are invalid.', 400);
+            return;
+        }
 
+        $documents = array();
+        foreach ($resolved_ids as $data_id) {
             $document = $this->Documents_model->get_document_file($data_id);
             if (!$document) {
                 show_error('One or more selected documents no longer exist.', 404);

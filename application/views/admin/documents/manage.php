@@ -562,11 +562,14 @@ $build_subfolder_parent_label = function ($path) {
                         <?php if ($active_level > 0): ?>
                             <?php
                             $back_index = count($breadcrumbs) - 2;
-                            $back_url = isset($breadcrumbs[$back_index]['url'])
+                            $back_url = isset($breadcrumbs[$back_index]['url']) && $breadcrumbs[$back_index]['url'] !== ''
                                 ? $breadcrumbs[$back_index]['url']
                                 : $manage_root_url;
                             ?>
-
+                            <a class="documents-back" href="<?php echo html_escape($back_url); ?>" aria-label="Back to previous folder">
+                                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                                <span>Back</span>
+                            </a>
                         <?php endif; ?>
 
                     </nav>
@@ -629,6 +632,7 @@ $build_subfolder_parent_label = function ($path) {
                                 </button>
                                 <button type="button" id="documents-pin-selected" disabled><i class="bi bi-pin-angle-fill"></i> Pin selected items</button>
                                 <button type="button" id="documents-unpin-selected" disabled><i class="bi bi-pin-angle"></i> Unpin selected items</button>
+                                <button type="button" id="documents-view-selected" disabled><i class="bi bi-eye"></i> View selected files</button>
                                 <button type="button" id="documents-download-selected" disabled><i class="bi bi-download"></i> Download selected files (ZIP)</button>
                                 <button type="button" id="documents-transfer-files" disabled><i class="bi bi-arrow-left-right"></i> Transfer selected files</button>
                                 <button type="button" id="documents-delete-files" disabled><i class="bi bi-trash"></i> Delete selected items</button>
@@ -1461,6 +1465,89 @@ $build_subfolder_parent_label = function ($path) {
             </div>
         </div>
     </div>
+
+    <!-- Separate viewer for files selected from List View. It intentionally uses
+         the same viewer visual language, but has its own state and controls so
+         the normal single-document viewer is never repurposed for bulk review. -->
+    <div class="unified-viewer selected-files-viewer" id="selected-files-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="selected-files-title">
+        <div class="unified-viewer-card">
+            <div class="unified-viewer-head">
+                <div class="unified-viewer-heading">
+                    <small>SELECTED FILES VIEWER</small>
+                    <div class="unified-viewer-file-meta">
+                        <h3 id="selected-files-title">Selected documents</h3>
+                        <small id="selected-files-position">File 1 of 1</small>
+                    </div>
+                    <div class="unified-viewer-comment" id="selected-files-path" title="Document full path">—</div>
+                </div>
+                <div class="unified-viewer-head-actions">
+                    <div class="unified-actions-position" aria-label="Actions position">
+                        <button type="button" id="selected-files-actions-position-toggle" aria-label="Switch actions position">
+                            <i class="bi bi-layout-sidebar-inset"></i><span>Side</span>
+                        </button>
+                    </div>
+                    <button type="button" class="unified-viewer-close" id="selected-files-close" aria-label="Close selected files viewer">&times;</button>
+                </div>
+            </div>
+            <div class="unified-viewer-workspace">
+                <aside class="unified-viewer-sidebar" id="selected-files-sidebar" aria-label="Selected files viewer actions">
+                    <div class="unified-viewer-sidebar-resizer" id="selected-files-sidebar-resizer" aria-hidden="true"></div>
+                    <div class="unified-viewer-side-section unified-file-actions-menu">
+                        <span class="unified-viewer-side-label">Selected files</span>
+                        <button type="button" id="selected-files-actions-toggle" aria-expanded="false" aria-haspopup="true">
+                            <i class="bi bi-three-dots"></i><span>File actions</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-file-actions-dropdown" id="selected-files-actions-dropdown" hidden>
+                            <button type="button" id="selected-files-transfer"><i class="bi bi-arrow-left-right"></i><span>Transfer selected files</span></button>
+                            <button type="button" id="selected-files-download"><i class="bi bi-file-earmark-zip"></i><span>Download files (ZIP)</span></button>
+                            <button type="button" class="danger" id="selected-files-delete"><i class="bi bi-trash"></i><span>Delete selected files</span></button>
+                        </div>
+                    </div>
+                    <div class="unified-viewer-side-section unified-zoom-menu">
+                        <span class="unified-viewer-side-label">Zoom</span>
+                        <button type="button" id="selected-files-zoom-toggle" aria-expanded="false" aria-haspopup="true">
+                            <i class="bi bi-search"></i><span>Zoom</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-zoom-actions-dropdown" id="selected-files-zoom-dropdown" hidden>
+                            <div class="unified-zoom-stepper" aria-label="Zoom controls">
+                                <button type="button" id="selected-files-zoom-out" aria-label="Zoom out"><i class="bi bi-dash-lg"></i></button>
+                                <strong class="unified-viewer-zoom" id="selected-files-zoom">100%</strong>
+                                <button type="button" id="selected-files-zoom-in" aria-label="Zoom in"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <div class="unified-zoom-size-control">
+                                <button type="button" id="selected-files-size-toggle" aria-expanded="false" aria-haspopup="true">
+                                    <i class="bi bi-arrows-fullscreen" id="selected-files-size-icon"></i>
+                                    <span id="selected-files-size-label">Fit to Screen</span>
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                                <div class="unified-zoom-size-menu" id="selected-files-size-menu" hidden>
+                                    <button type="button" id="selected-files-fit"><i class="bi bi-arrows-fullscreen"></i><span>Fit to Screen</span></button>
+                                    <button type="button" id="selected-files-actual"><i class="bi bi-aspect-ratio"></i><span>Actual Size</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="unified-viewer-side-section unified-view-mode">
+                        <span class="unified-viewer-side-label">View options</span>
+                        <button type="button" id="selected-files-view-mode-toggle" aria-expanded="false" aria-haspopup="true">
+                            <i class="bi bi-display"></i><span id="selected-files-view-mode-label">Page Navigation</span><i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="unified-view-mode-menu" id="selected-files-view-mode-menu" hidden>
+                            <button type="button" class="is-active" data-selected-view-mode="page"><i class="bi bi-display"></i><span><strong>Page Navigation</strong><small>← → arrow keys</small></span></button>
+                            <button type="button" data-selected-view-mode="vertical"><i class="bi bi-arrows-expand-vertical"></i><span><strong>Vertical Scroll</strong><small>↑ ↓ scroll pages</small></span></button>
+                        </div>
+                    </div>
+                </aside>
+                <div class="unified-viewer-body" id="selected-files-body">
+                    <button type="button" class="unified-canvas-nav previous" id="selected-files-previous" aria-label="Previous selected file"><i class="bi bi-chevron-left"></i></button>
+                    <img id="selected-files-image" alt="Selected document preview" draggable="false" hidden>
+                    <iframe id="selected-files-frame" title="Selected document preview" hidden></iframe>
+                    <div class="unified-vertical-scroll" id="selected-files-vertical-scroll" hidden></div>
+                    <button type="button" class="unified-canvas-nav next" id="selected-files-next" aria-label="Next selected file"><i class="bi bi-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="documents-drop-overlay" id="documents-drop-overlay"><strong><i class="bi bi-cloud-arrow-up"></i> Drop files to upload to this folder</strong></div>
 
     <script>
@@ -1480,6 +1567,7 @@ $build_subfolder_parent_label = function ($path) {
                                     'folderFilesUrl' => site_url('administrator/documents/view_documents') . '?datatable=1',
                                     'fileUrl' => site_url('administrator/documents/file'),
                                     'downloadSelectedUrl' => site_url('administrator/documents/download-selected'),
+                                    'validateUnpublishedPathUrl' => site_url('administrator/documents/validate-unpublished-path'),
                                     'uploadUrl' => site_url('administrator/documents/upload'),
                                     'checkUploadDuplicatesUrl' => site_url('administrator/documents/check-upload-duplicates'),
                                     'createFilenameUrl' => site_url('administrator/documents/create-filename'),
@@ -1537,7 +1625,7 @@ $build_subfolder_parent_label = function ($path) {
                          * Level 4 unrestricted unpublished-path behavior.
                          */
                         /* VIEWER FIX: new version forces the browser to load the right-drag and scroll-lock code. */
-                        'assets/js/rms-documents.js?v=20260909-marquee-transfer-v9'
+                        'assets/js/rms-documents.js?v=20260922-view-selected-actions-v1'
                     ); ?>"></script>
 </body>
 
