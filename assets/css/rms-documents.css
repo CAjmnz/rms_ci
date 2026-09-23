@@ -1446,16 +1446,15 @@
 /* VIEWER FIX: keep the dialog's height/max-height inside the viewport so its content cannot enlarge it. */
 .unified-viewer-card {
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 24px 80px rgba(0, 0, 0, .28);
+    border-radius: 0;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
-    height: min(90vh, 860px);
-    height: min(90dvh, 860px);
-    max-height: calc(100vh - 56px);
-    max-height: calc(100dvh - 56px);
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
     overflow: hidden;
-    width: min(1120px, 95vw);
+    width: 100vw;
 }
 
 /* Compact viewer header; all working document controls live in the side rail. */
@@ -2957,6 +2956,17 @@
 #selected-files-image,
 #uploaded-image {
     -webkit-user-drag: none;
+}
+
+/* Default document picture size: use the viewer height while preserving
+ * the image's natural aspect ratio. Zoom controls can still change it. */
+#unified-file-image,
+#selected-files-image {
+    height: auto;
+    width: auto;
+    max-height: calc(100% - 28px);
+    max-width: calc(100% - 28px);
+    object-fit: contain;
 }
 
 /* The selected-files viewer intentionally shares the document viewer shell,

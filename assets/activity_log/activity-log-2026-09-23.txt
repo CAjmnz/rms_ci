@@ -1,0 +1,65 @@
+rose|2026-09-23 08:10:16|Login to Administrator Portal|Administrator
+rose|2026-09-23 08:35:23|RMS Action: Documents / validate_unpublished_path (level=1, record_id=49)|Administrator
+rose|2026-09-23 08:35:23|RMS Action: Documents / download_selected (batch_number=1, batch_count=1)|Administrator
+rose|2026-09-23 10:42:50|Login to Administrator Portal|Administrator
+rose|2026-09-23 10:42:55|Login to Administrator Portal|Administrator
+rose|2026-09-23 10:45:43|RMS Action: Documents / validate_unpublished_path (level=1, record_id=49)|Administrator
+rose|2026-09-23 10:45:43|RMS Action: Documents / download_selected (batch_number=1, batch_count=1)|Administrator
+rose|2026-09-23 10:46:15|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=696c17b6e413dcb4bbbe9b69b6d2c7fcc5b2ffad0e2bef73229851e9e01d04ce534f9aa2a48eb...)|Administrator
+rose|2026-09-23 10:57:07|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=img_0001.jpg,img_0002.jpg,img_0003.jpg,img_0004.jpg,img_0005.jpg,img_0006.jpg...)|Administrator
+rose|2026-09-23 10:57:07|Upload Data: img_0001.jpg, img_0002.jpg, img_0003.jpg, img_0004.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg, img_0058.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg|Administrator
+rose|2026-09-23 10:57:07|Upload Data: img_0009.jpg, img_0010.jpg, img_0011.jpg, img_0012.jpg, img_0013.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg|Administrator
+rose|2026-09-23 10:57:07|Upload Data: img_0017.jpg, img_0018.jpg, img_0019.jpg, img_0020.jpg, img_0021.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg, img_0013.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg|Administrator
+rose|2026-09-23 10:57:08|Upload Data: img_0025.jpg, img_0026.jpg, img_0027.jpg, img_0028.jpg, img_0029.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg, img_0021.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg|Administrator
+rose|2026-09-23 10:57:08|Upload Data: img_0033.jpg, img_0034.jpg, img_0035.jpg, img_0036.jpg, img_0037.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg, img_0029.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg|Administrator
+rose|2026-09-23 10:57:08|Upload Data: img_0041.jpg, img_0042.jpg, img_0043.jpg, img_0044.jpg, img_0045.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg, img_0037.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg|Administrator
+rose|2026-09-23 10:57:08|Upload Data: img_0049.jpg, img_0050.jpg, img_0051.jpg, img_0052.jpg, img_0053.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg, img_0045.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg|Administrator
+rose|2026-09-23 10:57:09|Upload Data: img_0057.jpg, img_0058.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg, img_0053.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg|Administrator
+rose|2026-09-23 10:58:28|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=4f4c9725deb582045ae14e7be927fd43104deccd1b20e6267f6d94ebc604767cf05792e61034b...)|Administrator
+rose|2026-09-23 11:00:31|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=img_0001.jpg,img_0002.jpg,img_0003.jpg,img_0004.jpg,img_0005.jpg,img_0006.jpg...)|Administrator
+rose|2026-09-23 11:00:31|Upload Data: img_0001.jpg, img_0002.jpg, img_0003.jpg, img_0004.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg|Administrator
+rose|2026-09-23 11:00:31|Upload Data: img_0009.jpg, img_0010.jpg, img_0011.jpg, img_0012.jpg, img_0013.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg|Administrator
+rose|2026-09-23 11:00:31|Upload Data: img_0017.jpg, img_0018.jpg, img_0019.jpg, img_0020.jpg, img_0021.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg|Administrator
+rose|2026-09-23 11:00:31|Upload Data: img_0025.jpg, img_0026.jpg, img_0027.jpg, img_0028.jpg, img_0029.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg|Administrator
+rose|2026-09-23 11:00:32|Upload Data: img_0033.jpg, img_0034.jpg, img_0035.jpg, img_0036.jpg, img_0037.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg|Administrator
+rose|2026-09-23 11:00:32|Upload Data: img_0041.jpg, img_0042.jpg, img_0043.jpg, img_0044.jpg, img_0045.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg|Administrator
+rose|2026-09-23 11:00:32|Upload Data: img_0049.jpg, img_0050.jpg, img_0051.jpg, img_0052.jpg, img_0053.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg|Administrator
+rose|2026-09-23 11:00:32|Upload Data: img_0057.jpg, img_0058.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg|Administrator
+rose|2026-09-23 11:13:58|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=c0609b152e51657b03a5a68628275819623892793dc29330a5cfae5aeccbbbb88e5c790047961...)|Administrator
+rose|2026-09-23 11:14:27|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=img_0001.jpg,img_0002.jpg,img_0003.jpg,img_0004.jpg,img_0005.jpg,img_0006.jpg...)|Administrator
+rose|2026-09-23 11:14:27|Upload Data: img_0001.jpg, img_0002.jpg, img_0003.jpg, img_0004.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg|Administrator
+rose|2026-09-23 11:14:27|Upload Data: img_0009.jpg, img_0010.jpg, img_0011.jpg, img_0012.jpg, img_0013.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg|Administrator
+rose|2026-09-23 11:14:27|Upload Data: img_0017.jpg, img_0018.jpg, img_0019.jpg, img_0020.jpg, img_0021.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg|Administrator
+rose|2026-09-23 11:14:28|Upload Data: img_0025.jpg, img_0026.jpg, img_0027.jpg, img_0028.jpg, img_0029.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg|Administrator
+rose|2026-09-23 11:14:28|Upload Data: img_0033.jpg, img_0034.jpg, img_0035.jpg, img_0036.jpg, img_0037.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg|Administrator
+rose|2026-09-23 11:14:28|Upload Data: img_0041.jpg, img_0042.jpg, img_0043.jpg, img_0044.jpg, img_0045.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg|Administrator
+rose|2026-09-23 11:14:28|Upload Data: img_0049.jpg, img_0050.jpg, img_0051.jpg, img_0052.jpg, img_0053.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg|Administrator
+rose|2026-09-23 11:14:28|Upload Data: img_0057.jpg, img_0058.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg|Administrator
+rose|2026-09-23 11:26:23|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=d72efd8c37db186f5755ac43c5f1b68b5b0d9aed711693eda3d5d89d3f6c9a5767ea6e4a9e882...)|Administrator
+rose|2026-09-23 11:26:52|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=intergrate.jpg,it still looks the same .jpg,just like drive .jpg,kina bolokan...)|Administrator
+rose|2026-09-23 11:26:53|Upload Data: intergrate.jpg, it still looks the same .jpg, just like drive .jpg, kina bolokan .jpg, line form.jpg, link.jpg, Long Outstanding 2.png, Long Outstanding 3.png|Administrator
+rose|2026-09-23 11:26:53|Upload Data: long outstanding_fixrite.png, Long Outstanding_Supermarket.png, Long outstanding.png, long outstanding1.png, loo.jpg, make it like this .jpg, make the modal small.jpg, masamangtao.jpg|Administrator
+rose|2026-09-23 11:26:53|Upload Data: might mouse.jpg, modall.jpg, no datatabl;e.jpg, nonmoving.png, on top .jpg, opin.jpg, PAGE.jpg, pagination on top .jpg|Administrator
+rose|2026-09-23 11:26:53|Upload Data: pagination.jpg, pinfolder.jpg, pinn modal.jpg, pinnne.jpg, pinnnn.jpg, pinnthis.jpg, pins.jpg, pinsearch.jpg|Administrator
+rose|2026-09-23 11:26:53|Upload Data: pinui.jpg, re designing the upload .jpg, reconnecting.jpg, redesigning .jpg, redirection .jpg, refer .jpg, reference 2.jpg, reference 3.jpg|Administrator
+rose|2026-09-23 11:26:53|Upload Data: reference1 .jpg, remoiver .jpg, remove the boxes.jpg, rename.jpg, renameing modal .jpg, rud.jpg, same file.jpg, Screenshot 2026-08-25 174534.jpg|Administrator
+rose|2026-09-23 11:26:54|Upload Data: Screenshot 2026-08-26 085422.jpg, Screenshot 2026-08-26 085440.jpg, Screenshot 2026-08-26 092516.jpg, Screenshot 2026-08-26 092555.jpg, Screenshot 2026-08-26 095714.jpg, Screenshot 2026-08-26 145956.jpg, Screenshot 2026-08-26 173932.jpg, Screenshot 2026-08-26 175908.jpg|Administrator
+rose|2026-09-23 11:26:54|Upload Data: Screenshot 2026-08-27 083308.jpg, Screenshot 2026-08-27 102148.jpg, Screenshot 2026-08-27 110411.jpg, Screenshot 2026-08-27 111813.jpg, Screenshot 2026-08-27 114337.jpg, Screenshot 2026-08-28 085507.jpg, Screenshot 2026-08-28 085532.jpg, Screenshot 2026-08-28 090155.jpg|Administrator
+rose|2026-09-23 11:26:54|Upload Data: Screenshot 2026-08-28 091958.jpg, Screenshot 2026-08-28 095045.jpg, Screenshot 2026-08-28 101004.jpg, Screenshot 2026-08-28 110448.jpg, Screenshot 2026-08-28 111747.jpg, Screenshot 2026-08-28 114254.jpg, Screenshot 2026-08-28 143408.jpg, Screenshot 2026-08-28 145612.jpg|Administrator
+rose|2026-09-23 11:26:54|Upload Data: Screenshot 2026-08-28 150314.jpg, Screenshot 2026-08-28 153510.jpg, Screenshot 2026-08-28 155547.jpg, Screenshot 2026-08-28 182117.jpg, Screenshot 2026-08-28 182128.jpg, Screenshot 2026-08-28 182139.jpg, Screenshot 2026-08-28 182150.jpg, Screenshot 2026-09-01 170943.jpg|Administrator
+rose|2026-09-23 11:26:54|Upload Data: Screenshot 2026-09-02 095150.jpg, Screenshot 2026-09-02 100045.jpg, Screenshot 2026-09-03 092554.jpg, Screenshot 2026-09-04 084007.jpg, Screenshot 2026-09-04 091650.jpg, Screenshot 2026-09-07 153711.jpg, Screenshot 2026-09-07 153856.jpg, Screenshot 2026-09-08 154327.jpg|Administrator
+rose|2026-09-23 11:26:55|Upload Data: Screenshot 2026-09-16 090258.jpg, search button.jpg, sidebar.jpg, sss.jpg, st1.jpg, still .jpg, suggestions.jpg, swal conversion .jpg|Administrator
+rose|2026-09-23 11:26:55|Upload Data: system settings.jpg, the design reference .jpg, topbarr.jpg, ugma napud .jpg|Administrator
+rose|2026-09-23 11:27:13|RMS Action: Documents / validate_unpublished_path (level=1, record_id=49)|Administrator
+rose|2026-09-23 11:27:13|RMS Action: Documents / download_selected (batch_number=1, batch_count=1)|Administrator
+rose|2026-09-23 11:29:12|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=e1442497d60a7b118898e3dafddb2e1dc3bf9101603787b503fc2c7e9d483911630e9357f781f...)|Administrator
+rose|2026-09-23 11:29:20|RMS Action: Documents / delete_uploaded_files (level=1, record_id=49, data_ids=5fbf5b57c700d93a518b28cd4506d290ea44b5f0aa4093a29db057aadaa5fd648e4a14d440617...)|Administrator
+rose|2026-09-23 13:40:27|RMS Action: Documents / check_upload_duplicates (record_level=1, record_id=49, file_names=img_0001.jpg,img_0002.jpg,img_0003.jpg,img_0004.jpg,img_0005.jpg,img_0006.jpg...)|Administrator
+rose|2026-09-23 13:40:28|Upload Data: img_0001.jpg, img_0002.jpg, img_0003.jpg, img_0004.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg|Administrator
+rose|2026-09-23 13:40:28|Upload Data: img_0009.jpg, img_0010.jpg, img_0011.jpg, img_0012.jpg, img_0013.jpg, img_0014.jpg, img_0015.jpg, img_0016.jpg|Administrator
+rose|2026-09-23 13:40:28|Upload Data: img_0017.jpg, img_0018.jpg, img_0019.jpg, img_0020.jpg, img_0021.jpg, img_0022.jpg, img_0023.jpg, img_0024.jpg|Administrator
+rose|2026-09-23 13:40:28|Upload Data: img_0025.jpg, img_0026.jpg, img_0027.jpg, img_0028.jpg, img_0029.jpg, img_0030.jpg, img_0031.jpg, img_0032.jpg|Administrator
+rose|2026-09-23 13:40:29|Upload Data: img_0033.jpg, img_0034.jpg, img_0035.jpg, img_0036.jpg, img_0037.jpg, img_0038.jpg, img_0039.jpg, img_0040.jpg|Administrator
+rose|2026-09-23 13:40:29|Upload Data: img_0041.jpg, img_0042.jpg, img_0043.jpg, img_0044.jpg, img_0045.jpg, img_0046.jpg, img_0047.jpg, img_0048.jpg|Administrator
+rose|2026-09-23 13:40:29|Upload Data: img_0049.jpg, img_0050.jpg, img_0051.jpg, img_0052.jpg, img_0053.jpg, img_0054.jpg, img_0055.jpg, img_0056.jpg|Administrator
+rose|2026-09-23 13:40:29|Upload Data: img_0057.jpg, img_0058.jpg, img_0059.jpg, img_0060.jpg, img_0061.jpg|Administrator

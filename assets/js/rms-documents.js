@@ -4042,11 +4042,7 @@ showCurrentFolderRenameModal();
         var image = $('#unified-file-image').get(0);
         var stage = $('.unified-viewer-body').get(0);
         if (!image || !stage || !image.naturalWidth || !image.naturalHeight) return;
-        unifiedScale = Math.min(
-            (stage.clientWidth - 28) / image.naturalWidth,
-            (stage.clientHeight - 28) / image.naturalHeight,
-            1
-        );
+        unifiedScale = 1;
         unifiedPageScaleLocked = true;
         unifiedOffsetX = 0;
         unifiedOffsetY = 0;
@@ -5613,11 +5609,7 @@ showCurrentFolderRenameModal();
         var image = $('#selected-files-image').get(0);
         var stage = $('#selected-files-body').get(0);
         if (!image || !stage || !image.naturalWidth || !image.naturalHeight) return;
-        selectedViewerScale = Math.min(
-            (stage.clientWidth - 28) / image.naturalWidth,
-            (stage.clientHeight - 28) / image.naturalHeight,
-            1
-        );
+        selectedViewerScale = 1;
         selectedViewerPageScaleLocked = true;
         selectedViewerOffsetX = 0;
         selectedViewerOffsetY = 0;
@@ -6351,6 +6343,27 @@ showCurrentFolderRenameModal();
         }
 
         return Array.prototype.slice.call(input.files);
+    }
+
+    /*
+     * Keep a multi-file upload in the same filename sequence as the reference
+     * folder. This is applied only to the upload batch arrays and does not
+     * change the existing file-selection, viewer, table, or document logic.
+     */
+    function sortUploadFilesByName(files) {
+        return files.slice(0).sort(function (a, b) {
+            var aName = String(a && a.name || '');
+            var bName = String(b && b.name || '');
+
+            return aName.localeCompare(
+                bName,
+                undefined,
+                {
+                    numeric: true,
+                    sensitivity: 'base'
+                }
+            );
+        });
     }
 
     /**
@@ -7198,8 +7211,12 @@ showCurrentFolderRenameModal();
             return;
         }
 
-        var originalFiles = uploadFiles('original');
-        var watermarkFiles = uploadFiles('watermark');
+        var originalFiles = sortUploadFilesByName(
+            uploadFiles('original')
+        );
+        var watermarkFiles = sortUploadFilesByName(
+            uploadFiles('watermark')
+        );
         var validation;
 
         if (!$uploadPath.length || $uploadPath.val() === '') {
