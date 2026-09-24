@@ -6457,6 +6457,8 @@ body:has(#documents-access-modal.show)::-webkit-scrollbar {
 .documents-grid-badge { display:inline-flex; align-items:center; min-height:19px; padding:0 7px; border-radius:999px; font-size:9px; font-weight:800; }
 .documents-grid-badge--download { border:1px solid #bce2d3; background:#effaf6; color:#08765b; }
 .documents-grid-badge--status { background:#fff3d6; color:#9a6200; }
+.documents-grid-badge--published { background:#059669; color:#ffffff; }
+.documents-grid-badge--unpublished { background:#fff3d6; color:#92400e; }
 .documents-grid-empty { grid-column:1/-1; padding:48px 20px; text-align:center; color:#73867f; border:1px dashed #cadfd6; border-radius:14px; }
 @media (max-width:1450px) { .documents-grid-view { grid-template-columns:repeat(5,minmax(0,1fr)); } }
 @media (max-width:1200px) { .documents-grid-view { grid-template-columns:repeat(4,minmax(0,1fr)); } }

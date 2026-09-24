@@ -283,7 +283,7 @@ $build_subfolder_parent_label = function ($path) {
         rel="stylesheet"
         href="<?php echo base_url(
                     /* VIEWER FIX: new version forces the browser to load the updated viewer CSS. */
-                    'assets/css/rms-documents.css?v=20260909-marquee-transfer-v9'
+                    'assets/css/rms-documents.css?v=20260924-grid-publish-badge-v1'
                 ); ?>">
     <link
         rel="stylesheet"
@@ -1625,7 +1625,7 @@ $build_subfolder_parent_label = function ($path) {
                          * Level 4 unrestricted unpublished-path behavior.
                          */
                         /* VIEWER FIX: new version forces the browser to load the right-drag and scroll-lock code. */
-                        'assets/js/rms-documents.js?v=20260922-view-selected-actions-v1'
+                        'assets/js/rms-documents.js?v=20260924-grid-publish-badge-v1'
                     ); ?>"></script>
 </body>
 

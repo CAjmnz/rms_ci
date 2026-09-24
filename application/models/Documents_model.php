@@ -28,14 +28,14 @@ class Documents_model extends CI_Model
             ->from('document_pins')
             ->where('user_id', $user_id)
             ->group_start()
-                ->group_start()
-                    ->where('item_type', 'folder')
-                    ->where('record_level', $folder_level)
-                ->group_end()
-                ->or_group_start()
-                    ->where('item_type', 'document')
-                    ->where('record_level', $document_level)
-                ->group_end()
+            ->group_start()
+            ->where('item_type', 'folder')
+            ->where('record_level', $folder_level)
+            ->group_end()
+            ->or_group_start()
+            ->where('item_type', 'document')
+            ->where('record_level', $document_level)
+            ->group_end()
             ->group_end();
 
         foreach ($this->db->get()->result_array() as $row) {
@@ -534,6 +534,7 @@ class Documents_model extends CI_Model
     }
 
     /** Update original and viewer names after physical rename succeeds. */
+    /** Update original and viewer names after physical rename succeeds. */
     public function rename_uploaded_document(
         $document,
         $original_name,
@@ -541,18 +542,55 @@ class Documents_model extends CI_Model
     ) {
         $this->db->trans_begin();
 
-        if (
-            !$this->db
-                ->where('data_id', (int) $document['data_id'])
-                ->update('data', array('data_name' => $original_name))
-        ) {
+        /*
+     * Update the original document record.
+     */
+        $this->db
+            ->where('data_id', (int) $document['data_id'])
+            ->where('stat', 0);
+
+        if (!$this->db->update('data', array(
+            'data_name' => $original_name
+        ))) {
             $this->db->trans_rollback();
             return FALSE;
         }
 
+        /*
+     * Update the matching watermark/viewer record.
+     *
+     * IMPORTANT:
+     * Do not use date_uploadedf here. The upload timestamps of the
+     * original and watermark records are not guaranteed to be identical.
+     *
+     * The stable identity for the corresponding page is:
+     * file_id + page_nof + complete folder hierarchy.
+     */
         if ($document['viewer_name'] !== '') {
-            $this->apply_viewer_identity($document);
-            if (!$this->db->update('data_f', array('data_namef' => $viewer_name))) {
+            $this->db
+                ->where('file_id', (int) $document['file_id'])
+                ->where('page_nof', (int) $document['page_no'])
+                ->where('statf', 0);
+
+            for ($level = 1; $level <= $this->maximum_level; $level++) {
+                $this->db->where(
+                    'subfolder' . $level . '_idf',
+                    (int) $document['subfolder' . $level . '_id']
+                );
+            }
+
+            if (!$this->db->update('data_f', array(
+                'data_namef' => $viewer_name
+            ))) {
+                $this->db->trans_rollback();
+                return FALSE;
+            }
+
+            /*
+         * A real rename should modify the watermark filename.
+         * If no row was changed, do not commit the transaction.
+         */
+            if ((int) $this->db->affected_rows() <= 0) {
                 $this->db->trans_rollback();
                 return FALSE;
             }
@@ -564,6 +602,7 @@ class Documents_model extends CI_Model
         }
 
         $this->db->trans_commit();
+
         return TRUE;
     }
 
@@ -927,8 +966,7 @@ class Documents_model extends CI_Model
         $level,
         $record_ids,
         $publish_status
-    )
-    {
+    ) {
         $level = $this->normalize_level($level);
         $publish_status = (int) $publish_status === 1 ? 1 : 0;
 
@@ -1041,8 +1079,7 @@ class Documents_model extends CI_Model
     public function get_upload_paths(
         $owned_records = array(),
         $include_all_unpublished = FALSE
-    )
-    {
+    ) {
         $paths = array();
         $owned_records = $this->normalize_owned_records(
             $owned_records
@@ -1491,8 +1528,7 @@ class Documents_model extends CI_Model
     public function get_subfolder_parent_paths(
         $owned_records = array(),
         $include_all_unpublished = FALSE
-    )
-    {
+    ) {
         $paths = array();
         $owned_records = $this->normalize_owned_records(
             $owned_records

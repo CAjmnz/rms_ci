@@ -550,6 +550,7 @@
             var isPinned = Number(row.is_pinned) === 1;
             var meta = '';
             var footer = '';
+            var isPublished = false;
 
             if (isFile) {
                 filePageNumber += 1;
@@ -559,7 +560,8 @@
                 var count = Number(row.document_count) > 0 ? Number(row.document_count) : Number(row.child_count || 0);
                 var noun = Number(row.document_count) > 0 ? 'uploaded file' : 'subfolder';
                 meta = 'ID #' + escapeHtml(row.record_id) + ' &middot; ' + count + ' ' + noun + (count === 1 ? '' : 's');
-                footer = '<span class="documents-grid-badge documents-grid-badge--status">' + (Number(row.publish_status) === 1 ? 'Published' : 'Unpublished') + '</span>';
+                isPublished = Number(row.publish_status) === 1;
+                footer = '<span class="documents-grid-badge documents-grid-badge--status ' + (isPublished ? 'documents-grid-badge--published' : 'documents-grid-badge--unpublished') + '">' + (isPublished ? 'Published' : 'Unpublished') + '</span>';
             }
 
             return '<article class="documents-grid-card' + (isPinned ? ' is-pinned' : '') + '" data-item-type="' + escapeHtml(itemType) + '" data-grid-id="' + escapeHtml(itemId) + '" data-next-url="' + escapeHtml(row.next_url || '') + '">' +
@@ -2661,7 +2663,40 @@ function loadRecord(recordId, done, requestedLevel) {
                 var row = table.row($(this).closest('tr')).data();
                 openUnifiedFileViewer(row);
             } else if (action === 'rename-file') {
-                renameUnifiedFile(table.row($(this).closest('tr')).data());
+                var $renameAction = $(this);
+                var renameRow = table.row($renameAction.closest('tr')).data();
+
+                /* Grid action menus are cloned to <body>, so resolve the
+                 * exact uploaded file from the menu's data-grid-id. */
+                if (!renameRow && $renameAction.closest('.documents-grid-actions-menu').length) {
+                    var $gridRenameMenu = $renameAction.closest('.documents-grid-actions-menu');
+                    var gridRenameId = String(
+                        $gridRenameMenu.attr('data-grid-id') ||
+                        $renameAction.attr('data-id') ||
+                        ''
+                    );
+
+                    table.rows().every(function () {
+                        if (renameRow) return;
+                        var candidate = this.data();
+                        if (!candidate || String(candidate.item_type || '') !== 'file') return;
+
+                        if (String(candidate.data_id || '') === gridRenameId) {
+                            renameRow = candidate;
+                        }
+                    });
+                }
+
+                if (!renameRow) {
+                    documentsAlert(
+                        'Rename unavailable',
+                        'The selected uploaded document could not be identified.',
+                        'error'
+                    );
+                    return;
+                }
+
+                renameUnifiedFile(renameRow);
             } else if (action === 'transfer-file') {
                 var $transferAction = $(this);
                 var transferRow = table.row($transferAction.closest('tr')).data();
@@ -4263,7 +4298,42 @@ showCurrentFolderRenameModal();
                 }
                 file.record_name = name;
                 $('#unified-file-title').text(file.record_name);
-                table.ajax.reload(null, false);
+
+                /*
+                 * Keep the renamed file exactly where the user last saw it.
+                 * A server-side reload would reapply the active Name sort and
+                 * move the file to its new alphabetical position. Update the
+                 * current DataTable row in place instead, then rebuild the
+                 * Grid View from the same in-memory page data.
+                 */
+                if (table) {
+                    table.rows().every(function () {
+                        var row = this.data();
+                        if (!row || row.item_type !== 'file') return;
+
+                        if (String(row.data_id) === String(file.data_id)) {
+                            row.record_name = name;
+                            this.data(row);
+
+                            var node = this.node();
+                            if (node) {
+                                var rowIndex = this.index();
+                                $(node).find('td').eq(1).html(
+                                    renderName(
+                                        row.record_name,
+                                        'display',
+                                        row,
+                                        { row: rowIndex }
+                                    )
+                                );
+                            }
+                        }
+                    });
+
+                    /* Grid View uses the current DataTable page, so it keeps
+                     * the exact same card position after the rename. */
+                    renderDocumentsGrid();
+                }
             }, 'json').fail(function () {
                 documentsAlert('Rename failed', 'The server could not rename the file.', 'error');
             });
@@ -5236,19 +5306,31 @@ showCurrentFolderRenameModal();
         changePublishStatus(0);
     });
 
+    function closeCreateMenu() {
+        $('#documents-create-menu').prop('hidden', true);
+        $('#documents-create-toggle').attr('aria-expanded', 'false');
+    }
+
     $('#documents-create-toggle').on('click', function (event) {
         event.stopPropagation();
         var $button = $(this);
         var $menu = $('#documents-create-menu');
         var willOpen = $menu.prop('hidden');
+
+        // Only one toolbar dropdown may be open at a time.
+        closeBulkMenu();
+
         $menu.prop('hidden', !willOpen);
         $button.attr('aria-expanded', willOpen ? 'true' : 'false');
     });
 
     $(document).on('click', function (event) {
         if (!$(event.target).closest('.documents-create-dropdown').length) {
-            $('#documents-create-menu').prop('hidden', true);
-            $('#documents-create-toggle').attr('aria-expanded', 'false');
+            closeCreateMenu();
+        }
+
+        if (!$(event.target).closest('.documents-bulk').length) {
+            closeBulkMenu();
         }
     });
 
@@ -5340,6 +5422,10 @@ showCurrentFolderRenameModal();
     $('#documents-bulk-toggle').on('click', function (event) {
         event.stopPropagation();
         closeAllActionMenus();
+
+        // Only one toolbar dropdown may be open at a time.
+        closeCreateMenu();
+
         var $menu = $('#documents-bulk-menu');
         var open = $menu.prop('hidden');
         $menu.prop('hidden', !open);
@@ -5353,7 +5439,6 @@ showCurrentFolderRenameModal();
 
     /**
      * Apply the value currently entered in the Documents search field.
-     *
      * Short RMS names such as IT, ICM, CAR, and IAD are applied only when
      * Search is clicked or Enter is pressed. The server-side DataTable performs
      * an Ajax redraw; the complete browser page is not reloaded.

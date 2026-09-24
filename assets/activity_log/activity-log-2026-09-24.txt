@@ -1,0 +1,38 @@
+rose|2026-09-24 09:21:23|Login to Administrator Portal|Administrator
+rose|2026-09-24 09:21:38|Publish Data: 39|Administrator
+rose|2026-09-24 09:22:04|Unpublish Data: 39|Administrator
+rose|2026-09-24 09:28:14|Publish Data: 49|Administrator
+rose|2026-09-24 10:02:59|Unpublish Data: 49|Administrator
+rose|2026-09-24 10:03:05|Publish Data: 49|Administrator
+rose|2026-09-24 10:26:27|Logout from Administrator Portal|Administrator
+rose|2026-09-24 10:26:31|Login to Administrator Portal|Administrator
+rose|2026-09-24 10:26:38|Publish Data: 39|Administrator
+rose|2026-09-24 10:55:27|Logout from Administrator Portal|Administrator
+rose|2026-09-24 11:00:49|Login to Administrator Portal|Administrator
+rose|2026-09-24 11:30:14|Unpublish Data: 39|Administrator
+rose|2026-09-24 14:25:05|Login to Administrator Portal|Administrator
+rose|2026-09-24 14:25:12|Login to Administrator Portal|Administrator
+rose|2026-09-24 14:27:41|RMS Action: Documents / validate_unpublished_path (level=0, record_id=39)|Administrator
+rose|2026-09-24 14:27:41|Create Subfolder: subfolder 1.2|Administrator
+rose|2026-09-24 15:17:52|RMS Action: Documents / validate_unpublished_path (level=1, record_id=55)|Administrator
+rose|2026-09-24 15:17:52|Create Subfolder: subfolder 2.1|Administrator
+rose|2026-09-24 15:18:14|RMS Action: Documents / validate_unpublished_path (level=2, record_id=26)|Administrator
+rose|2026-09-24 15:18:14|Create Subfolder: subfolder  3.1|Administrator
+rose|2026-09-24 15:18:42|RMS Action: Documents / validate_unpublished_path (level=3, record_id=18)|Administrator
+rose|2026-09-24 15:18:42|Create Subfolder: subfolder 3.1|Administrator
+rose|2026-09-24 15:19:24|Update Document Record: subfolder 4 1: 8|Administrator
+rose|2026-09-24 15:20:07|RMS Action: Documents / toggle_pin (item_type=folder, record_level=4, parent_id=18, record_id=8)|Administrator
+rose|2026-09-24 15:21:09|RMS Action: Documents / validate_unpublished_path (level=4, record_id=8)|Administrator
+rose|2026-09-24 15:21:09|Create Subfolder: subfolder 6.1|Administrator
+rose|2026-09-24 15:21:26|Update Document Record: subfolder 5 1: 2|Administrator
+rose|2026-09-24 15:24:38|RMS Action: Documents / validate_unpublished_path (level=5, record_id=2)|Administrator
+rose|2026-09-24 15:24:38|Create Subfolder: subfolder7.1|Administrator
+rose|2026-09-24 15:35:50|Unpublish Data: 49|Administrator
+rose|2026-09-24 15:38:43|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=60e84cc770ff29c3c0d321741b9d4880e8003e071484777cb0732eae8d2d1316fd5d40d969b1a..., name=img_00O1.jpg)|Administrator
+rose|2026-09-24 16:23:45|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=c908c893419a3356b119bb6481d9a614ade50f3c4aa021b130ca1658fa0448420513354b664f2..., name=aridapat.jpg)|Administrator
+rose|2026-09-24 16:31:33|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=eef8dbac6a376ff2e18997b88cf650231010ee245bbaea07a2fad3bd9fccc8f4baba6b939c4fe..., name=zz.jpg)|Administrator
+rose|2026-09-24 16:52:50|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=f04da5b6ae73642e8f5e7d6a0e83665abe1f71c9b5c9c64f9baf1f48653ad295e6ca5ec9de3e3..., name=the.jpg)|Administrator
+rose|2026-09-24 17:18:27|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=d1be9dcc42f57ec60ed332d64eda7e51f1669359765ca7b8978aebf75932c28ff577eb7358240..., name=dapat.jpg)|Administrator
+rose|2026-09-24 17:50:02|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=654b8d9ac8c307b1e83915201f076e9a07e9c4710fb8235a031b57623652b4b79d3a490d2af26..., name=zzzazaza.jpg)|Administrator
+rose|2026-09-24 18:07:20|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=38cf058b82c6504685ca0c185e93e0994c0b07f078a2718f01a04dd43b3f268fe319b4c082ec8..., name=aaa.jpg)|Administrator
+rose|2026-09-24 18:10:48|RMS Action: Documents / rename_uploaded_file (level=1, record_id=49, data_id=1a7c4fc20b55b7db714d9e7e7c6bd8b57d92c0f91d020644c9f4ce41978cde39feb39c0851d13..., name=the 3rd.jpg)|Administrator
