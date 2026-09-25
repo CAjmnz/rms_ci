@@ -976,8 +976,8 @@ class Documents extends CI_Controller
             : '';
 
         $order_request = $this->input->get('order', TRUE);
-        $order_column = 1;
-        $order_direction = 'ASC';
+        $order_column = 4;
+        $order_direction = 'DESC';
 
         if (is_array($order_request) && isset($order_request[0])) {
             if (isset($order_request[0]['column'])) {
@@ -989,10 +989,11 @@ class Documents extends CI_Controller
         }
 
         $order_keys = array(
-            1 => 'data_name',
-            2 => 'page_no',
-            3 => 'date_uploaded',
-            4 => 'status'
+            1 => 'data_id',
+            2 => 'data_name',
+            3 => 'page_no',
+            4 => 'date_uploaded',
+            5 => 'status'
         );
 
         $order_key = isset($order_keys[$order_column]) ? $order_keys[$order_column] : 'data_name';
@@ -2062,19 +2063,18 @@ class Documents extends CI_Controller
         );
 
         $order_request = $this->input->get('order', TRUE);
-        $order_column = 1;
-        $order_direction = 'ASC';
+        $order_column = 3;
+        $order_direction = 'DESC';
 
         if (is_array($order_request) && isset($order_request[0])) {
             if (isset($order_request[0]['column'])) {
                 $order_column = (int) $order_request[0]['column'];
             }
 
-            if (
-                isset($order_request[0]['dir']) &&
-                strtolower($order_request[0]['dir']) === 'desc'
-            ) {
-                $order_direction = 'DESC';
+            if (isset($order_request[0]['dir'])) {
+                $order_direction = strtolower((string) $order_request[0]['dir']) === 'asc'
+                    ? 'ASC'
+                    : 'DESC';
             }
         }
 
@@ -2083,12 +2083,12 @@ class Documents extends CI_Controller
             1 => 'name',
             2 => 'status',
             3 => 'date_modified',
-            4 => 'owner'
+            4 => 'department'
         );
 
         $order_key = isset($order_keys[$order_column])
             ? $order_keys[$order_column]
-            : 'name';
+            : 'date_modified';
 
         $folder_total = $this->Documents_model->count_all($level, '', $parent_id);
         $folder_filtered = $search === ''

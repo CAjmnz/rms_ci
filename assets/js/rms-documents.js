@@ -2874,7 +2874,6 @@ function loadRecord(recordId, done, requestedLevel) {
             }
         }
     );
-
     /**
      * Create the server-side DataTable for Manage Documents.
      * Sends level + parent_id on every ajax request so the list is scoped
@@ -2906,7 +2905,7 @@ function loadRecord(recordId, done, requestedLevel) {
             pageLength: 10,
             lengthMenu: [10, 25, 50, 100, 200],
             searchDelay: 350,
-            order: [[1, 'asc']],
+            order: [[3, 'desc']],
             stateSave: true,
             stateDuration: -1,
             stateSaveCallback: function (settings, data) {
@@ -2952,6 +2951,8 @@ function loadRecord(recordId, done, requestedLevel) {
                 data: function (request) {
                     request.level = config.level;
                     request.parent_id = config.parentId;
+
+                    /* DataTables header sorting is the only table sort control. */
                 },
 
                 dataSrc: function (response) {
@@ -3089,6 +3090,7 @@ function loadRecord(recordId, done, requestedLevel) {
             },
 
             drawCallback: function () {
+
                 var api = this.api();
                 var order = api.order();
                 var lastGroup = '';
@@ -7947,6 +7949,7 @@ showCurrentFolderRenameModal();
             pagingType: 'simple',
             lengthMenu: [10, 25, 50, 100, 200],
             pageLength: 50,
+            order: [[4,'desc']],
             stateSave: true,
             stateDuration: -1,
             stateSaveCallback: function (settings, data) {

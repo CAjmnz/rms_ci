@@ -6571,3 +6571,58 @@ body:has(#documents-access-modal.show)::-webkit-scrollbar {
         grid-template-columns:1fr;
     }
 }
+
+.documents-sort-control {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    flex: 0 0 auto;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.documents-sort-control label {
+    display: none;
+    margin: 0;
+    color: #728078;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.documents-sort-control select,
+.documents-sort-select {
+    display: none;
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 180px;
+    height: 34px;
+    padding: 4px 32px 4px 12px;
+    border: 1px solid #c5d5cc;
+    border-radius: 8px;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231a5f3a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    color: #143528;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.documents-table-wrap > .documents-sort-control:not(.is-placed) {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.documents-data-controls-top .documents-sort-control {
+    position: static;
+    left: auto;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
