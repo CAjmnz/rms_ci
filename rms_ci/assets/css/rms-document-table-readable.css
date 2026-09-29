@@ -1,0 +1,427 @@
+/*
+   User Portal document table readability
+   Scoped to the Documents workspace only.
+   List/DataTable styles only — grid cards use rms-portal-shell-match.css
+*/
+
+/* ----- List head (article list mode, if used) ----- */
+.portal-drive-page .drive-file-list.is-list-view .drive-file-list-head {
+    min-height: 46px !important;
+    color: #314d43 !important;
+    background: #f2f6f4 !important;
+    border-bottom: 1px solid #d6e0dc !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-list-head > span {
+    color: #314d43 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    letter-spacing: .08em !important;
+}
+
+/* ----- List rows only (do NOT apply to grid cards) ----- */
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row {
+    min-height: 60px !important;
+    color: #253d34 !important;
+    border-bottom-color: #dfe7e3 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row:nth-child(even) {
+    background: #f8fbfa !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row:hover {
+    background: #eef8f4 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-open {
+    min-width: 0 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-copy strong {
+    color: #153d31 !important;
+    font-size: 14px !important;
+    font-weight: 750 !important;
+    line-height: 1.35 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-copy small {
+    margin-top: 3px !important;
+    color: #536a61 !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+    line-height: 1.3 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-folder {
+    display: block !important;
+    min-width: 0 !important;
+    color: #354f45 !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1.45 !important;
+    overflow-wrap: anywhere !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-row time {
+    color: #3d554c !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1.4 !important;
+    white-space: nowrap !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-access {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 31px !important;
+    padding: 0 13px !important;
+    color: #076547 !important;
+    background: #eaf7f2 !important;
+    border: 1px solid #bcded1 !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-thumb,
+.portal-drive-page .drive-file-list.is-list-view .drive-file-type-icon {
+    width: 54px !important;
+    height: 54px !important;
+    flex: 0 0 54px !important;
+}
+
+.portal-drive-page .drive-file-heading h3 {
+    color: #173f33 !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+
+.portal-drive-page .drive-file-heading p,
+.portal-drive-page .drive-file-heading-tools {
+    color: #536a61 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+@media (max-width: 900px) {
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-folder,
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-row time {
+        font-size: 11.5px !important;
+    }
+}
+
+@media (max-width: 720px) {
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-row {
+        min-height: 0 !important;
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-copy strong {
+        font-size: 13px !important;
+    }
+
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-folder,
+    .portal-drive-page .drive-file-list.is-list-view .drive-file-row time {
+        white-space: normal !important;
+    }
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-access .drive-file-download {
+    color: #198754 !important;
+    text-decoration: none;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-access .drive-file-download svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #198754 !important;
+    fill: none !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-access .drive-file-download:hover {
+    color: #146c43 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-access .drive-file-download:hover svg {
+    stroke: #146c43 !important;
+}
+
+/* ----- Smaller User Portal grid cards ----- */
+.portal-drive-page .drive-file-list.is-grid-view {
+    grid-template-columns: repeat(auto-fill, 230px) !important;
+    gap: 10px !important;
+    padding: 10px !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-row {
+    width: 230px !important;
+    height: 298px !important;
+    min-height: 298px !important;
+    max-height: 298px !important;
+    box-sizing: border-box !important;
+    padding: 14px !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-preview {
+    width: 140px !important;
+    height: 118px !important;
+}
+
+/* ----- DataTable ----- */
+.portal-drive-page .dataTables_wrapper {
+    width: 100%;
+    color: #354f45;
+}
+
+.portal-drive-page table.rms-user-documents-table {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border: 1px solid #d6e0dc !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th {
+    position: relative;
+    min-height: 46px !important;
+    padding: 14px 32px 14px 14px !important;
+    color: #314d43 !important;
+    background: #f2f6f4 !important;
+    border-bottom: 1px solid #d6e0dc !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    letter-spacing: .08em !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    cursor: pointer;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th.sorting::after,
+.portal-drive-page table.rms-user-documents-table thead th.sorting_asc::after,
+.portal-drive-page table.rms-user-documents-table thead th.sorting_desc::after {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th.sorting::after {
+    content: '↕';
+    color: #7a9187;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th.sorting_asc::after {
+    content: '↑';
+    color: #076547;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th.sorting_desc::after {
+    content: '↓';
+    color: #076547;
+}
+
+.portal-drive-page table.rms-user-documents-table thead th.documents-select-column {
+    width: 48px !important;
+    padding-right: 8px !important;
+    cursor: default;
+}
+
+.portal-drive-page table.rms-user-documents-table tbody td {
+    padding: 6px 10px !important;
+    color: #253d34 !important;
+    border-bottom: 1px solid #dfe7e3 !important;
+    vertical-align: middle !important;
+}
+
+.portal-drive-page table.rms-user-documents-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+.portal-drive-page table.rms-user-documents-table tbody tr:nth-child(even) td {
+    background: #f8fbfa !important;
+}
+
+.portal-drive-page table.rms-user-documents-table tbody tr:hover td {
+    background: #eef8f4 !important;
+}
+
+.portal-drive-page table.rms-user-documents-table .drive-file-name {
+    width: 100%;
+    min-width: 180px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+}
+
+.portal-drive-page table.rms-user-documents-table .drive-file-folder {
+    max-width: 360px;
+}
+
+.portal-drive-page table.rms-user-documents-table .documents-action-cell {
+    width: 100px;
+    text-align: center;
+}
+
+/* Length / search */
+.portal-drive-page .dataTables_wrapper .dataTables_length,
+.portal-drive-page .dataTables_wrapper .dataTables_filter {
+    margin: 0 !important;
+    color: #728078 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_length select,
+.portal-drive-page .dataTables_wrapper .dataTables_filter input {
+    margin: 0 4px !important;
+    height: 36px !important;
+    padding: 0 10px !important;
+    border: 1px solid #dde7e2 !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    color: #253d34 !important;
+    outline: none !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_filter input:focus,
+.portal-drive-page .dataTables_wrapper .dataTables_length select:focus {
+    border-color: #76ad99 !important;
+    box-shadow: 0 0 0 2px rgba(7, 101, 71, .08) !important;
+}
+
+/* Footer layout */
+.portal-drive-page .portal-documents-pagination,
+.portal-drive-page .portal-documents-pagination-top {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 8px 4px !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+}
+
+.portal-drive-page .portal-documents-paginate {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-left: auto !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_info {
+    float: none !important;
+    padding: 0 !important;
+    color: #728078 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_paginate {
+    float: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 0 !important;
+}
+
+/* Admin-style green prev/next */
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.next {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    margin: 0 0 0 6px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    border: 1px solid #00614c !important;
+    background: #00614c !important;
+    background-color: #00614c !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover,
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.next:hover {
+    background: #004b3a !important;
+    border-color: #004b3a !important;
+    color: #ffffff !important;
+}
+
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.previous.disabled,
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.next.disabled,
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.previous.disabled:hover,
+.portal-drive-page .dataTables_wrapper .dataTables_paginate .paginate_button.next.disabled:hover {
+    background: #4d8a7a !important;
+    background-color: #4d8a7a !important;
+    border-color: #4d8a7a !important;
+    color: #ffffff !important;
+    cursor: default !important;
+    pointer-events: none !important;
+    opacity: 1 !important;
+}
+
+.portal-drive-page .page-of-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 90px !important;
+    height: 36px !important;
+    padding: 0 12px !important;
+    border: 1px solid #dde7e2 !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    color: #275d4c !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+
+/* ----- Live grid bridge only (card look = rms-portal-shell-match.css) ----- */
+.portal-drive-page .drive-file-list.is-grid-view {
+    display: block !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-list-table-wrap {
+    display: none !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 15px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-grid-cards,
+.portal-drive-page .drive-file-grid-cards[hidden] {
+    display: none !important;
+}

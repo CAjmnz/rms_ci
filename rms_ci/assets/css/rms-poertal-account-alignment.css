@@ -1,0 +1,82 @@
+/* User Portal only: align the account name and department from one left edge. */
+.portal-workspace .topbar .topbar-actions .user-menu-button {
+    width: 250px !important;
+    min-width: 250px !important;
+    min-height: 56px !important;
+    padding: 6px 12px !important;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) 10px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    text-align: left !important;
+}
+
+.portal-workspace .topbar .user-menu-button .top-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+}
+
+.portal-workspace .topbar .user-menu-button .top-user-copy {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    text-align: left !important;
+}
+
+.portal-workspace .topbar .user-menu-button .top-user-copy strong,
+.portal-workspace .topbar .user-menu-button .top-user-copy small {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    overflow: hidden !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.portal-workspace .topbar .user-menu-button .top-user-copy strong {
+    margin-top: 0 !important;
+    margin-bottom: 3px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 14px !important;
+}
+
+.portal-workspace .topbar .user-menu-button .top-user-copy small {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-size: 9px !important;
+    font-weight: 600 !important;
+    line-height: 12px !important;
+}
+
+.portal-workspace .topbar .user-menu-button > i {
+    justify-self: end !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 720px) {
+    .portal-workspace .topbar .topbar-actions .user-menu-button {
+        width: auto !important;
+        min-width: 0 !important;
+        grid-template-columns: 40px !important;
+        padding: 5px !important;
+    }
+
+    .portal-workspace .topbar .user-menu-button .top-user-copy,
+    .portal-workspace .topbar .user-menu-button > i {
+        display: none !important;
+    }
+}

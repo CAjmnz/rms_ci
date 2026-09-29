@@ -37,9 +37,88 @@
     var panStartY = 0;
     var isPanning = false;
     var storageKey = 'rms-document-file-view';
+    var userDocumentsTable = null;
+
+    /* Initialize the local User Portal DataTable after every workspace render. */
+    function initializeUserDocumentsDataTable() {
+        var tableElement = document.getElementById('user-documents-table');
+        if (!tableElement || !window.jQuery || !window.jQuery.fn || !window.jQuery.fn.DataTable) {
+            return;
+        }
+
+        var $table = window.jQuery(tableElement);
+        if (window.jQuery.fn.DataTable.isDataTable(tableElement)) {
+            $table.DataTable().destroy();
+        }
+
+        var hasSelectionColumn = tableElement.querySelector('.documents-select-column') !== null;
+        var firstSortableColumn = hasSelectionColumn ? 1 : 0;
+        var nonOrderable = hasSelectionColumn ? [0, -1] : [-1];
+
+        userDocumentsTable = $table.DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, 200], [10, 25, 50, 100, 200]],
+            pagingType: 'simple',
+            order: [[firstSortableColumn, 'asc']],
+            columnDefs: [
+                { targets: nonOrderable, orderable: false, searchable: hasSelectionColumn ? false : undefined }
+            ],
+            dom: '<"portal-documents-pagination-top"l<"portal-documents-paginate"ip>>' +
+                't' +
+                '<"portal-documents-pagination"l<"portal-documents-paginate"ip>>',
+            language: {
+                search: 'Search:',
+                searchPlaceholder: 'Search this table...',
+                lengthMenu: 'Show _MENU_ entries',
+                info: 'Showing _START_ to _END_ of _TOTAL_ records',
+                infoEmpty: 'Showing 0 to 0 of 0 records',
+                infoFiltered: '',
+                emptyTable: 'No records found.',
+                zeroRecords: 'No matching documents found',
+                paginate: {
+                    previous: '←',
+                    next: '→'
+                }
+            },
+            drawCallback: function () {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                var $wrap = window.jQuery(api.table().container());
+                $wrap.find('.page-of-label').remove();
+                if (pageInfo.pages > 0) {
+                    $wrap.find('.dataTables_paginate .paginate_button.previous').after(
+                        '<span class="page-of-label">Page ' + (pageInfo.page + 1) + ' of ' + pageInfo.pages + '</span>'
+                    );
+                }
+            }
+        });
+
+                if (hasSelectionColumn) {
+            tableElement.classList.add('has-select-col');
+        } else {
+            tableElement.classList.remove('has-select-col');
+        }
+
+        window.setTimeout(function () {
+            if (userDocumentsTable) {
+                userDocumentsTable.columns.adjust().draw(false);
+            }
+        }, 50);
+
+        window.jQuery(window).off('resize.userDocsTable').on('resize.userDocsTable', function () {
+            if (userDocumentsTable) {
+                userDocumentsTable.columns.adjust();
+            }
+        });
+    }
 
     /* Apply one layout and synchronize the visible segmented control. */
-    function setView(view) {
+        function setView(view) {
         if (!fileList) {
             return;
         }
@@ -47,20 +126,45 @@
         var selectedView = view === 'list' ? 'list' : 'grid';
         var index;
 
-        fileList.classList.toggle('is-grid-view', selectedView === 'grid');
-        fileList.classList.toggle('is-list-view', selectedView === 'list');
+        fileList.classList.remove('is-grid-view', 'is-list-view');
+        fileList.classList.add(selectedView === 'grid' ? 'is-grid-view' : 'is-list-view');
         fileList.setAttribute('data-file-layout', selectedView);
 
+        viewButtons = document.querySelectorAll('[data-document-view]');
         for (index = 0; index < viewButtons.length; index++) {
             var isCurrent = viewButtons[index].getAttribute('data-document-view') === selectedView;
             viewButtons[index].classList.toggle('is-active', isCurrent);
             viewButtons[index].setAttribute('aria-pressed', isCurrent ? 'true' : 'false');
         }
 
+        /* Toggle list table vs grid cards (do not destroy DataTable). */
+        var tableWrap = fileList.querySelector('.drive-file-list-table-wrap');
+        var gridCards = fileList.querySelector('.drive-file-grid-cards');
+        if (tableWrap) {
+            tableWrap.hidden = selectedView === 'grid';
+        }
+        if (gridCards) {
+            gridCards.hidden = selectedView === 'list';
+        }
+
+        if (window.jQuery) {
+            var $wrap = window.jQuery(fileList).find('.dataTables_wrapper');
+            if ($wrap.length) {
+                if (selectedView === 'grid') {
+                    $wrap.hide();
+                } else {
+                    $wrap.show();
+                    if (userDocumentsTable) {
+                        userDocumentsTable.columns.adjust();
+                    }
+                }
+            }
+        }
+
         try {
             window.localStorage.setItem(storageKey, selectedView);
         } catch (error) {
-            /* The layout still works when browser storage is unavailable. */
+            /* Layout still works without storage. */
         }
     }
 
@@ -73,6 +177,7 @@
         savedView = defaultView;
     }
     setView(savedView);
+    initializeUserDocumentsDataTable();
 
     Array.prototype.forEach.call(viewButtons, function (button) {
         button.addEventListener('click', function () {
@@ -256,7 +361,7 @@
 
             event.preventDefault();
             setViewerZoom(currentZoom + (event.deltaY < 0 ? 0.25 : -0.25));
-        }, {passive: false});
+        }, { passive: false });
 
         /* VIEWER FIX: hold the left mouse button and drag to reposition the preview.
            Uses mousedown on the stage plus document-level mousemove/mouseup (rather than Pointer Events
@@ -367,9 +472,12 @@
 
     if (selectAll) {
         selectAll.addEventListener('change', function () {
+            var shouldSelectAll = selectAll.checked;
+
             Array.prototype.forEach.call(selectors, function (selector) {
-                selector.checked = selectAll.checked;
+                selector.checked = shouldSelectAll;
             });
+
             updateSelection();
         });
     }
@@ -489,13 +597,17 @@
         });
         if (selectAll) {
             selectAll.addEventListener('change', function () {
+                var shouldSelectAll = selectAll.checked;
+
                 Array.prototype.forEach.call(selectors, function (selector) {
-                    selector.checked = selectAll.checked;
+                    selector.checked = shouldSelectAll;
                 });
+
                 updateSelection();
             });
         }
         updateSelection();
+        initializeUserDocumentsDataTable();
     }
 
     /* Request a server-rendered folder and replace only the document workspace. */
@@ -509,7 +621,7 @@
         currentWorkspace.classList.add('is-ajax-loading');
         fetch(url, {
             credentials: 'same-origin',
-            headers: {'X-Requested-With': 'XMLHttpRequest'}
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         }).then(function (response) {
             if (!response.ok) {
                 throw new Error('Workspace request failed');
@@ -525,10 +637,10 @@
 
             currentWorkspace.parentNode.replaceChild(nextWorkspace, currentWorkspace);
             if (addHistory) {
-                window.history.pushState({documentWorkspace: true}, '', url);
+                window.history.pushState({ documentWorkspace: true }, '', url);
             }
             initializeAjaxWorkspace();
-            nextWorkspace.scrollIntoView({behavior: 'smooth', block: 'start'});
+            nextWorkspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }).catch(function () {
             window.location.href = url;
         });
@@ -557,4 +669,5 @@
     window.addEventListener('popstate', function () {
         loadDocumentWorkspace(window.location.href, false);
     });
+
 }());

@@ -1,0 +1,160 @@
+/* =========================================================
+   DRIVE-STYLE LIVE UPLOAD TOASTER — WHITE/GREEN RMS THEME
+   Add/merge into assets/css/rms-documents.css
+   ========================================================= */
+
+.rms-upload-toast {
+    position: fixed;
+    z-index: 100000;
+    right: 24px;
+    bottom: 24px;
+    width: min(430px, calc(100vw - 32px));
+    overflow: hidden;
+    color: var(--green-900);
+    background: #ffffff;
+    border: 1px solid #d9e8e1;
+    border-radius: 14px;
+    box-shadow: 0 18px 46px rgba(6, 59, 45, 0.16);
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.rms-upload-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rms-upload-toast-header {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 16px 0 20px;
+    background: #ffffff;
+}
+
+.rms-upload-toast-title {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--green-900);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rms-upload-toast-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 4px;
+}
+
+.rms-upload-toast-collapse,
+.rms-upload-toast-close {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    place-items: center;
+    color: var(--green-800);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.rms-upload-toast-collapse:hover,
+.rms-upload-toast-close:hover,
+.rms-upload-toast-collapse:focus-visible,
+.rms-upload-toast-close:focus-visible {
+    background: var(--green-50);
+    outline: none;
+}
+
+.rms-upload-toast-body {
+    border-top: 1px solid #e3eee9;
+    background: #ffffff;
+}
+
+.rms-upload-toast-status {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr) 30px;
+    gap: 12px;
+    align-items: center;
+    min-height: 68px;
+    padding: 0 18px;
+}
+
+.rms-upload-toast-upload-icon {
+    color: var(--green-700);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+.rms-upload-toast-status-text {
+    color: var(--green-900);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.rms-upload-toast-spinner {
+    width: 24px;
+    height: 24px;
+    border: 4px solid var(--green-100);
+    border-top-color: var(--green-700);
+    border-radius: 50%;
+    animation: rms-upload-toast-spin 0.8s linear infinite;
+}
+
+.rms-upload-toast-track {
+    display: block;
+    width: 100%;
+    height: 3px;
+    overflow: hidden;
+    background: var(--green-100);
+}
+
+.rms-upload-toast-bar {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--green-700);
+    transition: width 120ms linear;
+}
+
+.rms-upload-toast.is-collapsed .rms-upload-toast-body {
+    display: none;
+}
+
+@keyframes rms-upload-toast-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+    .rms-upload-toast {
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        width: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rms-upload-toast,
+    .rms-upload-toast-bar {
+        transition: none;
+    }
+
+    .rms-upload-toast-spinner {
+        animation: none;
+    }
+}

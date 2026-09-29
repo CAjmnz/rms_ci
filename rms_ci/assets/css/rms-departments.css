@@ -1,0 +1,520 @@
+/*
+ * Departments-only presentation layer.
+ * This file deliberately loads after rms-subsidiaries.css and is scoped to
+ * #dept-form-modal so it cannot change Subsidiaries or other admin modules.
+ */
+
+/*
+ * Keep the primary Department action visible in every pointer state.
+ * This overrides the shared pale hover background that made the white label
+ * and plus icon disappear in the previous screenshot.
+ */
+#dept-add.action.primary {
+    color: #ffffff !important;
+    border-color: #087552 !important;
+    background: linear-gradient(135deg, #087552, #079066) !important;
+    box-shadow: 0 7px 16px rgba(8, 117, 82, .18) !important;
+}
+
+#dept-add.action.primary:hover:not(:disabled),
+#dept-add.action.primary:focus-visible {
+    color: #ffffff !important;
+    border-color: #055f42 !important;
+    background: linear-gradient(135deg, #055f42, #087552) !important;
+    box-shadow: 0 9px 20px rgba(5, 95, 66, .25) !important;
+    transform: translateY(-1px);
+}
+
+#dept-add.action.primary:focus-visible {
+    outline: 3px solid rgba(8, 117, 82, .22);
+    outline-offset: 2px;
+}
+
+#dept-add.action.primary svg,
+#dept-add.action.primary span {
+    color: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/*
+ * Department row marking matches the Subsidiaries selection design.
+ * The stronger selector keeps the state visible even when shared table hover
+ * rules are loaded before this Department-only stylesheet.
+ */
+.subs-content .subs-table tbody tr[data-id].selected,
+.subs-content .subs-table tbody tr[data-id].selected:hover {
+    background: #eaf8f1;
+    box-shadow: inset 3px 0 0 #25b97d;
+}
+
+.subs-content .subs-table tbody tr[data-id].selected td {
+    border-top-color: #d8eee3;
+}
+
+.subs-content .subs-table input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.subs-content .subs-table tbody tr[data-id]:focus-within {
+    outline: 2px solid rgba(37, 185, 125, .2);
+    outline-offset: -2px;
+}
+
+/*
+ * Match the compact Users hero so the directory starts higher on the page.
+ * These rules are Department-only because this stylesheet loads last only on
+ * the Departments view; Subsidiaries keeps its own independent presentation.
+ */
+.subs-content .subs-hero {
+    min-height: 112px;
+    padding: 22px 28px;
+    border-radius: 17px;
+}
+
+.subs-content .subs-hero h1 {
+    margin-top: 6px;
+    margin-bottom: 5px;
+    font-size: 25px;
+}
+
+.subs-content .subs-hero p {
+    font-size: 12px;
+}
+
+.subs-content .subs-total {
+    min-width: 122px;
+    padding: 14px 18px;
+    border-radius: 14px;
+}
+
+.subs-content .subs-total strong {
+    font-size: 27px;
+}
+
+/*
+ * Professional Department search treatment matching the Users controls.
+ * The existing GET form, field name, query value, and submit behavior remain
+ * untouched; only hover, focus, active, and filled-query feedback is added.
+ */
+.subs-content .subs-search input[type="search"] {
+    height: 44px;
+    border: 1px solid #cfe1d9;
+    background: #f8fbfa;
+    box-shadow: 0 2px 7px rgba(7, 81, 60, .04);
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.subs-content .subs-search:hover input[type="search"] {
+    border-color: #7bcba3;
+    background: #fbfffd;
+    box-shadow: 0 0 0 3px rgba(21, 139, 96, .07);
+}
+
+.subs-content .subs-search input[type="search"]:focus {
+    border-color: #168b60;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(22, 139, 96, .13);
+    outline: none;
+}
+
+.subs-content .subs-search:focus-within svg {
+    stroke: #087552;
+    transform: scale(1.06);
+}
+
+.subs-content .subs-search svg {
+    transition: stroke .18s ease, transform .18s ease;
+}
+
+.subs-content .subs-search button[type="submit"] {
+    min-height: 44px;
+    color: #ffffff;
+    border: 1px solid #087552;
+    background: #087552;
+    box-shadow: 0 4px 10px rgba(8, 117, 82, .16);
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.subs-content .subs-search button[type="submit"]:hover,
+.subs-content .subs-search button[type="submit"]:focus-visible {
+    color: #ffffff;
+    border-color: #065f43;
+    background: #065f43;
+    box-shadow: 0 8px 18px rgba(6, 95, 67, .24);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.subs-content .subs-search button[type="submit"]:active {
+    border-color: #054e38;
+    background: #054e38;
+    box-shadow: 0 3px 8px rgba(6, 91, 63, .16);
+    transform: translateY(0);
+}
+
+.subs-content .subs-search a:hover,
+.subs-content .subs-search a:focus-visible {
+    color: #0b6b4d;
+    background: #f4faf7;
+    box-shadow: 0 0 0 3px rgba(22, 139, 96, .14);
+    outline: none;
+}
+
+#dept-form-modal .dept-form-dialog {
+    width: calc(100% - 32px);
+    max-width: 520px;
+    overflow: visible;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 26px 70px rgba(7, 45, 34, .24);
+}
+
+#dept-form-modal .dept-form-header {
+    min-height: 112px;
+    padding: 25px 62px 22px 24px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e2e9e6;
+    background: #ffffff;
+}
+
+#dept-form-modal .dept-form-heading {
+    width: 100%;
+}
+
+#dept-form-modal .dept-form-heading h2 {
+    margin: 0 0 8px;
+    color: #17372c;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+#dept-form-modal .dept-form-heading p {
+    margin: 0;
+    color: #586c65;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#dept-form-modal .modal-close {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: #71857d;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 25px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#dept-form-modal .modal-close:hover,
+#dept-form-modal .modal-close:focus {
+    color: #075e43;
+    background: #eaf5f0;
+    outline: none;
+}
+
+#dept-form-modal .dept-form-body {
+    padding: 24px;
+    display: block;
+}
+
+#dept-form-modal .dept-form-group {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 0;
+    display: block;
+}
+
+#dept-form-modal .dept-form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+#dept-form-modal .dept-form-group > label {
+    width: auto;
+    margin: 0 0 9px;
+    padding: 0;
+    display: block;
+    color: #243f36;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+#dept-form-modal .dept-form-group > label em {
+    color: #cf4050;
+    font-style: normal;
+}
+
+/*
+ * The real sub_id select is the only visible selector.
+ * A CSS-only chevron provides a polished appearance without an SVG or
+ * second button that could be enlarged by legacy global styles.
+ */
+#dept-form-modal .dept-subsidiary-select-wrap {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+#dept-form-modal .dept-subsidiary-select-wrap::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 19px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid #426257;
+    border-bottom: 2px solid #426257;
+    pointer-events: none;
+    transform: translateY(-68%) rotate(45deg);
+}
+
+#dept-form-modal .dept-subsidiary-select-wrap > #dept-subsidiary {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    height: 54px !important;
+    margin: 0 !important;
+    padding: 0 50px 0 17px !important;
+    display: block !important;
+    color: #233e35 !important;
+    border: 1.5px solid #c9d7d1 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(16, 68, 51, .05) !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 54px !important;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+
+#dept-form-modal .dept-subsidiary-select-wrap > #dept-subsidiary:hover {
+    border-color: #72a993 !important;
+    background-color: #fbfefd !important;
+}
+
+#dept-form-modal .dept-subsidiary-select-wrap > #dept-subsidiary:focus {
+    border-color: #087b55 !important;
+    box-shadow: 0 0 0 4px rgba(8, 123, 85, .12) !important;
+}
+
+#dept-form-modal .dept-form-group > input[type="text"] {
+    width: 100% !important;
+    height: 48px !important;
+    margin: 0 !important;
+    padding: 0 15px !important;
+    display: block !important;
+    color: #233e35 !important;
+    border: 1px solid #d1dcd7 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    outline: none;
+}
+
+#dept-form-modal .dept-form-group > input[type="text"]:focus {
+    border-color: #087b55 !important;
+    box-shadow: 0 0 0 4px rgba(8, 123, 85, .10) !important;
+}
+
+#dept-form-modal .dept-form-group > small {
+    width: 100%;
+    margin: 8px 0 0;
+    display: block;
+    clear: both;
+    color: #71827c;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+#dept-form-modal footer {
+    min-height: 74px;
+    padding: 15px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #e2e9e6;
+    background: #fbfcfc;
+}
+
+/* Mobile keeps the dropdown full width and moves actions into an easy tap layout. */
+@media (max-width: 560px) {
+    /* Keep the compact hero readable when it stacks on phone screens. */
+    .subs-content .subs-hero {
+        min-height: 0;
+        padding: 20px 22px;
+    }
+
+    #dept-form-modal .dept-form-dialog {
+        width: calc(100% - 20px);
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+        border-radius: 14px;
+    }
+
+    #dept-form-modal .dept-form-header {
+        min-height: 102px;
+        padding: 22px 54px 19px 18px;
+    }
+
+    #dept-form-modal .dept-form-heading h2 {
+        font-size: 20px;
+    }
+
+    #dept-form-modal .dept-form-body {
+        padding: 20px 18px 22px;
+    }
+
+    #dept-form-modal .dept-subsidiary-select-wrap > #dept-subsidiary {
+        height: 50px !important;
+        line-height: 50px !important;
+        font-size: 13px !important;
+    }
+
+    #dept-form-modal footer {
+        padding: 14px 18px;
+        flex-wrap: wrap;
+    }
+
+    #dept-form-modal footer .cancel,
+    #dept-form-modal footer .save {
+        min-height: 44px;
+    }
+}
+/* AJAX result feedback keeps the table readable while a server request runs. */
+#departments-ajax-region {
+    position: relative;
+    transition: opacity 160ms ease;
+}
+
+#departments-ajax-region.is-loading {
+    opacity: 0.48;
+    pointer-events: none;
+}
+
+#departments-ajax-region.is-loading::after {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    z-index: 3;
+    content: "";
+    border: 3px solid rgba(20, 122, 72, 0.18);
+    border-top-color: #147a48;
+    border-radius: 50%;
+    animation: departments-table-spin 700ms linear infinite;
+}
+
+@keyframes departments-table-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Users-style Department form header; scoped to avoid other dialogs. */
+#dept-form-modal .dept-form-dialog {
+    border: 1px solid #b9d9cc;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(1, 43, 31, .34);
+}
+
+#dept-form-modal .dept-form-header {
+    min-height: 106px;
+    padding: 20px 66px 20px 26px;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    border-bottom: 0;
+    background: linear-gradient(120deg, #064c39 0%, #07815b 58%, #0b9668 100%);
+}
+
+#dept-form-modal .dept-form-heading small {
+    display: block;
+    margin: 0 0 7px;
+    color: rgba(255, 255, 255, .82);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .15em;
+}
+
+#dept-form-modal .dept-form-heading h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+#dept-form-modal .dept-form-heading p {
+    margin: 6px 0 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 12px;
+}
+
+#dept-form-modal .modal-close {
+    top: 18px;
+    right: 22px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .30);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .08);
+    font-size: 25px;
+    line-height: 1;
+}
+
+#dept-form-modal .modal-close:hover,
+#dept-form-modal .modal-close:focus {
+    color: #fff;
+    border-color: rgba(255, 255, 255, .55);
+    background: rgba(255, 255, 255, .20);
+    box-shadow: 0 5px 14px rgba(1, 31, 23, .18);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#dept-form-modal .subs-backdrop {
+    cursor: default;
+}
+
+@media (max-width: 560px) {
+    #dept-form-modal .dept-form-header {
+        min-height: 98px;
+        padding: 18px 60px 18px 18px;
+    }
+
+    #dept-form-modal .dept-form-heading h2 {
+        font-size: 20px;
+    }
+}
+
+/* ========================================================================== */
+/* Final content spacing matched to Documents                                  */
+/* Departments uses the organization layout; keep it aligned with Documents.    */
+/* ========================================================================== */
+.subs-content {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 18px 34px 36px !important;
+    box-sizing: border-box !important;
+}

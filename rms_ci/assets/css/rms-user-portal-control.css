@@ -1,0 +1,125 @@
+/* ========================================================================== 
+   Admin-style User Portal sidebar toggle
+   ========================================================================== */
+
+.portal-sidebar,
+.portal-workspace {
+    transition: width .24s ease,margin-left .24s ease;
+}
+
+.portal-sidebar-collapse-control {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.portal-sidebar-edge-toggle {
+    position: fixed;
+    top: 103px;
+    left: 239px;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(6,75,56,.14);
+    border-radius: 50%;
+    color: #0b5b43;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(3,47,35,.18);
+    cursor: pointer;
+    transition: left .24s ease,color .18s ease,background .18s ease;
+}
+
+.portal-sidebar-edge-toggle:hover,
+.portal-sidebar-edge-toggle:focus-visible {
+    color: #fff;
+    background: #159464;
+    outline: 0;
+}
+
+.portal-sidebar-edge-toggle span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-bottom: 2px solid currentColor;
+    border-left: 2px solid currentColor;
+    transform: rotate(45deg) translate(1px,-1px);
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar {
+    width: 82px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+}
+
+/* Keep sidebar controls behind the secure photo and document viewer. */
+body.document-viewer-open .portal-sidebar-edge-toggle {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-workspace {
+    margin-left: 82px !important;
+}
+
+.portal-sidebar-collapse-control:checked + .portal-sidebar-edge-toggle {
+    left: 67px;
+}
+
+.portal-sidebar-collapse-control:checked + .portal-sidebar-edge-toggle span {
+    transform: rotate(225deg) translate(1px,-1px);
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-sidebar-brand {
+    justify-content: center;
+    padding-right: 7px !important;
+    padding-left: 7px !important;
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-brand-copy,
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-nav-label,
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-navigation a span,
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-sidebar-support div {
+    display: none !important;
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-navigation a {
+    justify-content: center !important;
+    width: 48px !important;
+    min-height: 48px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-navigation a svg {
+    margin: 0 !important;
+}
+
+.portal-sidebar-collapse-control:checked ~ .portal-sidebar .portal-sidebar-support {
+    right: 12px !important;
+    left: 12px !important;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 !important;
+}
+
+@media (max-width:980px) {
+    .portal-sidebar-edge-toggle {
+        display: none !important;
+    }
+
+    .portal-sidebar-collapse-control:checked ~ .portal-workspace {
+        margin-left: 0 !important;
+    }
+
+}

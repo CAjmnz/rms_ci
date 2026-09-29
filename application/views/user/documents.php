@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /* Configure the reusable User Portal shell for the document workspace. */
 $active_page = 'documents';
-$topbar_title = '';
+$topbar_title = 'My Documents';
 
 /* Use recent authorized files only at the root of My Documents. */
 $workspace_documents = !empty($documents)
@@ -18,7 +18,7 @@ $this->load->view('user/partials/header');
 ?>
 
 <!-- Documents-only readability improvements; cache version prevents stale CSS. -->
-<link rel="stylesheet" href="<?php echo base_url('assets/css/rms-document-table-readable.css?v=56'); ?>">
+<link rel="stylesheet" href="<?php echo base_url('assets/css/rms-document-table-readable.css?v=71-align'); ?>">
 
 <section class="portal-page-content portal-drive-page">
     <div class="portal-content-container">
@@ -33,7 +33,6 @@ $this->load->view('user/partials/header');
                 <h1 id="documents-title">My Documents</h1>
                 <p>Browse the folders and files assigned to your account.</p>
             </div>
-
         </section>
 
         <section class="drive-workspace" aria-label="Authorized document library">
@@ -98,11 +97,10 @@ $this->load->view('user/partials/header');
                 <?php if (!empty($workspace_documents)): ?>
                     <div class="drive-view-switch drive-command-view-switch" role="group" aria-label="File layout">
                         <button
-                            class="is-active"
                             type="button"
                             data-document-view="grid"
                             aria-label="Grid view"
-                            aria-pressed="true">
+                            aria-pressed="false">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <rect x="3" y="3" width="7" height="7" rx="1"/>
                                 <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -113,9 +111,10 @@ $this->load->view('user/partials/header');
                         </button>
                         <button
                             type="button"
+                            class="is-active"
                             data-document-view="list"
                             aria-label="List view"
-                            aria-pressed="false">
+                            aria-pressed="true">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M9 6h12M9 12h12M9 18h12"/>
                                 <circle cx="4.5" cy="6" r="1"/>
@@ -191,7 +190,6 @@ $this->load->view('user/partials/header');
                                 <h3 id="file-section-title"><?php echo $showing_recent_documents ? 'Recent files' : 'Files'; ?></h3>
                                 <p><?php echo $showing_recent_documents ? 'Your latest authorized records.' : 'Choose a file to preview or download.'; ?></p>
                             </div>
-
                             <div class="drive-file-heading-tools">
                                 <span><?php echo count($workspace_documents); ?> record<?php echo count($workspace_documents) === 1 ? '' : 's'; ?></span>
                             </div>
@@ -207,7 +205,6 @@ $this->load->view('user/partials/header');
                                         </span>
                                         <strong>Select all</strong>
                                     </label>
-
                                     <div class="drive-selection-actions">
                                         <span id="document-selection-count" aria-live="polite">0 selected</span>
                                         <button id="download-selected-documents" type="submit" disabled>
@@ -221,95 +218,207 @@ $this->load->view('user/partials/header');
                             <?php endif; ?>
 
                         <div
-                            class="drive-file-list <?php echo $showing_recent_documents ? 'is-list-view' : 'is-grid-view'; ?><?php echo $role_id === 3 ? ' has-selection' : ''; ?>"
-                            data-file-layout="<?php echo $showing_recent_documents ? 'list' : 'grid'; ?>"
-                            data-default-layout="<?php echo $showing_recent_documents ? 'list' : 'grid'; ?>"
+                            class="drive-file-list is-list-view<?php echo $role_id === 3 ? ' has-selection' : ''; ?>"
+                            data-file-layout="list"
+                            data-default-layout="list"
                             role="list">
-                            <div class="drive-file-list-head" aria-hidden="true">
-                                <?php if ($role_id === 3): ?><span></span><?php endif; ?>
-                                <span>Name</span>
-                                <span>Folder</span>
-                                <span>Date modified</span>
-                                <span>Access</span>
+
+                            <!-- LIST VIEW: DataTable (unchanged) -->
+                            <div class="drive-file-list-table-wrap">
+                                <table id="user-documents-table" class="display rms-user-documents-table">
+                                    <thead>
+                                        <tr>
+                                            <?php if ($role_id === 3): ?><th class="documents-select-column" aria-label="Select documents"></th><?php endif; ?>
+                                            <th>Name</th>
+                                            <th>Folder</th>
+                                            <th>Date modified</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($workspace_documents as $document_index => $document): ?>
+                                        <?php
+                                        $display_page = (int) $document_index + 1;
+                                        $display_name = isset($document['display_name']) && $document['display_name'] !== ''
+                                            ? $document['display_name']
+                                            : $document['data_name'];
+                                        $document_extension = strtolower(pathinfo($display_name, PATHINFO_EXTENSION));
+                                        $image_extensions = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp');
+                                        $is_image = in_array($document_extension, $image_extensions, TRUE);
+                                        $file_type_class = 'file-type-document';
+                                        if ($is_image) {
+                                            $file_type_class = 'file-type-image';
+                                        } elseif ($document_extension === 'pdf') {
+                                            $file_type_class = 'file-type-pdf';
+                                        } elseif (in_array($document_extension, array('doc', 'docx'), TRUE)) {
+                                            $file_type_class = 'file-type-word';
+                                        } elseif (in_array($document_extension, array('xls', 'xlsx', 'csv'), TRUE)) {
+                                            $file_type_class = 'file-type-excel';
+                                        }
+                                        $view_url = site_url('portal/documents/view/' . rawurlencode($document['token']));
+                                        $download_url = site_url('portal/documents/download/' . rawurlencode($document['token']));
+                                        ?>
+                                        <tr class="drive-file-row" title="Click the table to view document">
+                                            <?php if ($role_id === 3): ?>
+                                                <td class="documents-select-cell">
+                                                    <label class="drive-file-check">
+                                                        <input
+                                                            class="document-selector"
+                                                            type="checkbox"
+                                                            name="document_tokens[]"
+                                                            value="<?php echo html_escape($document['token']); ?>"
+                                                            aria-label="Select <?php echo html_escape($display_name); ?>">
+                                                        <span aria-hidden="true">
+                                                            <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
+                                                        </span>
+                                                    </label>
+                                                </td>
+                                            <?php endif; ?>
+                                            <td class="documents-name-cell">
+                                                <button
+                                                    class="drive-file-name drive-file-open"
+                                                    type="button"
+                                                    data-file-view-url="<?php echo $view_url; ?>"
+                                                    data-file-download-url="<?php echo $role_id === 3 ? $download_url : ''; ?>"
+                                                    data-file-name="<?php echo html_escape($display_name); ?>"
+                                                    data-file-page="Page <?php echo $display_page; ?>"
+                                                    data-file-kind="<?php echo $is_image ? 'image' : 'document'; ?>"
+                                                    aria-label="View <?php echo html_escape($display_name); ?>">
+                                                    <span class="drive-file-preview<?php echo $is_image ? ' is-image' : ' is-document'; ?> <?php echo $file_type_class; ?>">
+                                                        <?php if ($is_image): ?>
+                                                            <img
+                                                                loading="lazy"
+                                                                src="<?php echo $view_url; ?>"
+                                                                alt="Preview of <?php echo html_escape($display_name); ?>">
+                                                        <?php endif; ?>
+                                                        <span class="drive-file-preview-fallback" aria-hidden="true">
+                                                            <svg viewBox="0 0 24 24">
+                                                                <?php if ($is_image): ?>
+                                                                    <path d="M4 5h16v14H4zM7 16l3.5-4 2.5 3 2-2 3 3M8 9h.01"/>
+                                                                <?php else: ?>
+                                                                    <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 13h6M9 17h6"/>
+                                                                <?php endif; ?>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                    <span class="drive-file-copy">
+                                                        <strong><?php echo html_escape($display_name); ?></strong>
+                                                        <small>Page <?php echo $display_page; ?></small>
+                                                    </span>
+                                                </button>
+                                            </td>
+                                            <td class="drive-file-folder">
+                                                <?php echo html_escape(isset($document['path_label']) ? $document['path_label'] : $breadcrumbs[count($breadcrumbs) - 1]['label']); ?>
+                                            </td>
+                                            <td><time><?php echo html_escape($document['date_uploaded']); ?></time></td>
+                                            <td class="documents-action-cell">
+                                                <span class="drive-file-access">
+                                                    <?php if ($role_id === 3): ?>
+                                                        <a
+                                                            class="drive-file-download"
+                                                            href="<?php echo $download_url; ?>"
+                                                            title="Download document"
+                                                            aria-label="Download <?php echo html_escape($display_name); ?>"
+                                                            onclick="event.stopPropagation();">
+                                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                                <path d="M12 3v11"></path>
+                                                                <path d="m7 10 5 5 5-5"></path>
+                                                                <path d="M5 20h14"></path>
+                                                            </svg>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span>View only</span>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <?php foreach ($workspace_documents as $document): ?>
-                                <?php
-                                /* Match the filename shown in Manage Documents when a protected viewer copy exists. */
-                                $display_name = isset($document['display_name']) && $document['display_name'] !== ''
-                                    ? $document['display_name']
-                                    : $document['data_name'];
-                                /* Show safe inline thumbnails only for common browser image formats. */
-                                $document_extension = strtolower(pathinfo($display_name, PATHINFO_EXTENSION));
-                                $image_extensions = array('jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp');
-                                $is_image = in_array($document_extension, $image_extensions, TRUE);
-                                $file_type_class = 'file-type-document';
-                                if ($is_image) {
-                                    $file_type_class = 'file-type-image';
-                                } elseif ($document_extension === 'pdf') {
-                                    $file_type_class = 'file-type-pdf';
-                                } elseif (in_array($document_extension, array('doc', 'docx'), TRUE)) {
-                                    $file_type_class = 'file-type-word';
-                                } elseif (in_array($document_extension, array('xls', 'xlsx', 'csv'), TRUE)) {
-                                    $file_type_class = 'file-type-excel';
-                                }
-                                $view_url = site_url('portal/documents/view/' . rawurlencode($document['token']));
-                                $download_url = site_url('portal/documents/download/' . rawurlencode($document['token']));
-                                ?>
-                                <article class="drive-file-row" role="listitem">
-                                    <?php if ($role_id === 3): ?>
-                                        <label class="drive-file-check">
-                                            <input
-                                                class="document-selector"
-                                                type="checkbox"
-                                                name="document_tokens[]"
-                                                value="<?php echo html_escape($document['token']); ?>"
-                                                aria-label="Select <?php echo html_escape($display_name); ?>">
-                                            <span aria-hidden="true">
-                                                <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
+                            <!-- GRID VIEW: card layout (DataTable hidden when active) -->
+                            <div class="drive-file-grid-cards" hidden>
+                                <?php foreach ($workspace_documents as $document_index => $document): ?>
+                                    <?php
+                                    $display_page = (int) $document_index + 1;
+                                    $display_name = isset($document['display_name']) && $document['display_name'] !== ''
+                                        ? $document['display_name']
+                                        : $document['data_name'];
+                                    $document_extension = strtolower(pathinfo($display_name, PATHINFO_EXTENSION));
+                                    $is_image = in_array($document_extension, array('jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'), TRUE);
+                                    $file_type_class = $is_image ? 'file-type-image' : 'file-type-document';
+                                    if ($document_extension === 'pdf') {
+                                        $file_type_class = 'file-type-pdf';
+                                    }
+                                    $view_url = site_url('portal/documents/view/' . rawurlencode($document['token']));
+                                    $download_url = site_url('portal/documents/download/' . rawurlencode($document['token']));
+                                    ?>
+                                    <article class="drive-file-row" role="listitem">
+                                        <?php if ($role_id === 3): ?>
+                                            <label class="drive-file-check">
+                                                <input
+                                                    class="document-selector"
+                                                    type="checkbox"
+                                                    name="document_tokens[]"
+                                                    value="<?php echo html_escape($document['token']); ?>"
+                                                    aria-label="Select <?php echo html_escape($display_name); ?>">
+                                                <span aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>
+                                                </span>
+                                            </label>
+                                        <?php endif; ?>
+                                        <button
+                                            class="drive-file-name drive-file-open"
+                                            type="button"
+                                            data-file-view-url="<?php echo $view_url; ?>"
+                                            data-file-download-url="<?php echo $role_id === 3 ? $download_url : ''; ?>"
+                                            data-file-name="<?php echo html_escape($display_name); ?>"
+                                            data-file-page="Page <?php echo $display_page; ?>"
+                                            data-file-kind="<?php echo $is_image ? 'image' : 'document'; ?>"
+                                            aria-label="View <?php echo html_escape($display_name); ?>">
+                                            <span class="drive-file-preview<?php echo $is_image ? ' is-image' : ' is-document'; ?> <?php echo $file_type_class; ?>">
+                                                <?php if ($is_image): ?>
+                                                    <img
+                                                        loading="lazy"
+                                                        src="<?php echo $view_url; ?>"
+                                                        alt="Preview of <?php echo html_escape($display_name); ?>">
+                                                <?php endif; ?>
+                                                <span class="drive-file-preview-fallback" aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <?php if ($is_image): ?>
+                                                            <path d="M4 5h16v14H4zM7 16l3.5-4 2.5 3 2-2 3 3M8 9h.01"/>
+                                                        <?php else: ?>
+                                                            <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 13h6M9 17h6"/>
+                                                        <?php endif; ?>
+                                                    </svg>
+                                                </span>
                                             </span>
-                                        </label>
-                                    <?php endif; ?>
-
-                                    <button
-                                        class="drive-file-name drive-file-open"
-                                        type="button"
-                                        data-file-view-url="<?php echo $view_url; ?>"
-                                        data-file-download-url="<?php echo $role_id === 3 ? $download_url : ''; ?>"
-                                        data-file-name="<?php echo html_escape($display_name); ?>"
-                                        data-file-page="Page <?php echo (int) $document['page_no']; ?>"
-                                        data-file-kind="<?php echo $is_image ? 'image' : 'document'; ?>"
-                                        aria-label="View <?php echo html_escape($display_name); ?>">
-                                        <span class="drive-file-preview<?php echo $is_image ? ' is-image' : ' is-document'; ?> <?php echo $file_type_class; ?>">
-                                            <?php if ($is_image): ?>
-                                                <img
-                                                    loading="lazy"
-                                                    src="<?php echo $view_url; ?>"
-                                                    alt="Preview of <?php echo html_escape($display_name); ?>">
+                                            <span class="drive-file-copy">
+                                                <strong><?php echo html_escape($display_name); ?></strong>
+                                                <small>Page <?php echo $display_page; ?></small>
+                                            </span>
+                                        </button>
+                                        <span class="drive-file-folder">
+                                            <?php echo html_escape(isset($document['path_label']) ? $document['path_label'] : $breadcrumbs[count($breadcrumbs) - 1]['label']); ?>
+                                        </span>
+                                        <time><?php echo html_escape($document['date_uploaded']); ?></time>
+                                        <span class="drive-file-access">
+                                            <?php if ($role_id === 3): ?>
+                                                <a class="drive-file-download" href="<?php echo $download_url; ?>" title="Download">
+                                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                        <path d="M12 3v11"></path>
+                                                        <path d="m7 10 5 5 5-5"></path>
+                                                        <path d="M5 20h14"></path>
+                                                    </svg>
+                                                </a>
+                                            <?php else: ?>
+                                                View only
                                             <?php endif; ?>
-                                            <span class="drive-file-preview-fallback" aria-hidden="true">
-                                                <svg viewBox="0 0 24 24">
-                                                    <?php if ($is_image): ?>
-                                                        <path d="M4 5h16v14H4zM7 16l3.5-4 2.5 3 2-2 3 3M8 9h.01"/>
-                                                    <?php else: ?>
-                                                        <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 13h6M9 17h6"/>
-                                                    <?php endif; ?>
-                                                </svg>
-                                            </span>
                                         </span>
-                                        <span class="drive-file-copy">
-                                            <strong><?php echo html_escape($display_name); ?></strong>
-                                            <small>Page <?php echo (int) $document['page_no']; ?></small>
-                                        </span>
-                                    </button>
-
-                                    <span class="drive-file-folder">
-                                        <?php echo html_escape(isset($document['path_label']) ? $document['path_label'] : $breadcrumbs[count($breadcrumbs) - 1]['label']); ?>
-                                    </span>
-                                    <time><?php echo html_escape($document['date_uploaded']); ?></time>
-                                    <span class="drive-file-access"><?php echo $role_id === 3 ? 'Download enabled' : 'View only'; ?></span>
-                                </article>
-                            <?php endforeach; ?>
+                                    </article>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                         <?php echo form_close(); ?>
                     </section>
@@ -340,7 +449,6 @@ $this->load->view('user/partials/header');
     aria-describedby="document-viewer-description"
     hidden>
     <div class="document-viewer-backdrop" data-close-document-viewer></div>
-
     <section class="document-viewer-panel" tabindex="-1">
         <header class="document-viewer-header">
             <div class="document-viewer-file-icon" aria-hidden="true">
@@ -352,7 +460,6 @@ $this->load->view('user/partials/header');
                 <h2 id="document-viewer-title">File preview</h2>
                 <p id="document-viewer-description">Authorized document</p>
             </div>
-
             <div class="document-viewer-actions">
                 <div class="document-viewer-zoom" role="group" aria-label="Preview zoom controls">
                     <button id="document-viewer-zoom-out" type="button" aria-label="Zoom out">
@@ -380,7 +487,6 @@ $this->load->view('user/partials/header');
                 </button>
             </div>
         </header>
-
         <div class="document-viewer-stage">
             <div class="document-viewer-loading" aria-live="polite">
                 <span></span>
@@ -389,7 +495,6 @@ $this->load->view('user/partials/header');
             <img id="document-viewer-image" alt="" hidden>
             <iframe id="document-viewer-frame" title="Secure file preview" hidden></iframe>
         </div>
-
         <footer class="document-viewer-footer">
             <button id="document-viewer-previous" class="document-viewer-navigation" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
@@ -404,5 +509,7 @@ $this->load->view('user/partials/header');
     </section>
 </div>
 
-<script src="<?php echo base_url('assets/js/rms-document-workspace.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/jquery-3.5.1.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/rms-document-workspace.js?v=71-align'); ?>"></script>
 <?php $this->load->view('user/partials/footer'); ?>

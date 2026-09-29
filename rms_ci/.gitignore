@@ -1,0 +1,29 @@
+# Database dumps
+RMSdb.sql
+arms.sql
+*.sql
+
+# Database credentials / encryption secrets
+application/config/database.php
+application/config/documents_encryption.php
+
+# CI logs/cache
+application/logs/*
+!application/logs/index.html
+
+application/cache/*
+!application/cache/index.html
+
+# Local test files
+activity_log_test.php
+storage_test.php
+assetslog_*.txt
+
+# Windows
+Thumbs.db
+Desktop.ini
+nul
+
+# Environment
+.env
+.env.*

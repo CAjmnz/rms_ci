@@ -1,0 +1,316 @@
+/*
+ * RMS Subsidiaries refinements
+ * Loaded after rms-subsidiaries.css and scoped to the Subsidiaries page.
+ * This file owns the compact hero, search interactions, primary action,
+ * sortable headings, AJAX loading state, and responsive refinements.
+ */
+
+:root {
+    --subs-green-900: #064c38;
+    --subs-green-800: #075c43;
+    --subs-green-700: #087552;
+    --subs-green-600: #0a8b62;
+    --subs-green-100: #e9f7f0;
+    --subs-green-050: #f5fbf8;
+    --subs-border: #d7e7df;
+    --subs-text-muted: #687e76;
+    --subs-focus-ring: rgba(8, 117, 82, 0.16);
+}
+
+/* --------------------------------------------------------------------------
+   Compact hero — matches the proportions used on Users and Departments.
+   -------------------------------------------------------------------------- */
+.subs-content .subs-hero {
+    min-height: 112px;
+    padding: 22px 28px;
+    border-radius: 17px;
+}
+
+.subs-content .subs-hero h1 {
+    margin: 6px 0 5px;
+    font-size: 25px;
+    line-height: 1.15;
+}
+
+.subs-content .subs-hero p {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.subs-content .subs-total {
+    min-width: 122px;
+    padding: 14px 18px;
+    border-radius: 14px;
+}
+
+.subs-content .subs-total strong {
+    font-size: 27px;
+    line-height: 1.1;
+}
+
+/* --------------------------------------------------------------------------
+   Search — one balanced control group with clear hover and focus feedback.
+   -------------------------------------------------------------------------- */
+.subs-content .subs-search {
+    gap: 8px;
+}
+
+.subs-content .subs-search > svg {
+    z-index: 1;
+    left: 14px;
+    width: 17px;
+    height: 17px;
+    pointer-events: none;
+    transition: stroke 0.18s ease, transform 0.18s ease;
+}
+
+.subs-content .subs-search input[type="search"] {
+    box-sizing: border-box;
+    width: 280px;
+    height: 44px;
+    padding: 0 14px 0 42px;
+    color: #18322b;
+    border: 1px solid var(--subs-border);
+    border-radius: 11px;
+    background: #f8fbfa;
+    box-shadow: 0 2px 7px rgba(7, 81, 60, 0.04);
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.subs-content .subs-search input[type="search"]::placeholder {
+    color: #82978f;
+}
+
+.subs-content .subs-search:hover input[type="search"] {
+    border-color: #8bcbb0;
+    background: #fbfffd;
+}
+
+.subs-content .subs-search input[type="search"]:focus {
+    border-color: var(--subs-green-600);
+    background: #fff;
+    box-shadow: 0 0 0 4px var(--subs-focus-ring);
+    outline: none;
+}
+
+.subs-content .subs-search:focus-within > svg {
+    stroke: var(--subs-green-700);
+    transform: scale(1.06);
+}
+
+.subs-content .subs-search button[type="submit"],
+.subs-content .subs-search > a {
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 0 17px;
+    justify-content: center;
+    border-radius: 11px;
+    transition:
+        color 0.18s ease,
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+}
+
+.subs-content .subs-search button[type="submit"] {
+    color: #fff;
+    border: 1px solid var(--subs-green-700);
+    background: var(--subs-green-700);
+    box-shadow: 0 5px 12px rgba(8, 117, 82, 0.18);
+}
+
+.subs-content .subs-search button[type="submit"]:hover,
+.subs-content .subs-search button[type="submit"]:focus-visible {
+    color: #fff;
+    border-color: var(--subs-green-900);
+    background: var(--subs-green-900);
+    box-shadow: 0 8px 18px rgba(6, 76, 56, 0.24);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.subs-content .subs-search > a {
+    color: #526a62;
+    border: 1px solid transparent;
+    background: #edf4f1;
+}
+
+.subs-content .subs-search > a:hover,
+.subs-content .subs-search > a:focus-visible {
+    color: var(--subs-green-800);
+    border-color: #cce4d9;
+    background: var(--subs-green-050);
+    box-shadow: 0 0 0 3px rgba(8, 117, 82, 0.10);
+    outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Primary toolbar action — remains readable in every interactive state.
+   -------------------------------------------------------------------------- */
+#subs-add.action.primary {
+    color: #fff;
+    border-color: var(--subs-green-700);
+    background: linear-gradient(135deg, var(--subs-green-700), var(--subs-green-600));
+    box-shadow: 0 6px 15px rgba(8, 117, 82, 0.18);
+}
+
+#subs-add.action.primary:hover:not(:disabled),
+#subs-add.action.primary:focus-visible {
+    color: #fff;
+    border-color: var(--subs-green-900);
+    background: linear-gradient(135deg, var(--subs-green-900), var(--subs-green-700));
+    box-shadow: 0 9px 20px rgba(6, 76, 56, 0.24);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+#subs-add.action.primary:focus-visible {
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.9),
+        0 0 0 6px var(--subs-focus-ring),
+        0 9px 20px rgba(6, 76, 56, 0.24);
+}
+
+#subs-add.action.primary svg,
+#subs-add.action.primary span {
+    color: inherit;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --------------------------------------------------------------------------
+   Server-side sorting and AJAX table refresh states.
+   -------------------------------------------------------------------------- */
+/* Multiple selection — match the green marking used on Departments. */
+.subs-content .subs-table tbody tr[data-id] {
+    cursor: pointer;
+    transition: background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.subs-content .subs-table tbody tr[data-id].selected,
+.subs-content .subs-table tbody tr[data-id].selected:hover {
+    background: linear-gradient(90deg, #e4f6ed 0%, #f4fbf7 100%);
+    box-shadow: inset 4px 0 0 var(--subs-green-700);
+}
+
+.subs-content .subs-table tbody tr[data-id].selected td {
+    color: var(--subs-green-900);
+}
+
+.subs-content .subs-table input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    accent-color: var(--subs-green-700);
+}
+
+#subs-delete:not(:disabled) {
+    cursor: pointer;
+}
+
+.subs-table .sort-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.16s ease;
+}
+
+.subs-table .sort-link:hover,
+.subs-table .sort-link:focus-visible,
+.subs-table .sort-link.active {
+    color: var(--subs-green-700);
+    outline: none;
+}
+
+.subs-table .sort-link span {
+    min-width: 10px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+#subsidiaries-ajax-region {
+    position: relative;
+    transition: opacity 0.16s ease;
+}
+
+#subsidiaries-ajax-region.is-loading {
+    min-height: 120px;
+    opacity: 0.52;
+    pointer-events: none;
+}
+
+#subsidiaries-ajax-region.is-loading::after {
+    content: "Loading subsidiaries\2026";
+    position: absolute;
+    z-index: 3;
+    top: 18px;
+    right: 24px;
+    padding: 8px 12px;
+    color: var(--subs-green-900);
+    border: 1px solid #cce4d9;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(7, 81, 60, 0.13);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.subs-search.is-searching button[type="submit"] {
+    cursor: wait;
+    opacity: 0.86;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive refinements.
+   -------------------------------------------------------------------------- */
+@media (max-width: 800px) {
+    .subs-content .subs-hero {
+        min-height: auto;
+        padding: 20px;
+    }
+
+    .subs-content .subs-total {
+        min-width: 0;
+    }
+
+    .subs-content .subs-search input[type="search"] {
+        width: 100%;
+    }
+
+    .subs-content .subs-search button[type="submit"],
+    .subs-content .subs-search > a {
+        min-height: 42px;
+    }
+}
+
+@media (max-width: 520px) {
+    .subs-content .subs-search button[type="submit"] {
+        flex: 1 1 auto;
+    }
+
+    #subsidiaries-ajax-region.is-loading::after {
+        top: 12px;
+        right: 12px;
+    }
+}
+
+/* Keep the later-loading enhancements aligned with the compact mockup scale. */
+.subs-content .subs-hero {
+    min-height: 96px;
+    padding: 22px 24px;
+}
+
+.subs-content .subs-search input[type="search"],
+.subs-content .subs-search button[type="submit"],
+.subs-content .subs-search > a {
+    min-height: 40px;
+    border-radius: 9px;
+    font-size: 13px;
+}

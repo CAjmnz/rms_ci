@@ -1,0 +1,495 @@
+/*
+ * Shared admin header styles
+ *
+ * This file controls only the top header. Sidebar, footer, dashboard content,
+ * and module-specific designs remain in their own stylesheets.
+ */
+
+.topbar {
+  /*
+     * Keep the shared administrator header visible while the page scrolls.
+     * Sticky positioning preserves the header's space in the layout, so the
+     * first page section is never hidden underneath it.
+     */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Balanced header scale: slightly larger without becoming bulky. */
+  min-height: 89px;
+  padding: 0 42px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: 22px;
+  /*
+     * A light RMS-green wash adds brand color without competing with the
+     * stronger green sub-hero displayed immediately below the header.
+     */
+  border-bottom: 1px solid #b9dfd0;
+  background: #f7fcfa;
+  background: linear-gradient(110deg, #ffffff 0%, #f2faf7 48%, #e4f6ee 100%);
+  box-shadow:
+    0 5px 20px rgba(7, 81, 60, 0.1),
+    inset 0 -3px 0 rgba(10, 138, 101, 0.08);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================================================== 
+   ALTURAS Management brand alignment
+
+   These finishing rules coordinate the shared Admin header with the deep
+   emerald sidebar, mint page surfaces, and green sub-heroes. They intentionally
+   preserve the existing header size, sticky behavior, and responsive layout.
+   ========================================================================== */
+.topbar {
+  border-bottom-color: #9fcfbe;
+  background: #f5fbf8;
+  background:
+    radial-gradient(circle at 92% 0, rgba(70, 205, 153, 0.13), transparent 29%),
+    linear-gradient(105deg, #ffffff 0%, #f5fbf8 46%, #e5f5ee 100%);
+  box-shadow:
+    0 7px 24px rgba(6, 63, 47, 0.11),
+    inset 0 -3px 0 rgba(8, 112, 82, 0.11);
+}
+
+.topbar:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #07533e,
+    #28b987 55%,
+    rgba(40, 185, 135, 0)
+  );
+  opacity: 0.38;
+}
+
+.topbar-kicker {
+  color: #087052;
+  font-weight: 800;
+}
+.topbar h1 {
+  color: #123c30;
+  font-weight: 750;
+}
+
+.user-menu-button {
+  border-color: rgba(8, 112, 82, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  -webkit-transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    -webkit-transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #8fcbb5;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 9px 22px rgba(6, 83, 62, 0.13);
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+
+.top-avatar {
+  color: #064b38;
+  background: linear-gradient(135deg, #c7f3dd 0%, #7cddb0 100%);
+  box-shadow:
+    0 5px 15px rgba(6, 83, 62, 0.19),
+    0 0 0 1px rgba(8, 112, 82, 0.08);
+}
+
+.top-user-copy strong {
+  color: #173f33;
+}
+.topbar-create {
+  border-color: #b9ddcf;
+  background: rgba(233, 248, 242, 0.82);
+}
+
+/* Align the page title and action/profile groups. */
+.topbar-left,
+.topbar-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.topbar-left {
+  min-width: 0;
+  gap: 17px;
+}
+
+.topbar-title {
+  min-width: 0;
+}
+
+.topbar-actions {
+  position: relative;
+  gap: 14px;
+}
+
+.topbar-kicker {
+  margin: 0 0 5px;
+  color: var(--green-700);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+}
+
+.topbar h1 {
+  margin: 0;
+  overflow: hidden;
+  color: #123f32;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile navigation trigger is visible only below the tablet breakpoint. */
+.mobile-menu {
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  display: none;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  -webkit-transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    -webkit-transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.mobile-menu:hover,
+.mobile-menu:focus-visible {
+  border-color: #8ecdb6;
+  background: #e7f7f0;
+  box-shadow: 0 7px 16px rgba(7, 81, 60, 0.12);
+  outline: none;
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+
+.mobile-menu span {
+  width: 19px;
+  height: 2px;
+  margin: 3px auto;
+  display: block;
+  border-radius: 2px;
+  background: var(--green-900);
+}
+
+/* Optional primary action shown on the right side of the header. */
+.topbar-create {
+  min-height: 44px;
+  padding: 0 17px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-900);
+  border: 1px solid #cfe6da;
+  border-radius: 11px;
+  background: var(--green-50);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.topbar-create:hover,
+.topbar-create:focus {
+  color: #fff;
+  border-color: var(--green-700);
+  background: var(--green-700);
+  outline: none;
+}
+
+.topbar-create span {
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* Signed-in user button and dropdown. */
+.user-menu-button {
+  min-width: 210px;
+  min-height: 54px;
+  padding: 6px 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.48);
+  cursor: pointer;
+  text-align: left;
+}
+
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #a9d8c7;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 20px rgba(7, 81, 60, 0.1);
+  outline: none;
+}
+
+.top-avatar {
+  width: 44px;
+  height: 44px;
+  -ms-flex: 0 0 44px;
+  flex: 0 0 44px;
+  display: inline-block;
+  color: #07513c;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  background: linear-gradient(135deg, #b9efd2, #7edcaf);
+  box-shadow: 0 5px 13px rgba(7, 81, 60, 0.15);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 44px;
+  text-align: center;
+}
+
+.top-user-copy {
+  min-width: 0;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+
+.top-user-copy strong,
+.top-user-copy small {
+  display: block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.top-user-copy strong {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.top-user-copy small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.user-menu-button > i {
+  width: 7px;
+  height: 7px;
+  margin: 0 3px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  -webkit-transform: rotate(45deg) translateY(-2px);
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.user-dropdown {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 9px);
+  right: 0;
+  width: 172px;
+  padding: 7px;
+  visibility: hidden;
+  opacity: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(9, 63, 45, 0.13);
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+  -webkit-transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    -webkit-transform 0.16s ease;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    transform 0.16s ease;
+}
+
+.user-dropdown.is-open {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.user-dropdown a {
+  padding: 10px 11px;
+  display: block;
+  color: #3d554e;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.user-dropdown a:hover,
+.user-dropdown a:focus {
+  color: var(--green-800);
+  background: var(--green-50);
+  outline: none;
+}
+
+/* Tablet layout exposes the sidebar menu trigger. */
+@media (max-width: 980px) {
+  .mobile-menu {
+    display: block;
+  }
+}
+
+/* Phone layout keeps the header compact without causing horizontal overflow. */
+@media (max-width: 720px) {
+  .topbar {
+    /* Keep the larger desktop design compact on phones. */
+    min-height: 76px;
+    padding: 0 18px;
+  }
+
+  .topbar-kicker,
+  .top-user-copy,
+  .topbar-create {
+    display: none;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .user-menu-button {
+    min-width: 0;
+    padding: 5px;
+  }
+
+  .user-menu-button > i {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    gap: 10px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .mobile-menu {
+    width: 40px;
+    height: 40px;
+    -ms-flex: 0 0 40px;
+    flex: 0 0 40px;
+  }
+}
+
+/* Final ALTURAS header layer: kept last so module CSS cannot dilute branding. */
+.topbar {
+  border-bottom-color: #9fcfbe;
+  background:
+    radial-gradient(circle at 92% 0, rgba(70, 205, 153, 0.13), transparent 29%),
+    linear-gradient(105deg, #fff 0%, #f5fbf8 46%, #e5f5ee 100%);
+  box-shadow:
+    0 7px 24px rgba(6, 63, 47, 0.11),
+    inset 0 -3px 0 rgba(8, 112, 82, 0.11);
+}
+.topbar:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #07533e,
+    #28b987 55%,
+    rgba(40, 185, 135, 0)
+  );
+  opacity: 0.38;
+}
+.topbar-kicker {
+  color: #087052;
+  font-weight: 800;
+}
+.topbar h1 {
+  color: #123c30;
+  font-weight: 750;
+}
+.user-menu-button {
+  border-color: rgba(8, 112, 82, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+.user-menu-button:hover,
+.user-menu-button:focus,
+.user-menu-button[aria-expanded="true"] {
+  border-color: #8fcbb5;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 9px 22px rgba(6, 83, 62, 0.13);
+  transform: translateY(-1px);
+}
+.top-avatar {
+  color: #064b38;
+  background: linear-gradient(135deg, #c7f3dd 0%, #7cddb0 100%);
+  box-shadow:
+    0 5px 15px rgba(6, 83, 62, 0.19),
+    0 0 0 1px rgba(8, 112, 82, 0.08);
+}
+.top-user-copy strong {
+  color: #173f33;
+}
+.topbar-create {
+  border-color: #b9ddcf;
+  background: rgba(233, 248, 242, 0.82);
+}
