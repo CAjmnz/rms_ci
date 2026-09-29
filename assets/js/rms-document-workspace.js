@@ -450,9 +450,29 @@
     });
 
     /* Keep selection count, Select all, and ZIP button states synchronized. */
+        function getDocumentSelectors() {
+        return document.querySelectorAll('.document-selector');
+    }
+
     function updateSelection() {
-        var checked = document.querySelectorAll('.document-selector:checked').length;
-        var total = selectors.length;
+        var all = getDocumentSelectors();
+        var checkedTokens = {};
+        var totalTokens = {};
+        var checked = 0;
+        var total = 0;
+        var index;
+
+        for (index = 0; index < all.length; index++) {
+            var value = all[index].value;
+            if (!totalTokens[value]) {
+                totalTokens[value] = true;
+                total += 1;
+            }
+            if (all[index].checked && !checkedTokens[value]) {
+                checkedTokens[value] = true;
+                checked += 1;
+            }
+        }
 
         if (selectionCount) {
             selectionCount.textContent = checked + ' selected';
@@ -473,10 +493,12 @@
     if (selectAll) {
         selectAll.addEventListener('change', function () {
             var shouldSelectAll = selectAll.checked;
+            var all = getDocumentSelectors();
+            var index;
 
-            Array.prototype.forEach.call(selectors, function (selector) {
-                selector.checked = shouldSelectAll;
-            });
+            for (index = 0; index < all.length; index++) {
+                all[index].checked = shouldSelectAll;
+            }
 
             updateSelection();
         });
@@ -596,16 +618,18 @@
             });
         });
         if (selectAll) {
-            selectAll.addEventListener('change', function () {
-                var shouldSelectAll = selectAll.checked;
+        selectAll.addEventListener('change', function () {
+            var shouldSelectAll = selectAll.checked;
+            var all = getDocumentSelectors();
+            var index;
 
-                Array.prototype.forEach.call(selectors, function (selector) {
-                    selector.checked = shouldSelectAll;
-                });
+            for (index = 0; index < all.length; index++) {
+                all[index].checked = shouldSelectAll;
+            }
 
-                updateSelection();
-            });
-        }
+            updateSelection();
+        });
+    }
         updateSelection();
         initializeUserDocumentsDataTable();
     }
