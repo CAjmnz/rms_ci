@@ -1,6 +1,22 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/*
+ * MAINTENANCE NOTE - DOCUMENT DATA LAYER
+ *
+ * This model contains the database rules used by the legacy Documents module.
+ * It is the main source for folder hierarchy, document metadata, publishing,
+ * uploads, deletion, DataTables queries, and document-file lookup.
+ *
+ * IMPORTANT:
+ * - Keep the existing normalized legacy tables and subfolder1..subfolder10
+ *   hierarchy unless a database migration is explicitly approved.
+ * - publish = 1 means Published; publish = 0 means Unpublished.
+ * - data.stat is the active/deleted document-state field used by this module.
+ * - Do not bypass role or publication checks merely to make a UI action work.
+ * - Coordinate changes here with Documents.php because controller methods
+ *   depend on the model's existing return structures.
+ */
 class Documents_model extends CI_Model
 {
     private $maximum_level = 10;

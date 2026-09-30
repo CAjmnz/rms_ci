@@ -1,4 +1,15 @@
 /*
+   MAINTENANCE NOTE - DOCUMENT WORKSPACE CSS
+   This stylesheet is intentionally scoped to the Documents workspace.
+   Keep changes here limited to document list/grid presentation and document
+   table readability. Do not use CSS to implement access-control behavior.
+
+   User Portal document permissions are enforced by PHP; this file only affects
+   presentation. Existing list/grid selectors are shared with the document
+   workspace JavaScript, so selector changes should be checked against the view.
+*/
+
+/*
    User Portal document table readability
    Scoped to the Documents workspace only.
    List/DataTable styles only — grid cards use rms-portal-shell-match.css
@@ -156,24 +167,173 @@
 }
 
 /* ----- Smaller User Portal grid cards ----- */
+/* ----- Grid cards (match design mockup) ----- */
 .portal-drive-page .drive-file-list.is-grid-view {
-    grid-template-columns: repeat(auto-fill, 230px) !important;
-    gap: 10px !important;
-    padding: 10px !important;
+    display: block !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
-.portal-drive-page .drive-file-list.is-grid-view .drive-file-row {
-    width: 230px !important;
-    height: 298px !important;
-    min-height: 298px !important;
-    max-height: 298px !important;
-    box-sizing: border-box !important;
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-list-table-wrap {
+    display: none !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 16px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    padding: 4px 0 12px !important;
+}
+
+.portal-drive-page .drive-file-list.is-list-view .drive-file-grid-cards,
+.portal-drive-page .drive-file-grid-cards[hidden] {
+    display: none !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-row {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
     padding: 14px !important;
+    gap: 0 !important;
+    border: 1px solid #d8e5df !important;
+    border-radius: 18px !important;
+    background: #fffef8 !important;
+    box-shadow: 0 2px 8px rgba(23, 63, 51, 0.06) !important;
+    box-sizing: border-box !important;
+    transform: none !important;
 }
 
-.portal-drive-page .drive-file-list.is-grid-view .drive-file-preview {
-    width: 140px !important;
-    height: 118px !important;
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-row:hover {
+    border-color: #9fc9b8 !important;
+    box-shadow: 0 6px 16px rgba(23, 63, 51, 0.1) !important;
+}
+
+/* Checkbox top-right */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-check {
+    position: absolute !important;
+    top: 22px !important;
+    right: 22px !important;
+    z-index: 3 !important;
+    margin: 0 !important;
+}
+
+/* Open = preview + title */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-open {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    text-align: left !important;
+    cursor: pointer !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-preview {
+    width: 100% !important;
+    height: 150px !important;
+    margin: 0 0 12px !important;
+    border-radius: 14px !important;
+    border: 1px solid #e2ebe6 !important;
+    overflow: hidden !important;
+    background: #f4f8f6 !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-preview img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    padding: 6px !important;
+    background: #f7faf8 !important;
+}
+
+/* Title row: name left, View only right */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-copy {
+    display: block !important;
+    padding: 0 2px !important;
+    margin: 0 !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-copy strong {
+    display: block !important;
+    color: #0d6b52 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-copy small {
+    display: block !important;
+    margin-top: 2px !important;
+    color: #6b8077 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
+/* Hide folder path on grid (design shows access + date only) */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-folder {
+    display: none !important;
+}
+
+/* Uploaded line */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards time {
+    display: block !important;
+    order: 3 !important;
+    margin-top: 10px !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    color: #1a3d32 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards time::before {
+    content: "Uploaded: " !important;
+    font-weight: 800 !important;
+    color: #153d31 !important;
+}
+
+/* View only / Download pill — same row as title */
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-access {
+    position: absolute !important;
+    top: 176px !important; /* sits beside filename under preview */
+    right: 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 26px !important;
+    max-width: 90px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    transform: none !important;
+    border: 1px solid #d5e5de !important;
+    border-radius: 8px !important;
+    background: #eef5f1 !important;
+    color: #1f5c4a !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards .drive-file-access .drive-file-download {
+    color: #076547 !important;
+    text-decoration: none !important;
 }
 
 /* ----- DataTable ----- */
@@ -414,11 +574,11 @@
 
 .portal-drive-page .drive-file-list.is-grid-view .drive-file-grid-cards {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 15px !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 16px !important;
     overflow: visible !important;
     border: 0 !important;
-    padding: 0 !important;
+    padding: 4px 0 12px !important;
 }
 
 .portal-drive-page .drive-file-list.is-list-view .drive-file-grid-cards,

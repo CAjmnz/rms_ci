@@ -1,6 +1,18 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/*
+ * MAINTENANCE NOTE - USER DOCUMENTS VIEW
+ *
+ * This view is presentation-only for the regular-user document workspace.
+ * Authorization and document filtering belong in User_portal_model.php;
+ * do not use JavaScript/UI state as a permission check.
+ *
+ * The same document collection is represented in list/DataTable and grid views.
+ * Keep selection, viewer tokens, breadcrumbs, and download forms compatible
+ * with assets/js/rms-document-workspace.js when changing the markup.
+ */
+
 /* Configure the reusable User Portal shell for the document workspace. */
 $active_page = 'documents';
 $topbar_title = 'My Documents';
@@ -258,7 +270,7 @@ $this->load->view('user/partials/header');
                                         $view_url = site_url('portal/documents/view/' . rawurlencode($document['token']));
                                         $download_url = site_url('portal/documents/download/' . rawurlencode($document['token']));
                                         ?>
-                                        <tr class="drive-file-row" title="Click the table to view document">
+                                        <tr class="drive-file-row" title="CLICK THE TABLE TO VIEW DOCUMENT">
                                             <?php if ($role_id === 3): ?>
                                                 <td class="documents-select-cell">
                                                     <label class="drive-file-check">
@@ -307,7 +319,9 @@ $this->load->view('user/partials/header');
                                                     </span>
                                                 </button>
                                             </td>
-                                            <td class="drive-file-folder">
+                                            <td 
+                                                class="drive-file-folder"
+                                                title="<?php echo html_escape(isset($document['path_label']) ? $document['path_label'] : $breadcrumbs[count($breadcrumbs) -1 ]['label']); ?>">
                                                 <?php echo html_escape(isset($document['path_label']) ? $document['path_label'] : $breadcrumbs[count($breadcrumbs) - 1]['label']); ?>
                                             </td>
                                             <td><time><?php echo html_escape($document['date_uploaded']); ?></time></td>

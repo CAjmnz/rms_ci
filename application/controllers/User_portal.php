@@ -2,6 +2,24 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
+ * MAINTENANCE NOTE - USER DOCUMENT PORTAL
+ *
+ * This controller is the regular-user document portal, separate from the
+ * administrator Documents controller. It handles portal authentication,
+ * authorized browsing, viewing/downloading, profile/session behavior, and
+ * activity logging.
+ *
+ * IMPORTANT:
+ * - Administrator accounts use /administrator and are intentionally kept out
+ *   of this portal.
+ * - Document access must be revalidated on the server for every protected file.
+ * - User tagging is stored in user_allowed_data; the portal does not invent a
+ *   separate permission table or alter the existing document hierarchy.
+ * - Published/unpublished status is enforced by the model before documents
+ *   are exposed to the portal.
+ */
+
+/*
  * Regular-user authentication and first portal screen.
  *
  * Administrator roles continue to use /administrator. This controller owns a

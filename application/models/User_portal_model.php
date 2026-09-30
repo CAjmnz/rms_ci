@@ -1,6 +1,24 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/*
+ * MAINTENANCE NOTE - USER PORTAL DOCUMENT ACCESS
+ *
+ * This model is the server-side authorization layer for regular-user document
+ * access. It resolves user_allowed_data tags, folder paths, document tokens,
+ * protected viewer copies, and private physical storage paths.
+ *
+ * IMPORTANT:
+ * - user_allowed_data is the source of user-to-document/folder authorization.
+ * - A zero subfolder ID in a tag represents access to descendants at that level.
+ * - The portal only exposes active documents and published paths.
+ * - find_authorized_document() must continue to re-check authorization before
+ *   a file is served; UI visibility is never sufficient authorization.
+ * - maximum_level = 10 reflects the existing legacy RMS hierarchy.
+ * - Physical storage names may be encrypted; use the existing resolver rather
+ *   than constructing public URLs directly.
+ */
+
 /** Database operations used only by the regular-user portal. */
 class User_portal_model extends CI_Model
 {

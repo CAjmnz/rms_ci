@@ -1,6 +1,15 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/*
+ * MAINTENANCE NOTE - ADMIN-AREA USER DOCUMENT VIEW
+ * This view is a document workspace presentation layer used by the admin/user
+ * document flow. Keep authorization, publishing, tagging, and file access in
+ * the corresponding controllers/models. Do not duplicate permission logic in
+ * this template. Coordinate markup changes with the shared document workspace
+ * JavaScript and CSS selectors.
+ */
+
 /* Configure the reusable User Portal shell for the document workspace. */
 $active_page = 'documents';
 $topbar_title = '';

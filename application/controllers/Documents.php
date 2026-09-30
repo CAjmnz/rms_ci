@@ -1,6 +1,27 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/*
+ * MAINTENANCE NOTE - DOCUMENT MANAGEMENT
+ *
+ * This controller is the administrator-side document module for legacy rms_ci.
+ * It owns document browsing, folders, publishing/unpublishing, uploads,
+ * protected viewing, downloads, transfers, and document-management actions.
+ *
+ * IMPORTANT:
+ * - Preserve the existing CodeIgniter 3 / legacy database structure.
+ * - The hierarchy is intentionally recursive through subfolder1..subfolder10.
+ * - Do not move document authorization into the UI; every protected action
+ *   must continue to validate the authenticated role and destination.
+ * - Physical files are private and should be served through controller actions,
+ *   not exposed as public storage URLs.
+ * - Level 4 (role_id 1) is Super Admin; Level 3 (role_id 2) is Administrator.
+ * - Publishing state is part of document access and must remain consistent
+ *   across filename and subfolder records.
+ *
+ * For future changes, first trace the matching method in Documents_model.php
+ * and the related view/JavaScript before changing behavior here.
+ */
 class Documents extends CI_Controller
 {
     private $maximum_level = 10;
