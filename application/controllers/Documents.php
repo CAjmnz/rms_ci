@@ -2683,6 +2683,26 @@ class Documents extends CI_Controller
             return $this->json(FALSE, 'The selected record no longer exists.');
         }
 
+        /* ACTIVITY LOG: real name before delete (hook only has record_id). */
+        $deleted_name = '';
+        if (!empty($record['record_name'])) {
+            $deleted_name = trim((string) $record['record_name']);
+        } elseif (!empty($record['filename'])) {
+            $deleted_name = trim((string) $record['filename']);
+        } elseif (!empty($record['name'])) {
+            $deleted_name = trim((string) $record['name']);
+        }
+
+        $delete_activity = ((int) $level === 0)
+            ? 'Delete Filename'
+            : 'Delete Subfolder';
+
+        if ($deleted_name !== '') {
+            $delete_activity .= ': ' . $deleted_name;
+        } else {
+            $delete_activity .= ': ID ' . $record_id;
+        }
+
         $segments = $this->record_path_segments($record, $level);
         if (empty($segments)) {
             return $this->json(FALSE, 'The existing RMS directory path is invalid.');
@@ -2718,11 +2738,26 @@ class Documents extends CI_Controller
 
         $this->remove_unpublished_ownership($level, array($record_id));
 
-        foreach ($staged as $item) {
+foreach ($staged as $item) {
             if (!$this->delete_directory_tree($item['temporary'])) {
                 log_message('error', 'Documents staged directory requires manual cleanup: ' . $item['temporary']);
             }
         }
+
+     /* Log only after a successful delete. */
+        $this->load->model('Access_log_model');
+        $actor = trim((string) $this->session->userdata('rms_username'));
+        if ($actor === '') {
+            $actor = trim((string) $this->session->userdata('rms_display_name'));
+        }
+        if ($actor === '') {
+            $actor = 'Unknown';
+        }
+        $this->Access_log_model->append_activity(
+            $actor,
+            $delete_activity,
+            'Administrator'
+        );
 
         return $this->json(TRUE, 'The selected record was deleted successfully.');
     }

@@ -64,6 +64,11 @@
         if (!tableElement || !window.jQuery || !window.jQuery.fn || !window.jQuery.fn.DataTable) {
             return;
         }
+        
+        /* Avoid init errors when search returns no file rows */
+        if (!tableElement.tBodies.length || !tableElement.tHead) {
+            return;
+        }
 
         var $table = window.jQuery(tableElement);
         if (window.jQuery.fn.DataTable.isDataTable(tableElement)) {
@@ -682,9 +687,20 @@
             if (addHistory) {
                 window.history.pushState({ documentWorkspace: true }, '', url);
             }
+            try {
             initializeAjaxWorkspace();
+        }catch (err){
+            /* Still show content even if table init fail */
+            if (window.console && console.error) {
+                console.error(err);
+            } 
+        } 
+            nextWorkspace.classList.remove('is-ajax-loading');
             nextWorkspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }).catch(function () {
+            if (currentWorkspace) {
+                currentWorkspace.classList.remove('is-ajax-loading');
+            }
             window.location.href = url;
         });
     }

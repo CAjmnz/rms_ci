@@ -491,6 +491,41 @@ class Access_log_model extends CI_Model
             }
 
             if ($method === 'access' && $http_method === 'POST') {
+                $target_user = $this->first_post_value(
+                    $post,
+                    array(
+                        'username',
+                        'uname',
+                        'user_name',
+                        'target_username',
+                        'cname'
+                    )
+                );
+                /* Fallback: user id from URI e.g. users/access/12 */
+                if ($target_user === '' && $uri !== '') {
+                    if (preg_match('#(?:^|/)access(?:/|$)(\d+)#', $uri, $m)) {
+                        $target_user = 'User ID ' . $m[1];
+                    } elseif (preg_match('#(?:^|/)(\d+)(?:/|$)#', $uri, $m)) {
+                        $target_user = 'User ID ' . $m[1];
+                    }
+                }
+                $paths = $this->first_post_value(
+                    $post,
+                    array(
+                        'access_path',
+                        'paths',
+                        'select_paths',
+                        'filename',
+                        'record_name'
+                    )
+                );
+                $activity = 'Grant file access';
+                if ($target_user !== ''){
+                    $activity .= ' to '.$target_user;
+                }
+                if($paths !== ''){
+                    $activity .= ' → ' . $paths;
+                }
                 return 'Update User Access'
                     . $this->post_identifier_suffix($post);
             }
@@ -585,20 +620,68 @@ class Access_log_model extends CI_Model
                     . ($value !== '' ? ': ' . $value : '');
             }
 
+            /* Rename filename or subfolder (Edit name) */
             if ($method === 'update_record' && $http_method === 'POST') {
                 $value = $this->first_post_value(
                     $post,
-                    array('name', 'filename', 'data_name', 'record_name')
+                    array('record_name', 'name', 'filename', 'data_name')
                 );
+                $level = $this->first_post_value($post, array('level'));
+                $label = ((string) $level === '0')
+                    ? 'Rename Filename'
+                    : 'Rename Subfolder';
 
-                return 'Update Document Record'
-                    . ($value !== '' ? ': ' . $value : '')
-                    . $this->post_identifier_suffix($post);
+                return $label
+                    . ($value !== '' ? ': ' . $value : '');
             }
 
+            /*
+             * Delete is logged in Documents::delete_record() with the real name.
+             * Empty return avoids a second row that only shows the ID.
+             */
             if ($method === 'delete_record' && $http_method === 'POST') {
-                return 'Delete Document Record'
-                    . $this->post_identifier_suffix($post);
+                return '';
+            }
+
+            /* Delete uploaded file(s) inside a folder */
+            if ($method === 'delete_uploaded_files' && $http_method === 'POST') {
+                $value = $this->first_post_value(
+                    $post,
+                    array('data_ids', 'data_id', 'ids', 'names', 'data_name')
+                );
+
+                return 'Delete Uploaded File'
+                    . ($value !== '' ? ': ' . $value : '');
+            }
+
+            /* Rename one uploaded file */
+            if ($method === 'rename_uploaded_file' && $http_method === 'POST') {
+                $old = $this->first_post_value(
+                    $post,
+                    array('old_name', 'original_name', 'current_name')
+                );
+                $new = $this->first_post_value(
+                    $post,
+                    array('name', 'new_name', 'data_name', 'filename')
+                );
+
+                if ($old !== '' && $new !== '') {
+                    return 'Rename Uploaded File: ' . $old . ' → ' . $new;
+                }
+
+                return 'Rename Uploaded File'
+                    . ($new !== '' ? ': ' . $new : '');
+            }
+
+            /* Transfer uploaded files to another folder */
+            if ($method === 'transfer_uploaded_files' && $http_method === 'POST') {
+                $value = $this->first_post_value(
+                    $post,
+                    array('data_ids', 'ids', 'names')
+                );
+
+                return 'Transfer Uploaded File'
+                    . ($value !== '' ? ': ' . $value : '');
             }
 
             if ($method === 'publish' && $http_method === 'POST') {
@@ -609,7 +692,7 @@ class Access_log_model extends CI_Model
 
                 $ids = $this->first_post_value(
                     $post,
-                    array('record_ids', 'ids')
+                    array('record_ids', 'ids', 'record_id')
                 );
 
                 return ($value === '1' ? 'Publish Data' : 'Unpublish Data')
@@ -759,7 +842,7 @@ class Access_log_model extends CI_Model
         }
 
         return '';
-    }
+    }  
 
     /**
      * Return the LOCAL activity_log directory status for the System page.

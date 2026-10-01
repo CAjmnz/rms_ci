@@ -525,5 +525,5 @@ $this->load->view('user/partials/header');
 
 <script src="<?php echo base_url('assets/js/jquery-3.5.1.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/js/jquery.dataTables.min.js'); ?>"></script>
-<script src="<?php echo base_url('assets/js/rms-document-workspace.js?v=71-align'); ?>"></script>
+<script src="<?php echo base_url('assets/js/rms-document-workspace.js?v=76-search-loading'); ?>"></script>
 <?php $this->load->view('user/partials/footer'); ?>
