@@ -20,8 +20,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
 <div
     class="user-modal<?php echo $modal_is_open ? ' is-open' : ''; ?>"
     id="user-create-modal"
-    aria-hidden="<?php echo $modal_is_open ? 'false' : 'true'; ?>"
->
+    aria-hidden="<?php echo $modal_is_open ? 'false' : 'true'; ?>">
     <div class="user-modal-backdrop"></div>
 
     <section
@@ -29,8 +28,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
         role="dialog"
         aria-modal="true"
         aria-labelledby="new-user-modal-title"
-        tabindex="-1"
-    >
+        tabindex="-1">
         <!-- Compact modal header replaces the separate New User page banner. -->
         <header class="user-modal-header">
             <div>
@@ -53,104 +51,110 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
             <?php endif; ?>
 
             <!-- CI3 form helper keeps the configured action and CSRF protection. -->
-            <?php echo form_open('users/create', array('class' => 'user-create-form', 'id' => 'user-create-form')); ?>
-                <div class="modal-form-heading">
-                    <div>
-                        <p>ACCOUNT DETAILS</p>
-                        <h3>Add new user</h3>
-                    </div>
-                    <span class="required-note"><i>*</i> Required fields</span>
+            <?php echo form_open('administrator/users/create', array('class' => 'user-create-form', 'id' => 'user-create-form')); ?>
+            <div class="modal-form-heading">
+                <div>
+                    <p>ACCOUNT DETAILS</p>
+                    <h3>Add new user</h3>
+                </div>
+                <span class="required-note"><i>*</i> Required fields</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field form-field-wide">
+                    <label for="cname">Complete name <i>*</i></label>
+                    <input type="text" id="cname" name="cname" maxlength="150"
+                        value="<?php echo $create_form_active ? set_value('cname') : ''; ?>" autocomplete="name" required>
+                    <small>Letters, spaces, periods, apostrophes, and hyphens only.</small>
                 </div>
 
-                <div class="form-grid">
-                    <div class="form-field form-field-wide">
-                        <label for="cname">Complete name <i>*</i></label>
-                        <input type="text" id="cname" name="cname" maxlength="150"
-                            value="<?php echo $create_form_active ? set_value('cname') : ''; ?>" autocomplete="name" required>
-                        <small>Letters, spaces, periods, apostrophes, and hyphens only.</small>
-                    </div>
+                <div class="form-field">
+                    <label for="username">Username <i>*</i></label>
+                    <input type="text" id="username" name="username" maxlength="25"
+                        value="<?php echo $create_form_active ? set_value('username') : ''; ?>" autocomplete="off" required>
+                </div>
 
-                    <div class="form-field">
-                        <label for="username">Username <i>*</i></label>
-                        <input type="text" id="username" name="username" maxlength="25"
-                            value="<?php echo $create_form_active ? set_value('username') : ''; ?>" autocomplete="off" required>
+                <div class="form-field">
+                    <label for="password">Password <i>*</i></label>
+                    <div class="password-row">
+                        <input type="text" id="password" name="password" maxlength="50"
+                            value="<?php echo $create_form_active ? set_value('password') : ''; ?>"
+                            autocomplete="new-password"
+                            readonly="readonly"
+                            aria-readonly="true"
+                            required
+                            data-lpignore="true"
+                            data-1p-ignore="true"
+                            style="background:#eef2f0;cursor:text;">
+                        <button type="button" id="generate-password">Generate</button>
                     </div>
+                    <small>Password is shown for copy only. Click Generate — typing is blocked.</small>
+                </div>
 
-                    <div class="form-field">
-                        <label for="password">Password <i>*</i></label>
-                        <div class="password-row">
-                            <input type="text" id="password" name="password" maxlength="50"
-                                value="<?php echo $create_form_active ? set_value('password') : ''; ?>"
-                                autocomplete="new-password" readonly required>
-                            <button type="button" id="generate-password">Generate</button>
-                        </div>
-                        <small>Generate a password before saving.</small>
-                    </div>
+                <div class="form-field">
+                    <label for="subsidiary">Subsidiary <i>*</i></label>
+                    <!-- Options come from the existing subsidiaries table. -->
+                    <select id="subsidiary" name="subsidiary" required>
+                        <option value="">Select subsidiary</option>
+                        <?php foreach ($subsidiaries as $subsidiary): ?>
+                            <option value="<?php echo (int) $subsidiary['sub_id']; ?>"
+                                <?php echo $create_form_active ? set_select('subsidiary', $subsidiary['sub_id']) : ''; ?>>
+                                <?php echo html_escape($subsidiary['sub_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                    <div class="form-field">
-                        <label for="subsidiary">Subsidiary <i>*</i></label>
-                        <!-- Options come from the existing subsidiaries table. -->
-                        <select id="subsidiary" name="subsidiary" required>
-                            <option value="">Select subsidiary</option>
-                            <?php foreach ($subsidiaries as $subsidiary): ?>
-                                <option value="<?php echo (int) $subsidiary['sub_id']; ?>"
-                                    <?php echo $create_form_active ? set_select('subsidiary', $subsidiary['sub_id']) : ''; ?>>
-                                    <?php echo html_escape($subsidiary['sub_name']); ?>
+                <div class="form-field">
+                    <label for="department">Department <i>*</i></label>
+                    <!-- JavaScript filters departments by their existing subsidiary ID. -->
+                    <select id="department" name="department" required disabled>
+                        <option value="">Select subsidiary first</option>
+                        <?php foreach ($departments as $department): ?>
+                            <option value="<?php echo (int) $department['dept_id']; ?>"
+                                data-sub-id="<?php echo (int) $department['sub_id']; ?>"
+                                <?php echo $create_form_active ? set_select('department', $department['dept_id']) : ''; ?>>
+                                <?php echo html_escape($department['dept_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-field form-field-wide">
+                    <label for="role">User level <i>*</i></label>
+                    <!-- Only roles permitted by the existing manager rules are listed. -->
+                    <div class="user-level-control">
+                        <span class="user-level-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M12 2.5 20 6v5.3c0 4.9-3.4 8.8-8 10.2-4.6-1.4-8-5.3-8-10.2V6l8-3.5Zm0 3L7 7.7v3.6c0 3.2 2 5.9 5 7.1 3-1.2 5-3.9 5-7.1V7.7L12 5.5Zm-1 3h2v4h-2v-4Zm0 5.5h2v2h-2v-2Z"></path>
+                            </svg>
+                        </span>
+                        <select id="role" name="role" required>
+                            <option value="">Select user level</option>
+                            <?php foreach ($roles as $role): ?>
+                                <option value="<?php echo (int) $role['role_id']; ?>"
+                                    <?php echo $create_form_active ? set_select('role', $role['role_id']) : ''; ?>>
+                                    <?php echo html_escape($role['title']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-
-                    <div class="form-field">
-                        <label for="department">Department <i>*</i></label>
-                        <!-- JavaScript filters departments by their existing subsidiary ID. -->
-                        <select id="department" name="department" required disabled>
-                            <option value="">Select subsidiary first</option>
-                            <?php foreach ($departments as $department): ?>
-                                <option value="<?php echo (int) $department['dept_id']; ?>"
-                                    data-sub-id="<?php echo (int) $department['sub_id']; ?>"
-                                    <?php echo $create_form_active ? set_select('department', $department['dept_id']) : ''; ?>>
-                                    <?php echo html_escape($department['dept_name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="form-field form-field-wide">
-                        <label for="role">User level <i>*</i></label>
-                        <!-- Only roles permitted by the existing manager rules are listed. -->
-                        <div class="user-level-control">
-                            <span class="user-level-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" focusable="false">
-                                    <path d="M12 2.5 20 6v5.3c0 4.9-3.4 8.8-8 10.2-4.6-1.4-8-5.3-8-10.2V6l8-3.5Zm0 3L7 7.7v3.6c0 3.2 2 5.9 5 7.1 3-1.2 5-3.9 5-7.1V7.7L12 5.5Zm-1 3h2v4h-2v-4Zm0 5.5h2v2h-2v-2Z"></path>
-                                </svg>
-                            </span>
-                            <select id="role" name="role" required>
-                                <option value="">Select user level</option>
-                                <?php foreach ($roles as $role): ?>
-                                    <option value="<?php echo (int) $role['role_id']; ?>"
-                                        <?php echo $create_form_active ? set_select('role', $role['role_id']) : ''; ?>>
-                                        <?php echo html_escape($role['title']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="user-level-summary" id="user-level-summary" aria-live="polite">
-                            <span class="user-level-summary-mark" aria-hidden="true">i</span>
-                            <span id="user-level-summary-text">Choose the access level this user should receive.</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Cancel closes the modal; Save uses the unchanged server handler. -->
-                <div class="form-actions modal-form-actions">
-                    <p>This step creates the account only. Viewer permissions remain locked.</p>
-                    <div>
-                        <button type="button" class="form-cancel" data-close-user-modal>Cancel</button>
-                        <button type="submit" class="form-save">Save user</button>
+                    <div class="user-level-summary" id="user-level-summary" aria-live="polite">
+                        <span class="user-level-summary-mark" aria-hidden="true">i</span>
+                        <span id="user-level-summary-text">Choose the access level this user should receive.</span>
                     </div>
                 </div>
+
+            </div>
+
+            <!-- Cancel closes the modal; Save uses the unchanged server handler. -->
+            <div class="form-actions modal-form-actions">
+                <p>This step creates the account only. Viewer permissions remain locked.</p>
+                <div>
+                    <button type="button" class="form-cancel" data-close-user-modal>Cancel</button>
+                    <button type="submit" class="form-save">Save user</button>
+                </div>
+            </div>
             <?php echo form_close(); ?>
         </div>
     </section>
@@ -168,8 +172,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
         aria-modal="true"
         aria-labelledby="create-confirm-title"
         aria-describedby="create-confirm-description"
-        tabindex="-1"
-    >
+        tabindex="-1">
         <span class="create-message-icon create-message-icon-confirm" aria-hidden="true">?</span>
         <p class="create-message-kicker">CONFIRM NEW USER</p>
         <h2 id="create-confirm-title">Save this user account?</h2>
@@ -196,8 +199,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
             aria-modal="true"
             aria-labelledby="create-success-title"
             aria-describedby="create-success-description"
-            tabindex="-1"
-        >
+            tabindex="-1">
             <span class="create-message-icon create-message-icon-success" aria-hidden="true">&#10003;</span>
             <p class="create-message-kicker">ACCOUNT CREATED</p>
             <h2 id="create-success-title">User saved successfully</h2>
@@ -228,7 +230,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
         </section>
     </div>
     <script>
-        (function () {
+        (function() {
             'use strict';
 
             var copyButton = document.getElementById('copy-created-account');
@@ -268,12 +270,12 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
                 document.body.removeChild(temporary);
             }
 
-            copyButton.addEventListener('click', function () {
+            copyButton.addEventListener('click', function() {
                 var credentials = 'Username: ' + usernameNode.textContent.replace(/^\s+|\s+$/g, '') + '\n' +
                     'Password: ' + passwordNode.textContent.replace(/^\s+|\s+$/g, '');
 
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(credentials).then(showCopied, function () {
+                    navigator.clipboard.writeText(credentials).then(showCopied, function() {
                         fallbackCopy(credentials);
                     });
                 } else {
@@ -285,7 +287,7 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
 <?php endif; ?>
 
 <script>
-    (function () {
+    (function() {
         'use strict';
 
         var roleSelect = document.getElementById('role');
@@ -320,4 +322,95 @@ $create_form_active = isset($create_form_active) && $create_form_active === TRUE
         roleSelect.addEventListener('change', updateRoleSummary);
         updateRoleSummary();
     }());
+</script>
+<script>
+    (function() {
+        'use strict';
+
+        var roleSelect = document.getElementById('role');
+        var summary = document.getElementById('user-level-summary');
+        var summaryText = document.getElementById('user-level-summary-text');
+
+        if (!roleSelect || !summary || !summaryText) {
+            return;
+        }
+
+        function updateRoleSummary() {
+            // ... existing code ...
+        }
+
+        roleSelect.addEventListener('change', updateRoleSummary);
+        updateRoleSummary();
+    }());
+</script>
+
+<script>
+/* Password: visible + copy only. No type, paste, cut, or delete. */
+(function () {
+    'use strict';
+
+    function lockPasswordField(field) {
+        if (!field || field.getAttribute('data-rms-pwd-locked') === '1') {
+            return;
+        }
+        field.setAttribute('data-rms-pwd-locked', '1');
+        field.setAttribute('readonly', 'readonly');
+        field.setAttribute('aria-readonly', 'true');
+
+        function isCopyOrSelectShortcut(event) {
+            var key = event.key || '';
+            var code = event.which || event.keyCode || 0;
+            if (event.ctrlKey || event.metaKey) {
+                if (key === 'a' || key === 'A' || key === 'c' || key === 'C'
+                    || code === 65 || code === 67) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        field.addEventListener('keydown', function (event) {
+            if (isCopyOrSelectShortcut(event)) {
+                return;
+            }
+            event.preventDefault();
+            return false;
+        }, true);
+
+        field.addEventListener('keypress', function (event) {
+            event.preventDefault();
+            return false;
+        }, true);
+
+        field.addEventListener('paste', function (event) {
+            event.preventDefault();
+            return false;
+        }, true);
+
+        field.addEventListener('cut', function (event) {
+            event.preventDefault();
+            return false;
+        }, true);
+
+        field.addEventListener('drop', function (event) {
+            event.preventDefault();
+            return false;
+        }, true);
+
+        field.addEventListener('beforeinput', function (event) {
+            event.preventDefault();
+            return false;
+        }, true);
+    }
+
+    function init() {
+        lockPasswordField(document.getElementById('password'));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+}());
 </script>

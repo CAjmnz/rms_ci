@@ -140,7 +140,7 @@ $username_value = set_value('username', isset($profile['username']) ? $profile['
                             </label>
                             <div class="password-input">
                                 <input type="password" id="password" name="password" maxlength="50" autocomplete="new-password" placeholder="Leave blank to keep your current password">
-                                <button type="button" id="toggle-profile-password" aria-label="Show password" aria-pressed="false">
+                                <button type="button" id="toggle-profile-password" data-profile-password-toggle="password" aria-label="Show password" aria-pressed="false">
                                     <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
                                 </button>
                             </div>

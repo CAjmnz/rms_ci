@@ -936,6 +936,25 @@ class User_model extends CI_Model
             return TRUE;
         }
 
+        /*
+         * New accounts have no previous access rows to restore. If the legacy
+         * batch insert rejects the first assignment, retry the exact same
+         * validated rows individually. Existing users keep the original
+         * batch/restore behavior unchanged.
+         */
+        if (empty($old_rows)) {
+            $this->db->where('user_id', (int) $user_id)->delete('user_allowed_data');
+
+            foreach ($new_rows as $new_row) {
+                if (!$this->db->insert('user_allowed_data', $new_row)) {
+                    $this->db->where('user_id', (int) $user_id)->delete('user_allowed_data');
+                    return FALSE;
+                }
+            }
+
+            return TRUE;
+        }
+
         // Best-effort restoration protects the previous permissions on failure.
         if (!empty($old_rows)) {
             $this->db->insert_batch('user_allowed_data', $old_rows);

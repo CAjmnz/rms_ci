@@ -48,6 +48,22 @@ $sidebar_js_version = file_exists($sidebar_js_file)
 <!-- Shared sidebar assets with automatic cache-busting for all admin pages. -->
 <link rel="stylesheet" href="<?php echo base_url('assets/css/rms-sidebar.css?v=' . $sidebar_css_version); ?>">
 
+<!--
+ * Apply collapsed state BEFORE the sidebar paints.
+ * Stops expand→collapse flash on every Documents / Users / module navigation.
+ -->
+<script>
+(function () {
+    try {
+        if (window.localStorage.getItem('rmsSidebarCollapsed') === '1'
+            && window.innerWidth > 980
+            && document.body) {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    } catch (e) {}
+})();
+</script>
+
 <!-- Darkens the page while the sidebar is open on tablet or mobile. -->
 <div class="mobile-overlay" id="mobile-overlay" aria-hidden="true"></div>
 

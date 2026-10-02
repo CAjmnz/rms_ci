@@ -2098,26 +2098,32 @@
     }
 
     /** Creates a compatible temporary password only when explicitly requested. */
-    function generatePassword() {
-        var characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-        var generated = '';
-        var index;
+function generatePassword() {
+    var characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    var generated = '';
+    var index;
 
-        for (index = 0; index < 10; index++) {
-            generated += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-
-        password.value = generated;
-        password.focus();
-        password.select();
+    for (index = 0; index < 10; index++) {
+        generated += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+        );
     }
 
+    if (password) {
+        password.value = generated;
+        password.setAttribute('readonly', 'readonly');
+        try {
+            password.focus();
+            password.select(); /* ready to Ctrl+C */
+        } catch (ignore) {}
+    }
+}
     if (subsidiary && department) {
         subsidiary.onchange = updateDepartments;
         updateDepartments();
     }
 
-    if (generateButton && password) {
+    if (generateButton && (password || document.getElementById('password-display'))) {
         generateButton.onclick = generatePassword;
     }
 

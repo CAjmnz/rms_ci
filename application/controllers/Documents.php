@@ -1,27 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/*
- * MAINTENANCE NOTE - DOCUMENT MANAGEMENT
- *
- * This controller is the administrator-side document module for legacy rms_ci.
- * It owns document browsing, folders, publishing/unpublishing, uploads,
- * protected viewing, downloads, transfers, and document-management actions.
- *
- * IMPORTANT:
- * - Preserve the existing CodeIgniter 3 / legacy database structure.
- * - The hierarchy is intentionally recursive through subfolder1..subfolder10.
- * - Do not move document authorization into the UI; every protected action
- *   must continue to validate the authenticated role and destination.
- * - Physical files are private and should be served through controller actions,
- *   not exposed as public storage URLs.
- * - Level 4 (role_id 1) is Super Admin; Level 3 (role_id 2) is Administrator.
- * - Publishing state is part of document access and must remain consistent
- *   across filename and subfolder records.
- *
- * For future changes, first trace the matching method in Documents_model.php
- * and the related view/JavaScript before changing behavior here.
- */
 class Documents extends CI_Controller
 {
     private $maximum_level = 10;
@@ -1595,6 +1574,29 @@ class Documents extends CI_Controller
                 : count($clean_ids) . ' selected files were deleted successfully.'
         );
     }
+     
+        /**
+     * Write one readable Documents line into the System Access Logs archive.
+     */
+    private function log_documents_activity($message)
+    {
+        $message = trim((string) $message);
+        if ($message === '') {
+            return;
+        }
+
+        $this->load->model('Access_log_model');
+        $identity = trim((string) $this->session->userdata('rms_username'));
+        if ($identity === '') {
+            $identity = 'Unknown';
+        }
+
+        $this->Access_log_model->append_activity(
+            $identity,
+            $message,
+            'Administrator'
+        );
+    }
 
     /** Rename one uploaded file while preserving its original file types. */
     public function rename_uploaded_file()
@@ -1672,6 +1674,20 @@ class Documents extends CI_Controller
             $this->rollback_file_moves($moves);
             return $this->json(FALSE, 'The file record could not be renamed.');
         }
+
+        $old_label = pathinfo((string) $document['data_name'], PATHINFO_FILENAME);
+        if ($old_label === '') {
+            $old_label = (string) $document['data_name'];
+        }
+        $new_label = $base;
+        if ($old_label !== $new_label) {
+            $this->log_documents_activity(
+                'Renamed document: ' . $old_label . ' → ' . $new_label
+            );
+        } else {
+            $this->log_documents_activity('Renamed document: ' . $new_label);
+        }
+
         return $this->json(TRUE, 'The file was renamed successfully.');
     }
 
@@ -2636,9 +2652,23 @@ class Documents extends CI_Controller
             $renamed[] = array('old' => $old_path, 'new' => $new_path);
         }
 
-        if (!$this->Documents_model->update_record($level, $record_id, $name, $sub_id, $dept_id)) {
+                if (!$this->Documents_model->update_record($level, $record_id, $name, $sub_id, $dept_id)) {
             $this->rollback_directory_renames($renamed);
             return $this->json(FALSE, 'The record could not be saved. No directory changes were kept.');
+        }
+
+        $old_label = isset($record['record_name'])
+            ? trim((string) $record['record_name'])
+            : '';
+        $kind = ($level === 0) ? 'filename' : 'subfolder';
+        if ($old_label !== '' && $old_label !== $name) {
+            $this->log_documents_activity(
+                'Renamed ' . $kind . ': ' . $old_label . ' → ' . $name
+            );
+        } else {
+            $this->log_documents_activity(
+                'Renamed ' . $kind . ': ' . $name
+            );
         }
 
         return $this->json(TRUE, ($level === 0 ? 'Filename' : 'Subfolder') . ' updated successfully.');
@@ -2683,25 +2713,26 @@ class Documents extends CI_Controller
             return $this->json(FALSE, 'The selected record no longer exists.');
         }
 
+
         /* ACTIVITY LOG: real name before delete (hook only has record_id). */
         $deleted_name = '';
-        if (!empty($record['record_name'])) {
+        if (!empty($record['record_name'])){
             $deleted_name = trim((string) $record['record_name']);
-        } elseif (!empty($record['filename'])) {
+        }elseif (!empty($record['filename'])) {
             $deleted_name = trim((string) $record['filename']);
-        } elseif (!empty($record['name'])) {
+        }elseif (!empty($record['name'])) {
             $deleted_name = trim((string) $record['name']);
         }
 
-        $delete_activity = ((int) $level === 0)
+        $delete_activity = ((int)$level === 0)
             ? 'Delete Filename'
             : 'Delete Subfolder';
 
         if ($deleted_name !== '') {
             $delete_activity .= ': ' . $deleted_name;
         } else {
-            $delete_activity .= ': ID ' . $record_id;
-        }
+            $delete_activity .= ': ID'. $record_id;
+        }   
 
         $segments = $this->record_path_segments($record, $level);
         if (empty($segments)) {
@@ -2738,27 +2769,27 @@ class Documents extends CI_Controller
 
         $this->remove_unpublished_ownership($level, array($record_id));
 
-foreach ($staged as $item) {
+        foreach ($staged as $item) {
             if (!$this->delete_directory_tree($item['temporary'])) {
                 log_message('error', 'Documents staged directory requires manual cleanup: ' . $item['temporary']);
             }
         }
-
-     /* Log only after a successful delete. */
+        
+        /* Log only after a successful delete. */
         $this->load->model('Access_log_model');
-        $actor = trim((string) $this->session->userdata('rms_username'));
-        if ($actor === '') {
+        $actor = trim((string)$this->session-> userdata('rms_username'));
+        if ($actor === ''){
             $actor = trim((string) $this->session->userdata('rms_display_name'));
         }
         if ($actor === '') {
-            $actor = 'Unknown';
+            $actor = 'Unknown'; 
         }
-        $this->Access_log_model->append_activity(
+        $this-> Access_log_model->append_activity(
             $actor,
             $delete_activity,
             'Administrator'
         );
-
+        
         return $this->json(TRUE, 'The selected record was deleted successfully.');
     }
 

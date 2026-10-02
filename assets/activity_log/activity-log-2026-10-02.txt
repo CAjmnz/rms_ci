@@ -1,0 +1,64 @@
+rose|2026-10-02 08:22:00|Login to Administrator Portal|Administrator
+iadsumaylo|2026-10-02 08:22:49|[Portal] Login|Records
+rose|2026-10-02 08:23:39|RMS Action: Documents / item_access (action=add, user_ids=92)|Administrator
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: aaa.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: aa.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: bbjpg.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: ee.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: frat.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: img_0007.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: img_0009.jpg|Records
+iadsumaylo|2026-10-02 08:23:47|[Portal] Viewed: img_0011.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0012.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0013.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0016.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0017.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0018.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0019.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0020.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0021.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: img_0022.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: bbb.jpg|Records
+iadsumaylo|2026-10-02 08:23:48|[Portal] Viewed: autobots.jpg|Records
+rose|2026-10-02 08:24:06|Unpublish Data: 27|Administrator
+rose|2026-10-02 08:24:55|Publish Data: 27|Administrator
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: aa.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: bbb.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: aaa.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: autobots.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: frat.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: img_0007.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: img_0009.jpg|Records
+iadsumaylo|2026-10-02 08:24:59|[Portal] Viewed: img_0011.jpg|Records
+iadsumaylo|2026-10-02 08:25:00|[Portal] Viewed: bbjpg.jpg|Records
+iadsumaylo|2026-10-02 08:25:00|[Portal] Viewed: ee.jpg|Records
+rose|2026-10-02 08:25:23|Unpublish Data: 49|Administrator
+rose|2026-10-02 08:25:52|Publish Data: 49|Administrator
+rose|2026-10-02 08:31:38|Logout from Administrator Portal|Administrator
+iadsumaylo|2026-10-02 08:37:24|[Portal] Login|Records
+rose|2026-10-02 08:37:35|Login to Administrator Portal|Administrator
+rose|2026-10-02 08:37:40|Logout from Administrator Portal|Administrator
+iadsumaylo|2026-10-02 08:56:59|[Portal] Logout|Records
+rose|2026-10-02 13:25:17|Login to Administrator Portal|Administrator
+rose|2026-10-02 13:26:21|Create User: lamal123|Administrator
+rose|2026-10-02 13:26:29|Create User: lamal123|Administrator
+rose|2026-10-02 13:26:32|Logout from Administrator Portal|Administrator
+lamal1234|2026-10-02 13:26:44|Login to Administrator Portal|Administrator
+lamal123|2026-10-02 13:26:49|Login to Administrator Portal|Administrator
+lamal123|2026-10-02 13:27:04|[Portal] Login|Records
+lamal123|2026-10-02 13:28:56|[Portal] Logout|Records
+rose|2026-10-02 13:29:15|Login to Administrator Portal|Administrator
+lamal123|2026-10-02 13:29:41|[Portal] Login|Records
+rose|2026-10-02 13:29:49|Logout from Administrator Portal|Administrator
+rose|2026-10-02 13:30:16|Login to Administrator Portal|Administrator
+rose|2026-10-02 16:17:27|Create User: ado|Administrator
+lamal123|2026-10-02 16:17:32|[Portal] Logout|Records
+rose|2026-10-02 16:17:45|Logout from Administrator Portal|Administrator
+ado|2026-10-02 16:17:52|Login to Administrator Portal|Administrator
+ado|2026-10-02 16:18:27|Logout from Administrator Portal|Administrator
+rose|2026-10-02 16:18:32|Login to Administrator Portal|Administrator
+Unknown|2026-10-02 16:18:52|Update User Access|Administrator
+ado|2026-10-02 16:19:09|Update User: ado|Administrator
+Unknown|2026-10-02 16:19:25|Update User Access|Administrator
+Unknown|2026-10-02 16:46:56|Update User Access|Administrator
+Unknown|2026-10-02 16:50:13|Update User Access|Administrator

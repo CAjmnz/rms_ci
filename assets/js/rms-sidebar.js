@@ -3,6 +3,10 @@
  *
  * Controls the mobile drawer and the desktop compact/full-width toggle.
  * The selected desktop state is remembered across all admin pages.
+ *
+ * FIX: Do not expand a collapsed desktop sidebar when modals open/close or
+ * when the viewport width changes only because the scrollbar appears/hides.
+ * Re-apply the saved collapsed state after any action that touches body classes.
  */
 (function () {
     'use strict';
@@ -23,14 +27,28 @@
     var expandButtons = document.querySelectorAll
         ? document.querySelectorAll('.nav-expand')
         : [];
+    var lastIsDesktop = window.innerWidth > desktopBreakpoint;
 
     // Add or remove one body class without deleting classes used by a page.
     function setBodyClass(className, enabled) {
+        if (document.body.classList) {
+            if (enabled) {
+                document.body.classList.add(className);
+            } else {
+                document.body.classList.remove(className);
+            }
+            return;
+        }
+
         var pattern = new RegExp('(^|\\s)' + className + '(?=\\s|$)', 'g');
         var current = document.body.className.replace(pattern, ' ').replace(/\s+/g, ' ');
 
         document.body.className = (enabled ? current + ' ' + className : current)
             .replace(/^\s+|\s+$/g, '');
+    }
+
+    function isDesktopViewport() {
+        return window.innerWidth > desktopBreakpoint;
     }
 
     // Read the saved preference safely when browser storage is unavailable.
@@ -70,7 +88,7 @@
 
     // Apply the compact desktop rail while leaving the mobile drawer unchanged.
     function setDesktopCollapsed(collapsed, remember) {
-        if (window.innerWidth <= desktopBreakpoint) {
+        if (!isDesktopViewport()) {
             collapsed = false;
         }
 
@@ -100,31 +118,58 @@
         if (openButton) {
             openButton.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
-        if (toggleButton) {
+
+        // Only rewrite the shared toggle labels while in mobile layout.
+        // On desktop, the same control is the collapse/expand rail button.
+        if (!isDesktopViewport() && toggleButton) {
             toggleButton.setAttribute('aria-expanded', open ? 'true' : 'false');
-            toggleButton.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-            toggleButton.setAttribute('title', open ? 'Close navigation' : 'Open navigation');
+            toggleButton.setAttribute(
+                'aria-label',
+                open ? 'Close navigation' : 'Open navigation'
+            );
+            toggleButton.setAttribute(
+                'title',
+                open ? 'Close navigation' : 'Open navigation'
+            );
         }
+
         setBodyClass('nav-open', open);
+
+        // Keep desktop compact preference after any mobile drawer change.
+        if (isDesktopViewport()) {
+            setDesktopCollapsed(getSavedCollapsedState(), false);
+        }
     }
+
+    // Public helper so other modules can restore state after modal open/close.
+    window.rmsReapplySidebarState = function () {
+        if (isDesktopViewport()) {
+            setMobileSidebar(false);
+            setDesktopCollapsed(getSavedCollapsedState(), false);
+        }
+    };
 
     // Restore the compact preference as soon as the shared sidebar loads.
     setDesktopCollapsed(getSavedCollapsedState(), false);
-    if (window.innerWidth <= desktopBreakpoint) {
-        // Initialize the responsive control as a closed mobile menu button.
+    if (!isDesktopViewport()) {
         setMobileSidebar(false);
     }
 
     if (toggleButton) {
         toggleButton.onclick = function () {
             // On smaller screens the same visible control operates the drawer.
-            if (window.innerWidth <= desktopBreakpoint) {
-                var mobileOpen = document.body.className.indexOf('nav-open') !== -1;
-                setMobileSidebar(!mobileOpen);
+            if (!isDesktopViewport()) {
+                var isOpen = sidebar && sidebar.classList
+                    ? sidebar.classList.contains('is-open')
+                    : false;
+                setMobileSidebar(!isOpen);
                 return;
             }
 
-            var collapsed = document.body.className.indexOf('sidebar-collapsed') !== -1;
+            var collapsed = document.body.classList
+                ? document.body.classList.contains('sidebar-collapsed')
+                : (' ' + document.body.className + ' ').indexOf(' sidebar-collapsed ') !== -1;
+
             setDesktopCollapsed(!collapsed, true);
         };
     }
@@ -147,7 +192,7 @@
         };
     }
 
-    // Preserve the existing optional nested-menu behavior.
+    // Expand or collapse each sidebar submenu without reloading the page.
     for (var index = 0; index < expandButtons.length; index++) {
         expandButtons[index].onclick = function () {
             var targetId = this.getAttribute('data-target');
@@ -163,9 +208,22 @@
         };
     }
 
-    // Re-evaluate the layout when crossing between desktop and mobile widths.
+    // Only react when the layout truly crosses mobile/desktop.
+    // Ignore width noise from scrollbar show/hide when modals open.
     window.addEventListener('resize', function () {
-        if (window.innerWidth <= desktopBreakpoint) {
+        var isDesktop = isDesktopViewport();
+
+        if (isDesktop === lastIsDesktop) {
+            // Still re-apply saved desktop state if something stripped the class.
+            if (isDesktop) {
+                setDesktopCollapsed(getSavedCollapsedState(), false);
+            }
+            return;
+        }
+
+        lastIsDesktop = isDesktop;
+
+        if (!isDesktop) {
             setDesktopCollapsed(false, false);
             setMobileSidebar(false);
         } else {
@@ -180,6 +238,19 @@
 
         if (event.keyCode === 27) {
             setMobileSidebar(false);
+            if (isDesktopViewport()) {
+                setDesktopCollapsed(getSavedCollapsedState(), false);
+            }
         }
     });
+
+    // After any click that may open a modal, restore collapsed state on next frame.
+    document.addEventListener('click', function () {
+        if (!isDesktopViewport()) {
+            return;
+        }
+        window.setTimeout(function () {
+            setDesktopCollapsed(getSavedCollapsedState(), false);
+        }, 0);
+    }, true);
 }());

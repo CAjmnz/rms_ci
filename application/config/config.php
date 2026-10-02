@@ -403,7 +403,20 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'ci_session';
+
+/*
+ * Keep the Administrator and User Portal sessions in separate browser
+ * cookies. Both portals can therefore stay logged in at the same time on
+ * the same browser/device. Logging out of one portal only destroys that
+ * portal's session cookie.
+ */
+$request_path = isset($_SERVER['REQUEST_URI'])
+    ? (string) parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+    : '';
+$config['sess_cookie_name'] = (bool) preg_match(
+    '#/administrator(?:/|$)#i',
+    $request_path
+) ? 'rms_admin_session' : 'rms_portal_session';
 $config['sess_samesite'] = 'Lax';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = NULL;

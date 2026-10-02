@@ -30,3 +30,34 @@ rose|2026-10-01 14:06:42|RMS Action: Documents / check_upload_duplicates (record
 rose|2026-10-01 14:06:42|Upload Data: img_0001.jpg, img_0002.jpg, img_0003.jpg, img_0004.jpg, img_0005.jpg, img_0006.jpg, img_0007.jpg, img_0008.jpg|Administrator
 rose|2026-10-01 14:06:42|Upload Data: img_0009.jpg|Administrator
 rose|2026-10-01 14:07:29|Rename Uploaded File: img_00011.jpg|Administrator
+rose|2026-10-01 18:25:27|Login to Administrator Portal|Administrator
+DOSlvl|2026-10-01 18:25:43|[Portal] Login|Records
+rose|2026-10-01 18:26:24|Publish Data: 39|Administrator
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: aa.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: aaa.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: autobots.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: ee.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: frat.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: img_0007.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: img_0009.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: img_0011.jpg|Records
+DOSlvl|2026-10-01 18:26:28|[Portal] Viewed: img_0012.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0013.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0016.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0017.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0018.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0019.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0020.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0021.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0022.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0023.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0024.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0025.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0026.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: img_0027.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: bbjpg.jpg|Records
+DOSlvl|2026-10-01 18:26:29|[Portal] Viewed: bbb.jpg|Records
+rose|2026-10-01 18:26:40|RMS Action: Documents / validate_unpublished_path (level=0, record_id=47)|Administrator
+rose|2026-10-01 18:26:40|Create Subfolder: new|Administrator
+rose|2026-10-01 18:26:57|RMS Action: Documents / validate_unpublished_path (level=0, record_id=47)|Administrator
+rose|2026-10-01 18:26:57|Create Subfolder: new|Administrator

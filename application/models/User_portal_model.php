@@ -313,7 +313,18 @@ class User_portal_model extends CI_Model
             }
             $rows[$index]['token'] = $this->make_folder_token($child_path);
         }
-        return $rows;
+        $visible = array();
+        foreach ($rows as $row) {
+            $folder_id = (int) $row['folder_id'];
+            $file_count = isset($row['file_count']) ? (int) $row['file_count'] : 0;
+
+            if ($this->portal_should_show_folder($user_id, $path, $folder_id, $file_count)) {
+                $visible[] = $row;
+            }
+        }
+
+        return $visible;
+
     }
 
     /** Return files stored directly in the open folder, not in descendants. */
@@ -955,5 +966,145 @@ class User_portal_model extends CI_Model
             'reason' => $reason,
             'user' => array()
         );
+    }
+    /**
+     * Publish column for one hierarchy level.
+     * level 0 = filename.publish
+     * level N = Subfolder.publishN
+     * Published = 1 , Unpublished = 0.
+     */
+    private function folder_publish_column($level)
+    {
+        $level = (int) $level;
+        if ($level <=0) {
+            return 'filename.publish';
+        }
+        
+         return 'subfolder' . $level . '.publish' . $level;
+    }
+        /**
+     * Published = 1, Unpublished = 0.
+     * Level 0 = filename.publish
+     * Level N = subfolderN.publishN
+     */
+    private function is_folder_published($level, $folder_id)
+    {
+        $level = (int) $level;
+        $folder_id = (int) $folder_id;
+        if ($folder_id <= 0) {
+            return FALSE;
+        }
+
+        if ($level <= 0) {
+            $row = $this->db
+                ->select('publish')
+                ->from('filename')
+                ->where('file_id', $folder_id)
+                ->limit(1)
+                ->get()
+                ->row_array();
+
+            return $row && (int) $row['publish'] === 1;
+        }
+
+        $table = 'subfolder' . $level;
+        $row = $this->db
+            ->select('publish' . $level . ' AS publish', FALSE)
+            ->from($table)
+            ->where($table . '_id', $folder_id)
+            ->limit(1)
+            ->get()
+            ->row_array();
+
+        return $row && (int) $row['publish'] === 1;
+    }
+
+    /**
+     * True when this folder has at least one child subfolder
+     * (structure-only navigation).
+     */
+    private function folder_has_child_folders($user_id, $path, $folder_id)
+    {
+        $depth = $this->path_depth($path);
+        $next_level = empty($path) ? 1 : ($depth + 1);
+
+        if ($next_level > $this->maximum_level) {
+            return FALSE;
+        }
+
+        $child_path = $path;
+        if (empty($child_path)) {
+            $child_path = array('file_id' => (int) $folder_id);
+        } else {
+            $child_path['sub' . $next_level] = (int) $folder_id;
+        }
+
+        $deeper = $next_level + 1;
+        if ($deeper > $this->maximum_level) {
+            return FALSE;
+        }
+
+        $this->build_browser_base($user_id);
+        $this->apply_browser_path($child_path);
+
+        $id_col = 'subfolder' . $deeper . '_id';
+        $row = $this->db
+            ->select('COUNT(DISTINCT data.' . $id_col . ') AS c', FALSE)
+            ->where('data.' . $id_col . ' >', 0)
+            ->get()
+            ->row_array();
+
+        return $row && (int) $row['c'] > 0;
+    }
+
+    /**
+     * Published → always show.
+     * Unpublished + has child folders → show (navigate structure).
+     * Unpublished + has documents only → hide.
+     * Empty unpublished → hide.
+     */
+    private function portal_should_show_folder($user_id, $path, $folder_id, $file_count)
+    {
+        $depth = empty($path) ? 0 : ($this->path_depth($path) + 1);
+        $published = $this->is_folder_published($depth, $folder_id);
+
+        if ($published) {
+            return TRUE;
+        }
+
+        if ($this->folder_has_child_folders($user_id, $path, $folder_id)) {
+            return TRUE;
+        }
+
+        if ((int) $file_count > 0) {
+            return FALSE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * Documents only when every folder on the open path is published.
+     */
+    private function path_is_full_published($path)
+    {
+        if (empty($path) || !isset($path['file_id'])) {
+            return TRUE;
+        }
+
+        if (!$this->is_folder_published(0, (int) $path['file_id'])) {
+            return FALSE;
+        }
+
+        for ($level = 1; $level <= $this->maximum_level; $level++) {
+            if (!isset($path['sub' . $level])) {
+                break;
+            }
+            if (!$this->is_folder_published($level, (int) $path['sub' . $level])) {
+                return FALSE;
+            }
+        }
+
+        return TRUE;
     }
 }
